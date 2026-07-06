@@ -1,0 +1,22 @@
+{
+  "name": "review-event-platform",
+  "version": "1.0.0",
+  "description": "리뷰이벤트 플랫폼 - 요식업 매장용 게임형 리뷰 이벤트 시스템",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8420",
+    "start": "python -m http.server 8420"
+  },
+  "keywords": [
+    "review",
+    "event",
+    "restaurant",
+    "game",
+    "coupon"
+  ],
+  "author": "Restaurant Event Platform Team",
+  "license": "MIT",
+  "engines": {
+    "node": "18.x"
+  }
+}
