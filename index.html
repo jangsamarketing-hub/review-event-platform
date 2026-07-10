@@ -250,6 +250,11 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>이메일</label><input id="p-email" placeholder="platform@admin.com"></div>
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="p-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="platform-error"></div>
+    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
+      <div style="font-size:12px;color:#78350f;line-height:1.8">이메일: <b>platform@admin.com</b><br>비밀번호: <b>platform1234</b></div>
+      <button onclick="document.getElementById('p-email').value='platform@admin.com';document.getElementById('p-pw').value='platform1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
+    </div>
     <button class="btn btn-blue" onclick="platformLogin()">로그인</button>
   </div>
 </div>
@@ -367,9 +372,12 @@ body.dark .success-msg{color:#3ddc97}
         <div style="font-size:12px;color:rgba(255,255,255,.5)" id="home-spin-left">하루 1회</div>
       </div>
     </div>
+    <!-- 추가 이벤트 카드 (동적) -->
+    <div class="card" id="home-extra-events-card">
+      <div style="padding:12px 16px 4px"><div style="font-size:11px;font-weight:700;color:var(--t4);letter-spacing:.5px">🎁 추가 이벤트 참여</div></div>
+      <div id="home-extra-events"></div>
+    </div>
     <div class="card">
-      <div onclick="goToMainGame()" class="list-item"><div class="li-icon" style="background:#ebf3fe" id="home-game-icon">🎡</div><div class="li-body"><div class="li-title" id="home-game-title">럭키 이벤트</div><div class="li-sub">매일 1회 참여 가능</div></div><span class="li-arrow">›</span></div>
-      <div class="divider"></div>
       <div onclick="show('s-coupons')" class="list-item"><div class="li-icon" style="background:#e8faf3">🎟️</div><div class="li-body"><div class="li-title">내 쿠폰함</div><div class="li-sub" id="home-coupon-sub">사용 가능한 쿠폰</div></div><span class="li-badge badge-green" id="home-coupon-badge">0개</span><span class="li-arrow">›</span></div>
       <div class="divider"></div>
       <div onclick="show('s-stamp')" class="list-item"><div class="li-icon" style="background:#fff8e6">⭐</div><div class="li-body"><div class="li-title">스탬프 카드</div><div class="li-sub" id="home-stamp-sub">3 / 10개 적립</div></div><span class="li-arrow">›</span></div>
@@ -685,6 +693,11 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>직원 코드</label><input id="s-code" placeholder="STAFF001" maxlength="20"></div>
     <div class="field" style="margin-bottom:28px"><label>PIN 번호</label><input id="s-pin" type="password" placeholder="4자리" maxlength="4" inputmode="numeric"></div>
     <div id="staff-error"></div>
+    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
+      <div style="font-size:12px;color:#78350f;line-height:1.8">직원코드: <b>STAFF001</b><br>PIN: <b>1234</b></div>
+      <button onclick="document.getElementById('s-code').value='STAFF001';document.getElementById('s-pin').value='1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
+    </div>
     <button class="btn btn-blue" onclick="staffLogin()">로그인</button>
   </div>
 </div>
@@ -731,6 +744,11 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>이메일</label><input id="a-email" placeholder="admin@example.com"></div>
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="admin-error"></div>
+    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
+      <div style="font-size:12px;color:#78350f;line-height:1.8">이메일: <b>admin@example.com</b><br>비밀번호: <b>admin1234</b></div>
+      <button onclick="document.getElementById('a-email').value='admin@example.com';document.getElementById('a-pw').value='admin1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
+    </div>
     <button class="btn btn-blue" onclick="adminLogin()">로그인</button>
   </div>
 </div>
@@ -899,6 +917,25 @@ function migrateStore(s){
   if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'};
   if(!s.stampCards)s.stampCards={};
   if(!s.crmTemplate)s.crmTemplate='안녕하세요 {고객명}님 😊\n{매장명}입니다!\n\n{쿠폰명} 쿠폰이 발급되었어요 🎁\n매장 방문 시 직원에게 보여주세요.\n\n쿠폰번호: {쿠폰번호}\n유효기간: {유효기간}';
+  // 구버전 이모지-rating 문항이 있으면 최신 형태로 교체
+  if(!s.surveyQuestions||!s.surveyQuestions.length||s.surveyQuestions.some(q=>q.type==='rating')){
+    s.surveyQuestions=[
+      {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
+      {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다!',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
+      {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
+    ];
+  }
+  // 구버전 상품 확률 (꽝 없는 3개짜리) 이면 기본값으로 교체
+  const mg=s.mainGame;
+  if(mg&&mg.prizes&&mg.prizes.length<4){
+    mg.prizes=[
+      {id:'r1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료 (직원 확인 후 제공)'},
+      {id:'r2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},
+      {id:'r3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},
+      {id:'r4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},
+      {id:'r5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}
+    ];
+  }
   return s;
 }
 Object.keys(storesDB).forEach(k=>{storesDB[k]=migrateStore(storesDB[k])});
@@ -1315,7 +1352,11 @@ function renderPlatform(){
         </div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <button class="btn-ghost" style="width:auto;flex:1;padding:9px;font-size:12px;font-weight:600" onclick="location.search='?store=${id}'">고객 화면 보기</button>
-          <button class="btn-ghost" style="width:auto;flex:1;padding:9px;font-size:12px;font-weight:600;color:var(--blue);border-color:var(--blue)" onclick="platformManageStore('${id}')">🔧 매장 세팅 관리</button>
+          <button class="btn-ghost" style="width:auto;flex:1;padding:9px;font-size:12px;font-weight:600;color:var(--blue);border-color:var(--blue)" onclick="platformManageStore('${id}')">🔧 세팅 관리</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn-ghost" style="width:auto;flex:1;padding:9px;font-size:12px;font-weight:600;color:#f97316;border-color:#f97316" onclick="resetStoreData('${id}')">🔄 데이터 초기화</button>
+          <button class="btn-ghost" style="width:auto;flex:1;padding:9px;font-size:12px;font-weight:600;color:var(--red);border-color:var(--red)" onclick="deleteStore('${id}')">🗑️ 매장 삭제</button>
         </div>
         <div style="font-size:11px;color:var(--t4);margin-top:8px">고객 ${s.users?s.users.length:0}명 · 쿠폰 ${s.coupons?s.coupons.length:0}건 · 네이버 ${s.naverLinked?'연동됨':'미연동'}</div>
       </div>
@@ -1324,6 +1365,30 @@ function renderPlatform(){
 }
 function togglePlatformApprove(id){storesDB[id].approved=!storesDB[id].approved;saveStoresDB();renderPlatform();toast(storesDB[id].approved?'매장을 승인했습니다':'매장을 정지했습니다')}
 function togglePlatformPremium(id){storesDB[id].premium=!storesDB[id].premium;storesDB[id].plan=storesDB[id].premium?'premium':'free';saveStoresDB();renderPlatform();toast(storesDB[id].premium?'프리미엄을 부여했습니다':'프리미엄을 해제했습니다')}
+function resetStoreData(id){
+  if(!confirm('이 매장의 고객/쿠폰/설문 등 모든 데이터를 초기화할까요?\n매장 프로필(이름/주소)은 유지됩니다. 복구 불가.'))return;
+  const old=storesDB[id];
+  const fresh=seedDemoStore();
+  fresh.profile=old.profile;
+  fresh.owner=old.owner||{name:'사장님',phone:''};
+  fresh.adminEmail=old.adminEmail||'admin@example.com';
+  fresh.adminPassword=old.adminPassword||'admin1234';
+  fresh.approved=old.approved??true;
+  fresh.premium=old.premium??false;
+  fresh.plan=old.plan||'free';
+  storesDB[id]=migrateStore(fresh);
+  saveStoresDB();
+  if(STORE_ID===id){STORE=storesDB[id];}
+  renderPlatform();
+  toast('매장 데이터를 초기화했습니다');
+}
+function deleteStore(id){
+  if(!confirm('이 매장을 완전히 삭제할까요?\n모든 데이터가 영구 삭제됩니다. 복구 불가.'))return;
+  delete storesDB[id];
+  saveStoresDB();
+  renderPlatform();
+  toast('매장을 삭제했습니다');
+}
 
 /* ════════════════════ 홈 ════════════════════ */
 function refreshHome(){
@@ -1357,6 +1422,33 @@ function refreshHome(){
     const _surveyDone=_scard.history&&_scard.history.some(h=>h.reason&&h.reason.startsWith('survey_'+today()));
     _surveyEl.textContent=_surveyDone?'오늘 이미 적립됨 ✅':'참여 시 스탬프 1개 적립';
     _surveyEl.style.color=_surveyDone?'var(--green)':'var(--t3)';
+  }
+  // 추가 이벤트 섹션 렌더링
+  const extraEl=document.getElementById('home-extra-events');
+  if(extraEl){
+    if(!STORE.extraSpinLog)STORE.extraSpinLog={};
+    const todayKey=today();
+    const allEvents=STORE.events||[];
+    const platformMeta={
+      kakao:{icon:'🗺️',color:'#FEE500',bg:'#fffbcc',label:'카카오맵 리뷰'},
+      google:{icon:'🔍',color:'#4285F4',bg:'#eaf1ff',label:'구글 리뷰'},
+      tmap:{icon:'📍',color:'#00BCD4',bg:'#e0f8fb',label:'티맵 리뷰'}
+    };
+    if(!allEvents.length){
+      extraEl.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--t4)">추가 이벤트가 설정되지 않았습니다</div>';
+    }else{
+      extraEl.innerHTML=allEvents.map((ev,idx)=>{
+        const meta=platformMeta[ev.platform]||{icon:'🎁',color:'#8b5cf6',bg:'#f3f0ff',label:ev.label};
+        const done=!!(STORE.extraSpinLog[currentUser?.id+'_'+ev.platform+'_'+todayKey]);
+        const active=ev.active;
+        return `<div${idx>0?' style="border-top:1px solid var(--border2)"':''}><div class="list-item" style="opacity:${active?1:.4};cursor:${active&&!done?'pointer':'default'}" onclick="${active&&!done?`openExtraRoulette('${ev.id}')`:''}">`+
+          `<div class="li-icon" style="background:${meta.bg};font-size:20px">${meta.icon}</div>`+
+          `<div class="li-body"><div class="li-title">${meta.label}<span style="font-size:10px;font-weight:600;color:var(--t4);margin-left:6px">${active?'':'(비활성)'}</span></div>`+
+          `<div class="li-sub" style="color:${done?'var(--green)':'var(--t3)'}">` +
+          (done?'오늘 이미 참여했어요 ✅':(active?'리뷰 작성 후 게임 참여':'현재 비활성화됨'))+`</div></div>`+
+          `<span style="font-size:18px;color:${done?'var(--green)':'var(--t4)'}">${done?'✅':'›'}</span></div></div>`;
+      }).join('');
+    }
   }
   // 등급 진행바 렌더링
   const rankBarEl=document.getElementById('home-rank-bar');
@@ -1981,8 +2073,14 @@ function renderSurveyQuestions(){
           <div style="padding:14px 16px;${idx>0?'border-top:1px solid var(--border2)':''}">
             <div style="display:flex;align-items:center;justify-content:space-between">
               <div style="font-size:14px;font-weight:600;color:var(--t1)">${it}</div>
-              <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:4px">
-                ${[1,2,3,4,5].map(v=>`<span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${v},this.parentElement)" data-v="${v}" style="font-size:28px;cursor:pointer;color:#d1d5db;line-height:1;transition:color .1s">★</span>`).join('')}
+              <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px">
+                ${[1,2,3,4,5].map(n=>`
+                <span data-star="${n}" style="position:relative;display:inline-block;font-size:30px;line-height:1;width:30px;flex-shrink:0">
+                  <span style="color:#d1d5db">★</span>
+                  <span class="star-fill" style="position:absolute;left:0;top:0;overflow:hidden;color:#f5b925;white-space:nowrap;width:0%;pointer-events:none">★</span>
+                  <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n}-0.5,this.closest('.star-row'))" style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
+                  <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
+                </span>`).join('')}
               </div>
             </div>
           </div>
@@ -2011,11 +2109,13 @@ function renderSurveyQuestions(){
     }
   }).join('');
 }
-function setMatrixRating(qid,item,val,wrap){
-  [...wrap.querySelectorAll('span[data-v]')].forEach(s=>{
-    s.style.color=+s.dataset.v<=val?'#f5b925':'#d1d5db';
-  });
+function setMatrixRating(qid,item,val,rowEl){
   curSurveyAnswers[qid][item]=val;
+  rowEl.querySelectorAll('[data-star]').forEach(starEl=>{
+    const n=parseFloat(starEl.dataset.star);
+    const fill=val>=n?100:(val>=n-0.5?50:0);
+    starEl.querySelector('.star-fill').style.width=fill+'%';
+  });
 }
 function toggleMultiCheck(e,qid,opt,labelEl){
   const box=labelEl.querySelector('.mc-box');
