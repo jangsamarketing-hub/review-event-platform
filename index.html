@@ -207,8 +207,9 @@ body.dark .success-msg{color:#3ddc97}
   <div class="scroll" style="background:var(--bg);padding:28px 20px">
     <button class="btn btn-blue" style="font-size:17px;padding:18px" onclick="show('s-login')">🎁 리뷰이벤트 게임 시작</button>
     <button class="btn btn-ghost" style="margin-top:12px" onclick="show('s-owner-signup')">🏪 사장님 회원가입</button>
-    <div style="margin-top:28px;text-align:center">
+    <div style="margin-top:28px;display:flex;justify-content:center;gap:16px">
       <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">사장님 로그인</button>
+      <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">총괄관리자</button>
     </div>
     <div class="store-switcher" id="store-switcher-wrap"></div>
     <div style="margin-top:24px;font-size:11px;color:var(--t4);text-align:center;line-height:1.6">개인정보는 이벤트 참여 목적으로만 사용되며<br>안전하게 보관됩니다</div>
@@ -757,7 +758,10 @@ body.dark .success-msg{color:#3ddc97}
 <div class="scr" id="s-admin">
   <div style="background:var(--white);padding:max(env(safe-area-inset-top),20px) 20px 0;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">
     <div style="font-size:20px;font-weight:900;color:var(--t1)" id="admin-store-title">매장 관리</div>
-    <button class="tb-right" onclick="adminLogout()" id="admin-logout-btn">로그아웃</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="adminPreviewCustomer()" style="background:var(--blue-light);border:1px solid var(--blue);color:var(--blue);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">👁 고객화면</button>
+      <button class="tb-right" onclick="adminLogout()" id="admin-logout-btn">로그아웃</button>
+    </div>
   </div>
   <div style="background:var(--white);padding:12px 20px;border-bottom:1px solid var(--border2)">
     <div class="chips">
@@ -1173,6 +1177,16 @@ function staffLogin(){
   if(staff&&staff.active){currentStaff={code:staff.code,name:staff.name};el.innerHTML='';show('s-staff-check')}
   else if(staff&&!staff.active){el.innerHTML='<div class="error-msg">정지된 직원 계정입니다. 관리자에게 문의하세요</div>'}
   else el.innerHTML='<div class="error-msg">직원 코드 또는 PIN이 올바르지 않습니다</div>';
+}
+function adminPreviewCustomer(){
+  // 관리자에서 고객 화면으로 미리보기 전환
+  if(!currentUser&&STORE.users&&STORE.users.length){currentUser=STORE.users[0];}
+  if(!currentUser){
+    // 임시 미리보기 사용자 생성
+    currentUser={id:'preview',name:'미리보기',phone:'',visits:2,joined:today(),marketing:false};
+  }
+  show('s-home');
+  toast('고객 화면 미리보기 중 — 홈 우측 상단 👤 메뉴에서 관리자로 복귀');
 }
 function adminLogin(){
   const e=document.getElementById('a-email').value.trim(),p=document.getElementById('a-pw').value.trim();
@@ -3345,28 +3359,136 @@ function renderEventStats(){
 
 function renderSurveyAdmin(el){
   const qTypeName={rating:'별점',matrix:'항목별 별점',multicheck:'복수선택',choice:'객관식',text:'주관식'};
+  const n=STORE.surveys.length;
   el.innerHTML=`
+    <!-- 문항 관리 (접기/펼치기) -->
     <div class="card card-pad">
-      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">설문 문항 관리</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:12px">문항 내용을 직접 수정하고, ↑↓ 버튼으로 순서를 바꿀 수 있어요</div>
-      <div id="sq-list">${renderSurveyQuestionRows(qTypeName)}</div>
-      <hr style="border:none;border-top:1px solid var(--border2);margin:14px 0">
-      <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">새 문항 추가</div>
-      <div class="field"><label>질문 유형</label><select id="nq-type" onchange="toggleNqFields(this.value)">
-        <option value="rating">별점 (4단계, 1개 항목)</option>
-        <option value="matrix">항목별 별점 (여러 항목 한번에)</option>
-        <option value="multicheck">복수선택 체크박스</option>
-        <option value="choice">객관식 (1개 선택)</option>
-        <option value="text">주관식</option>
-      </select></div>
-      <div class="field"><label>질문 내용</label><input id="nq-label" placeholder="예) 직원 응대는 어떠셨나요?"></div>
-      <div class="field" id="nq-options-field" style="display:none"><label>선택지 (쉼표로 구분)</label><input id="nq-options" placeholder="예) 매우 좋음,좋음,보통,아쉬움"></div>
-      <div class="field" id="nq-items-field" style="display:none"><label>평가 항목들 (쉼표로 구분)</label><input id="nq-items" placeholder="예) 가격 대비 맛,가격 대비 양,매장 청결"></div>
-      <button class="btn btn-light" style="margin-top:10px" onclick="addQuestion()">+ 문항 추가</button>
+      <div onclick="toggleSurveyQMgmt()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div style="font-size:14px;font-weight:700;color:var(--t1)">📋 설문 문항 관리</div>
+        <span id="sq-mgmt-arrow" style="font-size:18px;color:var(--t3)">›</span>
+      </div>
+      <div id="sq-mgmt-body" style="display:none;margin-top:14px">
+        <div style="font-size:12px;color:var(--t3);margin-bottom:12px">문항 내용을 직접 수정하고, ↑↓ 버튼으로 순서를 바꿀 수 있어요</div>
+        <div id="sq-list">${renderSurveyQuestionRows(qTypeName)}</div>
+        <hr style="border:none;border-top:1px solid var(--border2);margin:14px 0">
+        <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">새 문항 추가</div>
+        <div class="field"><label>질문 유형</label><select id="nq-type" onchange="toggleNqFields(this.value)">
+          <option value="rating">별점 (4단계, 1개 항목)</option>
+          <option value="matrix">항목별 별점 (여러 항목 한번에)</option>
+          <option value="multicheck">복수선택 체크박스</option>
+          <option value="choice">객관식 (1개 선택)</option>
+          <option value="text">주관식</option>
+        </select></div>
+        <div class="field"><label>질문 내용</label><input id="nq-label" placeholder="예) 직원 응대는 어떠셨나요?"></div>
+        <div class="field" id="nq-options-field" style="display:none"><label>선택지 (쉼표로 구분)</label><input id="nq-options" placeholder="예) 매우 좋음,좋음,보통,아쉬움"></div>
+        <div class="field" id="nq-items-field" style="display:none"><label>평가 항목들 (쉼표로 구분)</label><input id="nq-items" placeholder="예) 가격 대비 맛,가격 대비 양,매장 청결"></div>
+        <button class="btn btn-light" style="margin-top:10px" onclick="addQuestion()">+ 문항 추가</button>
+      </div>
     </div>
-    <div class="section-label">응답 결과 (${STORE.surveys.length}건)</div>
-    <div class="card">${STORE.surveys.length?STORE.surveys.map(s=>`<div style="padding:16px 20px;border-bottom:1px solid var(--border2)"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">${s.name} <span style="font-size:11px;color:var(--t4);font-weight:400">${s.datetime||s.date}</span>${s.phone?`<span style="font-size:11px;color:var(--t3);margin-left:6px">${s.phone}</span>`:''}</div>${STORE.surveyQuestions.map(q=>{const a=s.answers[q.id];if(a===undefined)return'';let display;if(q.type==='rating'){display=['','😞 불만족','😐 보통','😊 만족','🥰 매우만족'][a];}else if(q.type==='matrix'){display=Object.entries(a||{}).map(([k,v])=>k+' '+'★'.repeat(v)).join(' · ');}else if(q.type==='multicheck'){display=Array.isArray(a)?a.join(', '):a;}else{display=a||'(무응답)';}return `<div style="font-size:13px;color:var(--t2);margin-top:4px"><span style="color:var(--t3)">${q.label}:</span> ${display}</div>`}).join('')}</div>`).join(''):'<div style="padding:24px 20px;color:var(--t4);font-size:13px;text-align:center">아직 응답이 없습니다</div>'}</div>
+
+    <!-- 응답 통계 차트 -->
+    <div class="section-label">📊 응답 통계 <span style="font-weight:400;color:var(--t4)">${n}건</span></div>
+    ${n===0?'<div class="card" style="padding:32px 20px;text-align:center;color:var(--t4);font-size:14px">아직 응답이 없습니다</div>':renderSurveyCharts()}
+
+    <!-- 개별 응답 목록 (접기/펼치기) -->
+    ${n>0?`
+    <div class="card card-pad" style="margin-top:8px">
+      <div onclick="toggleSurveyRawList()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div style="font-size:13px;font-weight:700;color:var(--t1)">📄 개별 응답 보기</div>
+        <span id="survey-raw-arrow" style="font-size:18px;color:var(--t3)">›</span>
+      </div>
+      <div id="survey-raw-list" style="display:none;margin-top:12px">
+        ${STORE.surveys.map(s=>`
+          <div style="padding:14px 0;border-bottom:1px solid var(--border2)">
+            <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:6px">
+              ${s.name||'익명'}
+              <span style="font-size:11px;color:var(--t4);font-weight:400;margin-left:6px">${s.datetime||s.date}</span>
+              ${s.phone?`<span style="font-size:11px;color:var(--t3);margin-left:4px">${s.phone}</span>`:''}
+            </div>
+            ${STORE.surveyQuestions.map(q=>{
+              const a=s.answers[q.id];
+              if(a===undefined||a===null||a==='')return'';
+              let disp='';
+              if(q.type==='matrix'){disp=Object.entries(a||{}).map(([k,v])=>`${k}: ${'★'.repeat(Math.floor(v))}${v%1?'½':''} (${v})`).join(' / ');}
+              else if(q.type==='multicheck'){disp=Array.isArray(a)?a.join(', '):String(a);}
+              else{disp=String(a||'(무응답)');}
+              return `<div style="font-size:12px;color:var(--t2);margin-top:3px"><span style="color:var(--t3)">${q.label}:</span> ${disp}</div>`;
+            }).join('')}
+          </div>`).join('')}
+      </div>
+    </div>`:''}
   `;
+}
+function toggleSurveyQMgmt(){
+  const b=document.getElementById('sq-mgmt-body');
+  const a=document.getElementById('sq-mgmt-arrow');
+  const open=b.style.display==='none';
+  b.style.display=open?'block':'none';
+  a.textContent=open?'˅':'›';
+}
+function toggleSurveyRawList(){
+  const b=document.getElementById('survey-raw-list');
+  const a=document.getElementById('survey-raw-arrow');
+  const open=b.style.display==='none';
+  b.style.display=open?'block':'none';
+  a.textContent=open?'˅':'›';
+}
+function renderSurveyCharts(){
+  const n=STORE.surveys.length;
+  if(!n)return'';
+  const BAR_COLORS=['#3182f6','#00c471','#f5b925','#f04452','#8b5cf6','#ec4899','#14b8a6','#f97316'];
+  return STORE.surveyQuestions.map(q=>{
+    if(q.type==='matrix'){
+      const items=q.items||[];
+      const rows=items.map((item,i)=>{
+        const scores=STORE.surveys.map(s=>{const v=s.answers[q.id]?.[item];return(v!==undefined&&v>0)?v:null;}).filter(v=>v!==null);
+        const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0;
+        const pct=Math.round(avg/5*100);
+        const stars=avg>0?('★'.repeat(Math.floor(avg))+(avg%1>=0.5?'½':'')+'☆'.repeat(5-Math.ceil(avg))):'-';
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span style="color:var(--t1);font-weight:600">${item}</span>
+            <span style="color:#f5b925;font-weight:700;font-size:12px">${avg>0?avg.toFixed(1)+'점':'-'} <span style="color:var(--t4);font-size:10px">(${scores.length}명)</span></span>
+          </div>
+          <div style="height:10px;background:var(--border);border-radius:6px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#f5b925,#f97316);border-radius:6px;transition:width .4s ease"></div>
+          </div>
+        </div>`;
+      });
+      return `<div class="card card-pad"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">${q.label}</div>${rows.join('')}</div>`;
+    }
+    if(q.type==='multicheck'||q.type==='choice'){
+      const opts=q.options||[];
+      const counts=opts.map(opt=>{
+        const cnt=STORE.surveys.filter(s=>{const a=s.answers[q.id];return Array.isArray(a)?a.includes(opt):a===opt;}).length;
+        return{opt,cnt};
+      }).sort((a,b)=>b.cnt-a.cnt);
+      const maxCnt=Math.max(1,...counts.map(c=>c.cnt));
+      const rows=counts.map((c,i)=>{
+        const pct=Math.round(c.cnt/n*100);
+        const barW=Math.round(c.cnt/maxCnt*100);
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+            <span style="color:var(--t1)">${c.opt}</span>
+            <span style="color:var(--t2);font-weight:700">${c.cnt}명 <span style="color:var(--t4);font-size:11px">(${pct}%)</span></span>
+          </div>
+          <div style="height:10px;background:var(--border);border-radius:6px;overflow:hidden">
+            <div style="height:100%;width:${barW}%;background:${BAR_COLORS[i%BAR_COLORS.length]};border-radius:6px;transition:width .4s ease"></div>
+          </div>
+        </div>`;
+      });
+      return `<div class="card card-pad"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:14px">${q.label}</div>${rows.join('')}</div>`;
+    }
+    if(q.type==='text'){
+      const responses=STORE.surveys.filter(s=>s.answers[q.id]&&String(s.answers[q.id]).trim()).map(s=>String(s.answers[q.id]));
+      if(!responses.length)return'';
+      return `<div class="card card-pad">
+        <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">${q.label} <span style="font-weight:400;color:var(--t4)">${responses.length}건</span></div>
+        ${responses.map(r=>`<div style="padding:10px 12px;background:var(--bg);border-radius:10px;font-size:13px;color:var(--t2);margin-bottom:6px;line-height:1.5">"${r}"</div>`).join('')}
+      </div>`;
+    }
+    return'';
+  }).join('');
 }
 function renderSurveyQuestionRows(qTypeName){
   if(!STORE.surveyQuestions.length)return '<div style="font-size:13px;color:var(--t4)">등록된 문항이 없습니다</div>';
