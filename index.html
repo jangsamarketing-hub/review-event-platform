@@ -207,10 +207,8 @@ body.dark .success-msg{color:#3ddc97}
   <div class="scroll" style="background:var(--bg);padding:28px 20px">
     <button class="btn btn-blue" style="font-size:17px;padding:18px" onclick="show('s-login')">🎁 리뷰이벤트 게임 시작</button>
     <button class="btn btn-ghost" style="margin-top:12px" onclick="show('s-owner-signup')">🏪 사장님 회원가입</button>
-    <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;font-size:13px">
-      <button class="btn-ghost" style="width:auto;padding:9px 16px;font-size:13px;font-weight:600" onclick="show('s-staff-login')">직원 로그인</button>
-      <button class="btn-ghost" style="width:auto;padding:9px 16px;font-size:13px;font-weight:600" onclick="show('s-admin-login')">매장 관리자</button>
-      <button class="btn-ghost" style="width:auto;padding:9px 16px;font-size:13px;font-weight:600" onclick="show('s-platform-login')">총괄</button>
+    <div style="margin-top:28px;text-align:center">
+      <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">사장님 로그인</button>
     </div>
     <div class="store-switcher" id="store-switcher-wrap"></div>
     <div style="margin-top:24px;font-size:11px;color:var(--t4);text-align:center;line-height:1.6">개인정보는 이벤트 참여 목적으로만 사용되며<br>안전하게 보관됩니다</div>
@@ -253,7 +251,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="p-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="platform-error"></div>
     <button class="btn btn-blue" onclick="platformLogin()">로그인</button>
-    <div style="font-size:11px;color:var(--t4);margin-top:14px;text-align:center">테스트 계정: platform@admin.com / platform1234</div>
   </div>
 </div>
 
@@ -626,7 +623,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field" style="margin-bottom:28px"><label>PIN 번호</label><input id="s-pin" type="password" placeholder="4자리" maxlength="4" inputmode="numeric"></div>
     <div id="staff-error"></div>
     <button class="btn btn-blue" onclick="staffLogin()">로그인</button>
-    <div style="font-size:11px;color:var(--t4);margin-top:14px;text-align:center">테스트 계정: STAFF001 / 1234</div>
   </div>
 </div>
 
@@ -673,7 +669,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="admin-error"></div>
     <button class="btn btn-blue" onclick="adminLogin()">로그인</button>
-    <div style="font-size:11px;color:var(--t4);margin-top:14px;text-align:center">데모 매장 테스트 계정: admin@example.com / admin1234</div>
   </div>
 </div>
 
@@ -704,8 +699,8 @@ body.dark .success-msg{color:#3ddc97}
 const PROD_DOMAIN='matchissunzip.com'; // 실제 배포 시 보유 도메인으로 교체
 
 function buildStoreUrl(uid){
-  // MVP 정식 방식: 하나의 도메인 + 경로 기반 (도메인.com/s/{uid})
-  return location.origin+'/s/'+uid;
+  // ?store=uid 방식 — 정적 호스팅(Vercel)에서 바로 작동
+  return location.origin+location.pathname+'?store='+uid;
 }
 function detectStoreId(){
   // 1) 경로 기반: /s/{uid} 또는 /store/{uid} (정식 운영 방식)
@@ -839,6 +834,7 @@ function migrateStore(s){
   if(!s.profile.kakaoChatUrl)s.profile.kakaoChatUrl='';
   if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'};
   if(!s.stampCards)s.stampCards={};
+  if(!s.crmTemplate)s.crmTemplate='안녕하세요 {고객명}님 😊\n{매장명}입니다!\n\n{쿠폰명} 쿠폰이 발급되었어요 🎁\n매장 방문 시 직원에게 보여주세요.\n\n쿠폰번호: {쿠폰번호}\n유효기간: {유효기간}';
   return s;
 }
 Object.keys(storesDB).forEach(k=>{storesDB[k]=migrateStore(storesDB[k])});
@@ -2405,16 +2401,31 @@ function fallbackCopy(text){
   catch(e){toast('복사 실패. 직원에게 화면을 보여주세요')}
   document.body.removeChild(ta);
 }
+function buildCrmMsg(c,u){
+  const tpl=STORE.crmTemplate||'[{매장명}] {고객명}님, {쿠폰명} 쿠폰이 도착했어요! 쿠폰번호: {쿠폰번호} 유효기간: {유효기간}';
+  return tpl
+    .replace(/\{매장명\}/g,STORE.profile.name||'매장')
+    .replace(/\{고객명\}/g,u?u.name:'고객')
+    .replace(/\{쿠폰명\}/g,c.name||'')
+    .replace(/\{쿠폰번호\}/g,c.id||'')
+    .replace(/\{유효기간\}/g,c.expires||'');
+}
 function copyCouponMessage(cid){
   const c=STORE.coupons.find(x=>x.id===cid);
   if(!c)return;
   const u=STORE.users.find(x=>x.id===c.uid);
-  const msg=`[${STORE.profile.name}] ${u?u.name+'님, ':''}${c.name} 쿠폰이 도착했어요! 🎁\\n매장 방문 시 아래 쿠폰번호를 보여주세요.\\n쿠폰번호: ${c.id}\\n유효기간: ${c.expires}`;
+  const msg=buildCrmMsg(c,u);
   if(navigator.clipboard){
     navigator.clipboard.writeText(msg).then(()=>toast('쿠폰 문구가 복사됐어요! 카톡/문자에 붙여넣기 하세요 📋')).catch(()=>fallbackCopyText(msg));
   }else{
     fallbackCopyText(msg);
   }
+}
+function saveCrmTemplate(){
+  const val=document.getElementById('crm-template-input').value;
+  STORE.crmTemplate=val;
+  saveState();
+  toast('CRM 메시지 템플릿이 저장됐습니다 ✅');
 }
 function fallbackCopyText(text){
   const ta=document.createElement('textarea');
@@ -2431,6 +2442,153 @@ function markCouponSent(cid){
   saveState();
   renderAdmin('coupons');
   toast('발송완료로 기록했습니다');
+}
+
+/* ════════════ 고객 탭: 기간 필터 + 체크박스 + 단체 발송 ════════════ */
+let _custFilter='all'; // 현재 선택된 필터
+
+function getLastVisit(u){
+  // 스탬프 이력 → 스핀 로그 → 가입일 순으로 가장 최근 날짜 반환
+  const sc=STORE.stampCards&&STORE.stampCards[u.id];
+  const stampLast=sc&&sc.history&&sc.history.length?sc.history[sc.history.length-1].datetime||sc.history[sc.history.length-1].date:null;
+  const spinLast=(STORE.spinLog||[]).filter(s=>s.uid===u.id).map(s=>s.date).sort().pop()||null;
+  const dates=[stampLast,spinLast,u.joined].filter(Boolean).sort();
+  return dates.length?dates[dates.length-1]:null;
+}
+
+function daysDiff(dateStr){
+  if(!dateStr)return 9999;
+  const d=new Date(dateStr);
+  const now=new Date();
+  return Math.floor((now-d)/(1000*60*60*24));
+}
+
+function applyCustomerFilter(users, filter){
+  if(filter==='all') return users;
+  const [type,days]=filter.split('_'); // 'visited_7', 'notvisit_30' 등
+  const d=parseInt(days);
+  return users.filter(u=>{
+    const diff=daysDiff(getLastVisit(u));
+    if(type==='visited') return diff<=d;
+    if(type==='notvisit') return diff>d;
+    return true;
+  });
+}
+
+function renderCustomersTab(el){
+  const filters=[
+    {key:'all',label:'전체'},
+    {key:'visited_7',label:'1주 이내 방문'},
+    {key:'visited_21',label:'3주 이내 방문'},
+    {key:'visited_30',label:'1달 이내 방문'},
+    {key:'notvisit_30',label:'1달+ 미방문'},
+    {key:'notvisit_60',label:'2달+ 미방문'},
+  ];
+  const filtered=applyCustomerFilter(STORE.users,_custFilter);
+  const rows=filtered.map(u=>{
+    const r=getRank(u.visits||0);
+    const last=getLastVisit(u)||'-';
+    const diff=daysDiff(getLastVisit(u));
+    const diffLabel=diff===9999?'-':(diff===0?'오늘':`${diff}일 전`);
+    return `<tr style="border-top:1px solid var(--border2)" data-uid="${u.id}" data-phone="${u.phone}">
+      <td style="padding:10px 8px 10px 12px"><input type="checkbox" class="cust-chk" data-uid="${u.id}" onchange="updateBulkBtn()" style="width:17px;height:17px;accent-color:var(--blue)"></td>
+      <td style="padding:10px 8px;font-weight:700;color:var(--t1);white-space:nowrap">${u.name}</td>
+      <td style="padding:10px 8px;color:var(--blue);font-weight:600;white-space:nowrap;font-size:12px">${u.phone}</td>
+      <td style="padding:10px 4px;text-align:center"><span class="badge-rank" style="font-size:10px">${r.emoji}${r.name}</span></td>
+      <td style="padding:10px 4px;text-align:center;font-size:11px;color:${diff>30?'var(--red)':diff>7?'var(--yellow)':'var(--green)'};font-weight:600;white-space:nowrap">${diffLabel}</td>
+      <td style="padding:10px 4px;text-align:center">${u.marketing?'<span class="li-badge badge-blue" style="font-size:10px">동의</span>':'<span class="li-badge badge-gray" style="font-size:10px">미동의</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div style="padding:0 16px 10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="padding:0">고객 연락처 (${STORE.users.length}명 전체 / 필터 ${filtered.length}명)</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-ghost" style="width:auto;padding:7px 10px;font-size:11px;font-weight:700" onclick="downloadCustomersCSV()">📊 CSV</button>
+          <button class="btn-ghost" style="width:auto;padding:7px 10px;font-size:11px;font-weight:700" onclick="downloadCustomersTXT()">📄 TXT</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        ${filters.map(f=>`<button onclick="setCustFilter('${f.key}')" style="padding:7px 13px;border-radius:20px;border:1.5px solid ${_custFilter===f.key?'var(--blue)':'var(--border)'};background:${_custFilter===f.key?'var(--blue-light)':'var(--white)'};color:${_custFilter===f.key?'var(--blue)':'var(--t2)'};font-size:12px;font-weight:700;cursor:pointer;font-family:Noto Sans KR,sans-serif">${f.label}</button>`).join('')}
+      </div>
+    </div>
+
+    <div id="bulk-action-bar" style="display:none;margin:0 16px 10px;padding:12px 14px;background:var(--blue-light);border-radius:12px;border:1.5px solid var(--blue)">
+      <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px" id="bulk-count-label">0명 선택됨</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="bulkCopyMessages()" class="btn btn-blue btn-sm">📋 선택 고객 문구 전체 복사</button>
+        <button onclick="bulkSendSMS()" class="btn btn-light btn-sm">💬 첫번째 고객 문자 앱 열기</button>
+      </div>
+      <div style="font-size:11px;color:var(--t3);margin-top:6px">※ 단체 문자는 각 고객 번호로 순서대로 복사/전송해주세요</div>
+    </div>
+
+    <div class="card" style="margin:0 16px 12px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--bg)">
+          <th style="padding:10px 8px 10px 12px"><input type="checkbox" id="chk-all" onchange="toggleSelectAll(this)" style="width:17px;height:17px;accent-color:var(--blue)"></th>
+          <th style="padding:10px 8px;text-align:left;color:var(--t3);font-weight:700;white-space:nowrap">이름</th>
+          <th style="padding:10px 8px;text-align:left;color:var(--t3);font-weight:700;white-space:nowrap">연락처</th>
+          <th style="padding:10px 4px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">등급</th>
+          <th style="padding:10px 4px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">최근방문</th>
+          <th style="padding:10px 4px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">수신</th>
+        </tr></thead>
+        <tbody>${rows||'<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--t4)">해당하는 고객이 없습니다</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div style="padding:0 16px 16px;font-size:11px;color:var(--t4);line-height:1.6">마케팅 수신 동의 고객에게만 문자를 발송해주세요. 최근방문 색상: 🟢 7일 이내 · 🟡 8~30일 · 🔴 30일 초과</div>
+  `;
+}
+
+function setCustFilter(key){
+  _custFilter=key;
+  renderCustomersTab(document.getElementById('admin-body'));
+}
+
+function toggleSelectAll(chk){
+  document.querySelectorAll('.cust-chk').forEach(c=>c.checked=chk.checked);
+  updateBulkBtn();
+}
+
+function updateBulkBtn(){
+  const checked=document.querySelectorAll('.cust-chk:checked');
+  const bar=document.getElementById('bulk-action-bar');
+  const lbl=document.getElementById('bulk-count-label');
+  if(bar){bar.style.display=checked.length?'block':'none';}
+  if(lbl){lbl.textContent=`${checked.length}명 선택됨`;}
+  const allChk=document.getElementById('chk-all');
+  const total=document.querySelectorAll('.cust-chk').length;
+  if(allChk){allChk.indeterminate=checked.length>0&&checked.length<total;allChk.checked=checked.length===total&&total>0;}
+}
+
+function getSelectedUsers(){
+  const uids=[...document.querySelectorAll('.cust-chk:checked')].map(c=>c.dataset.uid);
+  return STORE.users.filter(u=>uids.includes(u.id));
+}
+
+function bulkCopyMessages(){
+  const users=getSelectedUsers();
+  if(!users.length){toast('선택된 고객이 없습니다');return;}
+  const lines=users.map(u=>{
+    const coupon=STORE.coupons.filter(c=>c.uid===u.id&&c.status==='available').slice(-1)[0];
+    if(coupon) return buildCrmMsg(coupon,u);
+    const tpl=STORE.crmTemplate||'';
+    return tpl.replace(/\{고객명\}/g,u.name).replace(/\{매장명\}/g,STORE.profile.name||'매장').replace(/\{쿠폰명\}/g,'').replace(/\{쿠폰번호\}/g,'').replace(/\{유효기간\}/g,'');
+  });
+  const msg=lines.join('\n\n---\n\n');
+  if(navigator.clipboard){navigator.clipboard.writeText(msg).then(()=>toast(`${users.length}명 문구 복사 완료! 📋`)).catch(()=>fallbackCopyText(msg));}
+  else{fallbackCopyText(msg);}
+}
+
+function bulkSendSMS(){
+  const users=getSelectedUsers();
+  if(!users.length){toast('선택된 고객이 없습니다');return;}
+  const u=users[0];
+  const coupon=STORE.coupons.filter(c=>c.uid===u.id&&c.status==='available').slice(-1)[0];
+  const msg=coupon?buildCrmMsg(coupon,u):(STORE.crmTemplate||'').replace(/\{고객명\}/g,u.name).replace(/\{매장명\}/g,STORE.profile.name||'매장').replace(/\{쿠폰명\}/g,'').replace(/\{쿠폰번호\}/g,'').replace(/\{유효기간\}/g,'');
+  const phone=u.phone.replace(/-/g,'');
+  window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`,'_self');
+  if(users.length>1) toast(`${users.length}명 중 1명 문자 앱 열림. 나머지는 복사 후 직접 전송해주세요`);
 }
 
 /* ════════════════════ 직원: 쿠폰 확인 + QR 스캔 ════════════════════ */
@@ -2672,33 +2830,7 @@ function renderAdmin(tab){
       </div>
     `;
   }else if(tab==='customers'){
-    el.innerHTML=`
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 16px 10px">
-        <div class="section-label" style="padding:0">고객 연락처 (${STORE.users.length}명)</div>
-        <div style="display:flex;gap:6px">
-          <button class="btn-ghost" style="width:auto;padding:8px 12px;font-size:12px;font-weight:700" onclick="downloadCustomersCSV()">📊 CSV</button>
-          <button class="btn-ghost" style="width:auto;padding:8px 12px;font-size:12px;font-weight:700" onclick="downloadCustomersTXT()">📄 TXT</button>
-        </div>
-      </div>
-      <div class="card" style="margin:0 16px 12px;overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:100%">
-          <thead><tr style="background:var(--bg)">
-            <th style="padding:11px 12px;text-align:left;color:var(--t3);font-weight:700;white-space:nowrap">이름</th>
-            <th style="padding:11px 12px;text-align:left;color:var(--t3);font-weight:700;white-space:nowrap">연락처</th>
-            <th style="padding:11px 8px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">등급</th>
-            <th style="padding:11px 8px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">최근 방문</th>
-            <th style="padding:11px 8px;text-align:center;color:var(--t3);font-weight:700;white-space:nowrap">수신</th>
-          </tr></thead>
-          <tbody>${STORE.users.map(u=>{const r=getRank(u.visits||0);return `<tr style="border-top:1px solid var(--border2)">
-            <td style="padding:12px;font-weight:700;color:var(--t1);white-space:nowrap">${u.name}</td>
-            <td style="padding:12px;color:var(--blue);font-weight:600;white-space:nowrap">${u.phone}</td>
-            <td style="padding:12px 8px;text-align:center"><span class="badge-rank" style="font-size:10px">${r.emoji}${r.name}</span></td>
-            <td style="padding:12px 8px;text-align:center;font-size:11px;color:var(--t3)">${(()=>{const sc=STORE.stampCards&&STORE.stampCards[u.id];const last=sc&&sc.history&&sc.history.length?sc.history[sc.history.length-1].datetime||sc.history[sc.history.length-1].date:'';return last||u.joined||'-';})()}</td>
-            <td style="padding:12px 8px;text-align:center">${u.marketing?'<span class="li-badge badge-blue" style="font-size:10px">동의</span>':'<span class="li-badge badge-gray" style="font-size:10px">미동의</span>'}</td>
-          </tr>`}).join('')}</tbody>
-        </table>
-      </div>
-      <div style="padding:0 16px;font-size:11px;color:var(--t4);line-height:1.6">마케팅 수신에 동의한 고객에게만 메시지를 발송해주세요</div>`;
+    renderCustomersTab(el);
   }else if(tab==='qr'){
     const officialUrl=buildStoreUrl(STORE_ID);
     el.innerHTML=`<div class="card card-pad" style="text-align:center"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px">매장 QR코드</div><div style="background:var(--bg);padding:16px;border-radius:14px;display:inline-block"><div id="admin-qr"></div></div><div style="margin-top:14px;font-size:12px;color:var(--t3)">스캔하면 매장 이벤트 페이지로 이동합니다</div><div style="font-size:11px;color:var(--t4);margin-top:4px;word-break:break-all">${officialUrl}</div><button class="btn btn-blue btn-sm" style="margin-top:14px;width:auto" onclick="downloadQR()">QR 다운로드</button></div>`;
@@ -3139,6 +3271,14 @@ function renderSettingsAdmin(el){
       <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">고객이 해당 방문 횟수에 도달하면 쿠폰이 자동 발급됩니다. 내용을 원하시는 대로 수정하세요.</div>
       ${[10,20,30,50].map(v=>{const gradeNames={10:'🥈 실버 (10회)',20:'🥇 골드 (20회)',30:'💠 플래티넘 (30회)',50:'💎 다이아 (50회)'};return `<div class="field" style="margin-bottom:10px"><label>${gradeNames[v]}</label><input id="vip-benefit-${v}" value="${((STORE.vipBenefits&&STORE.vipBenefits[v])||'').replace(/"/g,'&quot;')}" placeholder="예) 음료 1잔 무료"></div>`}).join('')}
       <button class="btn btn-blue" onclick="saveVipBenefits()">VIP 혜택 저장</button>
+    </div>
+
+    <div class="card card-pad" style="border-color:var(--blue)">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">💬 CRM 문자 메시지 템플릿</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:10px;line-height:1.6">쿠폰 발송 시 사용할 문자 내용을 직접 수정하세요.<br>사용 가능한 변수: <b>{고객명} {매장명} {쿠폰명} {쿠폰번호} {유효기간}</b></div>
+      <textarea id="crm-template-input" rows="7" oninput="document.getElementById('crm-byte-count').textContent=this.value.length" style="width:100%;border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:13px;line-height:1.7;font-family:Noto Sans KR,sans-serif;background:var(--white);color:var(--t1);resize:vertical;outline:none">${(STORE.crmTemplate||'').replace(/</g,'&lt;')}</textarea>
+      <div style="font-size:11px;color:var(--t4);margin:6px 0 12px">현재 글자수: <span id="crm-byte-count">${(STORE.crmTemplate||'').length}</span>자 (한글 45자 이하 SMS, 초과 시 장문 MMS)</div>
+      <button class="btn btn-blue" onclick="saveCrmTemplate()">템플릿 저장</button>
     </div>
 
     <div class="card card-pad" style="border-color:var(--yellow)">
