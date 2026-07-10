@@ -7,16 +7,7 @@
     "dev": "python -m http.server 8420",
     "start": "python -m http.server 8420"
   },
-  "keywords": [
-    "review",
-    "event",
-    "restaurant",
-    "game",
-    "coupon"
-  ],
+  "keywords": ["review", "event", "restaurant", "game", "coupon"],
   "author": "Restaurant Event Platform Team",
-  "license": "MIT",
-  "engines": {
-    "node": "18.x"
-  }
+  "license": "MIT"
 }
