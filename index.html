@@ -287,9 +287,8 @@ body.dark .success-msg{color:#3ddc97}
 <div class="scr" id="s-login">
   <div class="topbar"><button class="tb-back" onclick="show('s-landing')">‹</button><div class="tb-title">시작하기</div></div>
   <div class="scroll" style="background:var(--white);padding:24px 20px">
-    <div style="font-size:22px;font-weight:900;color:var(--t1);margin-bottom:6px;line-height:1.3">연락처를 입력하면<br>바로 시작할 수 있어요</div>
-    <div style="font-size:14px;color:var(--t3);margin-bottom:28px">처음이시면 자동으로 가입됩니다</div>
-    <div class="field"><label>닉네임 (이름)</label><input id="l-name" placeholder="예) 홍길동 또는 단골손님" maxlength="20"><div style="font-size:11px;color:var(--t4);margin-top:4px">재방문 시 전화번호로 기존 내역이 자동 연결됩니다</div></div>
+    <div style="font-size:22px;font-weight:900;color:var(--t1);margin-bottom:6px;line-height:1.3">휴대폰 번호로<br>바로 시작하세요</div>
+    <div style="font-size:14px;color:var(--t3);margin-bottom:28px">다음 화면에서 닉네임을 입력합니다</div>
     <div class="field" style="margin-bottom:20px"><label>휴대폰 번호</label><input id="l-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
     <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:20px">
       <input type="checkbox" id="l-marketing" checked style="width:20px;height:20px;margin-top:2px;accent-color:var(--blue)">
@@ -367,8 +366,8 @@ body.dark .success-msg{color:#3ddc97}
     <div style="padding:8px 20px;text-align:center">
       <button class="btn btn-blue" id="spin-btn" onclick="doSpin()">돌리기</button>
       <div id="spin-error" style="margin-top:8px"></div>
-      <div id="owner-reset-wrap" style="display:none;margin-top:10px">
-        <button class="btn-ghost" style="width:auto;font-size:13px;padding:10px 16px;color:var(--t3)" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
+      <div id="owner-reset-wrap" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+        <button class="btn" style="width:100%;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);font-weight:600;font-size:13px" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
       </div>
       <button onclick="toggleSound()" id="sound-btn" class="btn-ghost" style="margin-top:12px;width:auto;font-size:12px;padding:8px 14px">🔊 효과음 켜짐</button>
     </div>
@@ -402,9 +401,9 @@ body.dark .success-msg{color:#3ddc97}
       </div>
       <div id="scratch-error" style="min-height:20px;margin-bottom:6px"></div>
       <button id="scratch-spin-btn" class="btn btn-blue" onclick="doScratch()">복권 시작하기</button>
-      <div id="scratch-already" style="display:none;margin-top:10px">
+      <div id="scratch-already" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
         <div id="scratch-owner-reset" style="display:none">
-          <button class="btn-ghost" style="width:auto;font-size:13px;padding:10px 16px;color:var(--t3)" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
+          <button class="btn" style="width:100%;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);font-weight:600;font-size:13px" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
         </div>
       </div>
       <button onclick="toggleSound()" id="scratch-sound-btn" class="btn-ghost" style="margin-top:12px;width:auto;font-size:12px;padding:8px 14px">🔊 효과음 켜짐</button>
@@ -427,8 +426,8 @@ body.dark .success-msg{color:#3ddc97}
     <div style="padding:8px 20px;text-align:center">
       <div id="card-error" style="min-height:20px;margin-bottom:6px"></div>
       <button id="card-spin-btn" class="btn btn-blue" onclick="doMainCardStart()">🃏 카드 뽑기 시작</button>
-      <div id="card-already" style="display:none;margin-top:10px">
-        <button class="btn-ghost" style="width:auto;font-size:13px;padding:10px 16px;color:var(--t3)" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
+      <div id="card-already" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+        <button class="btn" style="width:100%;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);font-weight:600;font-size:13px" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
       </div>
       <button onclick="toggleSound()" id="card-sound-btn" class="btn-ghost" style="margin-top:12px;width:auto;font-size:12px;padding:8px 14px">🔊 효과음 켜짐</button>
     </div>
@@ -448,11 +447,11 @@ body.dark .success-msg{color:#3ddc97}
         <div style="font-size:15px;color:var(--t3);margin-top:6px" id="res-sub">쿠폰이 자동 발급되었습니다</div>
       </div>
       <div id="res-coupon" style="width:100%"></div>
-      <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+      <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:16px">
         <button id="extra-event-btn" class="btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:800;display:none;box-shadow:0 6px 16px rgba(118,75,162,.35)" onclick="openExtraEventPopup()">&#x1F381; 추가 이벤트 참여하기</button>
         <button id="kakao-share-btn" class="btn" style="background:#FEE500;color:#191f28;font-weight:800;display:none;box-shadow:0 6px 16px rgba(254,229,0,.4)" onclick="shareToKakaoChannel()">💬 당첨내역 카카오채널에 보내기</button>
-        <button class="btn-ghost" style="color:var(--t3);font-weight:500" onclick="show('s-coupons')">내 쿠폰들 확인하기</button>
-        <button class="btn-ghost" style="color:var(--t4);font-weight:500;font-size:13px" onclick="show('s-home')">홈으로</button>
+        <button class="btn btn-blue" onclick="show('s-coupons')" style="font-weight:700">🎟️ 내 쿠폰들 확인하기</button>
+        <button class="btn" style="background:var(--bg);border:1.5px solid var(--border);color:var(--t2);font-weight:600" onclick="show('s-home')">🏠 홈으로</button>
       </div>
     </div>
   </div>
@@ -3314,7 +3313,19 @@ if(STORE){
   document.getElementById('a-pw').value=STORE.adminPassword;
   document.getElementById('s-code').value=(STORE.staff&&STORE.staff[0]?STORE.staff[0].code:'');
   document.getElementById('s-pin').value=(STORE.staff&&STORE.staff[0]?STORE.staff[0].pin:'');
-  show('s-landing');
+
+  // 자동 로그인: 로그인 없이 바로 접근 가능
+  if(!currentUser){
+    const guestId='guest_'+Math.random().toString(36).substr(2,9);
+    let user=STORE.users.find(u=>u.phone==='010-9999-9999'); // 게스트 폰번호로 찾기
+    if(!user){
+      user={id:guestId,name:'고객님',phone:'010-9999-9999',marketing:true,joined:today(),visits:0,nameHistory:[]};
+      STORE.users.push(user);
+      saveState();
+    }
+    currentUser=user;
+  }
+  show('s-home');
 }else{
   show('s-notfound');
 }
