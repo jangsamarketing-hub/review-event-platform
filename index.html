@@ -3273,9 +3273,12 @@ function renderAdminCoupons(tab,q){
         <div style="font-size:12px;color:var(--t4);margin-bottom:8px">발급일: ${c.issued||'-'} · 만료: ${c.expires||'-'}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;min-width:80px" onclick="copyCouponMessage('${c.id}')">📋 문구 복사</button>
-          <a href="sms:${u.phone.replace(/-/g,'')}?body=${encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)')}" style="flex:1;text-decoration:none;min-width:80px">
-            <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:var(--blue);border-color:var(--blue)">💬 문자 보내기</button>
-          </a>
+          <div style="position:relative;flex:1;min-width:80px;display:inline-flex">
+            <a href="${isPremium()?'sms:'+u.phone.replace(/-/g,'')+'?body='+encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)'):'#'}" onclick="${isPremium()?'':'event.preventDefault();showVipModal()'}" style="flex:1;text-decoration:none">
+              <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:${isPremium()?'var(--blue)':'var(--t3)'};border-color:${isPremium()?'var(--blue)':'var(--border)'};filter:${isPremium()?'none':'blur(1px)'}">💬 문자 보내기</button>
+            </a>
+            ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;display:flex;align-items:center;justify-content:center"><span style="font-size:10px;font-weight:800;color:#f97316;background:rgba(249,115,22,0.1);border:1px solid #f97316;border-radius:5px;padding:1px 6px">👑</span></div>'}
+          </div>
           ${c.sentAt?
             `<span style="font-size:11px;color:var(--green);font-weight:600;padding:8px 0">✅ 발송완료</span>`:
             `<button onclick="markCouponSent('${c.id}')" style="flex-shrink:0;padding:8px 10px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--t3);cursor:pointer">발송완료 체크</button>`
@@ -3455,7 +3458,10 @@ function renderCustomersTab(el){
       <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px" id="bulk-count-label">0명 선택됨</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button onclick="bulkCopyMessages()" class="btn btn-blue btn-sm">📋 선택 고객 문구 전체 복사</button>
-        <button onclick="${isPremium()?'bulkSendSMS()':'showVipModal()'}" class="btn btn-light btn-sm" style="${isPremium()?'':'opacity:0.75;border-color:#f97316;color:#f97316'}">${isPremium()?'📱 고객에게 메시지 보내기':'👑 고객에게 메시지 보내기 (VIP)'}</button>
+        <div style="position:relative;display:inline-flex">
+          <button class="btn btn-light btn-sm" style="pointer-events:${isPremium()?'auto':'none'};filter:${isPremium()?'none':'blur(1.5px)'}" onclick="bulkSendSMS()">📱 고객에게 메시지 보내기</button>
+          ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="background:rgba(249,115,22,0.12);border:1px solid #f97316;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;color:#f97316;white-space:nowrap">👑 VIP</span></div>'}
+        </div>
       </div>
     </div>
 
@@ -3800,27 +3806,48 @@ function renderSurveyRatio(){
 /* ════════════════════ VIP/프리미엄 ════════════════════ */
 function isPremium(){return !!(STORE&&STORE.premium);}
 function showVipModal(){
+  const plans=[
+    {label:'1개월',price:12900,monthly:12900,discount:0},
+    {label:'3개월',price:29900,monthly:9967,discount:23},
+    {label:'6개월',price:49900,monthly:8317,discount:36,best:true},
+    {label:'12개월',price:89900,monthly:7492,discount:42},
+  ];
   const m=document.createElement('div');
-  m.style.cssText='position:fixed;inset:0;z-index:9100;display:flex;align-items:flex-end;background:rgba(0,0,0,.45)';
-  m.innerHTML=`<div style="width:100%;background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;max-height:82vh;overflow-y:auto">
-    <div style="text-align:center;margin-bottom:18px">
-      <div style="font-size:40px;margin-bottom:8px">👑</div>
-      <div style="font-size:20px;font-weight:900;color:var(--t1)">VIP 프리미엄 회원 기능</div>
-      <div style="font-size:13px;color:var(--t3);margin-top:6px">월 9,900원 × 6개월 단위 결제</div>
+  m.style.cssText='position:fixed;inset:0;z-index:9100;display:flex;align-items:flex-end;background:rgba(0,0,0,.5)';
+  m.innerHTML=`<div style="width:100%;background:var(--white);border-radius:24px 24px 0 0;padding:20px 18px 36px;max-height:90vh;overflow-y:auto">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:36px;margin-bottom:6px">👑</div>
+      <div style="font-size:19px;font-weight:900;color:var(--t1)">VIP 프리미엄</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:4px">더 많은 기능으로 매장을 성장시키세요</div>
     </div>
-    <div style="background:var(--bg);border-radius:14px;padding:16px 18px;margin-bottom:18px">
-      <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:12px">✅ 프리미엄 활성화 시 이용 가능</div>
-      <div style="font-size:13px;color:var(--t2);line-height:2.2">
-        🎯 <b>추가이벤트 3종</b> — 카카오맵 / 구글 / 티맵<br>
-        📱 <b>고객 CRM 문자 발송</b> — 타겟 마케팅<br>
-        📝 <b>설문 문항 자유 편집</b> — 원하는 대로<br>
-        📊 <b>고급 통계 분석</b> — 심층 고객 데이터
+    <div style="background:var(--bg);border-radius:12px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">✅ 프리미엄 활성화 시 이용 가능</div>
+      <div style="font-size:12px;color:var(--t2);line-height:2">
+        🎯 추가이벤트 3종 — 카카오맵 / 구글 / 티맵<br>
+        📱 고객 CRM 문자 발송 — 타겟 마케팅<br>
+        📋 설문 문항 자유 편집<br>
+        📊 고급 통계 — 기간별 / 주별 / 월별<br>
+        📈 설문 응답 비율 분석
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:4px">
-      <a href="https://litt.ly/jangsa.doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:#FEE500;border-radius:14px;font-size:15px;font-weight:800;color:#191f28;text-decoration:none;box-shadow:0 4px 14px rgba(254,229,0,.4)">💬 카카오톡으로 문의하기</a>
-      <a href="https://open.kakao.com/me/jangsa_doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:700;color:var(--t1);text-decoration:none">🔗 오픈카카오로 문의하기</a>
-    </div>
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">요금제 선택</div>
+    ${plans.map(p=>`
+      <div style="border:2px solid ${p.best?'var(--blue)':'var(--border)'};border-radius:14px;padding:12px 14px;margin-bottom:8px;position:relative;background:${p.best?'rgba(49,130,246,0.06)':'var(--white)'}">
+        ${p.best?'<div style="position:absolute;top:-9px;right:12px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.3px">인기</div>':''}
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--t1)">${p.label}</div>
+            ${p.discount?`<div style="font-size:11px;color:var(--t3);margin-top:2px">월 ${p.monthly.toLocaleString()}원</div>`:'<div style="font-size:11px;color:var(--t3);margin-top:2px">기준 요금</div>'}
+          </div>
+          <div style="text-align:right">
+            ${p.discount?`<div style="font-size:11px;color:#e03131;font-weight:700">${p.discount}% 할인</div>`:''}
+            <div style="font-size:18px;font-weight:900;color:${p.best?'var(--blue)':'var(--t1)'}">${p.price.toLocaleString()}원</div>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+    <a href="https://litt.ly/jangsa.doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:15px;background:#FEE500;border-radius:14px;font-size:15px;font-weight:800;color:#191f28;text-decoration:none;box-shadow:0 4px 14px rgba(254,229,0,.35)">💬 카카오톡으로 결제 문의하기</a>
+    <a href="https://open.kakao.com/me/jangsa_doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;padding:13px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;font-size:13px;font-weight:700;color:var(--t1);text-decoration:none">🔗 오픈카카오로 문의하기</a>
     <button onclick="this.closest('[style*=fixed]').remove()" style="display:block;width:100%;margin-top:14px;padding:12px;background:none;border:none;font-size:14px;color:var(--t3);cursor:pointer;font-family:Noto Sans KR,sans-serif">닫기</button>
   </div>`;
   document.body.appendChild(m);
@@ -3869,10 +3896,10 @@ function renderAdmin(tab){
 
       <div class="card card-pad" style="position:relative;overflow:hidden">
         <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">리뷰 이벤트 참여 대비 설문 응답 비율</div>
-        <div style="${isPremium()?'':'filter:blur(5px);pointer-events:none;user-select:none'}">
+        <div style="${isPremium()?'':'filter:blur(6px);pointer-events:none;user-select:none'}">
           ${renderSurveyRatio()}
         </div>
-        ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.08)"><div style="background:rgba(255,255,255,.95);border:2px solid #f97316;border-radius:12px;padding:10px 18px;text-align:center"><div style="font-size:18px;margin-bottom:4px">👑</div><div style="font-size:12px;font-weight:700;color:#f97316">VIP 기능 — 탭하여 문의</div></div></div>'}
+        ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.06)"><div style="background:rgba(255,255,255,.95);border:2px solid #f97316;border-radius:12px;padding:10px 18px;text-align:center"><div style="font-size:18px;margin-bottom:4px">👑</div><div style="font-size:12px;font-weight:700;color:#f97316">VIP 기능 — 탭하여 문의</div></div></div>'}
       </div>
 
       <div class="card card-pad">
@@ -4221,7 +4248,24 @@ function renderSurveyAdmin(el){
         <div class="field" id="nq-options-field" style="display:none"><label>선택지 (쉼표로 구분)</label><input id="nq-options" placeholder="예) 매우 좋음,좋음,보통,아쉬움"></div>
         <div class="field" id="nq-items-field" style="display:none"><label>평가 항목들 (쉼표로 구분)</label><input id="nq-items" placeholder="예) 가격 대비 맛,가격 대비 양,매장 청결"></div>
         <button class="btn btn-light" style="margin-top:10px" onclick="addQuestion()">+ 문항 추가</button>
-      </div>`:''}
+      </div>`:`
+      <div style="margin-top:12px;position:relative;border-radius:10px;overflow:hidden">
+        <div style="filter:blur(2.5px);pointer-events:none;user-select:none;opacity:0.8">
+          <div style="font-size:12px;color:var(--t3);margin-bottom:10px">문항 내용을 직접 수정하고, ↑↓ 버튼으로 순서를 바꿀 수 있어요</div>
+          ${(STORE.surveyQuestions||[]).slice(0,2).map((q,i)=>`
+            <div style="padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--bg)">
+              <div style="font-size:12px;font-weight:700;color:var(--t1)">${i+1}. ${q.label||'설문 문항'}</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:3px">${qTypeName[q.type]||q.type}</div>
+            </div>
+          `).join('')}
+          <div style="padding:10px 12px;border:1.5px dashed var(--border);border-radius:10px;text-align:center;font-size:12px;color:var(--t4)">+ 새 문항 추가</div>
+        </div>
+        <div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;display:flex;align-items:center;justify-content:center">
+          <div style="background:rgba(255,255,255,.92);border:1.5px solid #f97316;border-radius:12px;padding:8px 16px;text-align:center">
+            <div style="font-size:12px;font-weight:800;color:#f97316">👑 VIP — 문항 자유 편집</div>
+          </div>
+        </div>
+      </div>`}
     </div>
 
     <!-- 응답 통계 차트 -->
