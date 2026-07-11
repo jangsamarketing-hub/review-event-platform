@@ -90,6 +90,7 @@ body.dark{background:#0a0b0d}
 body.dark .badge-green{color:#3ddc97}
 .badge-red{background:var(--red-light);color:var(--red)}
 .badge-gray{background:var(--border);color:var(--t3)}
+.badge-yellow{background:var(--yellow-light);color:#92400e}
 .li-arrow{color:var(--t4);font-size:18px}
 .divider{height:1px;background:var(--border2);margin:0 20px}
 .strike{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--t4)}
@@ -161,6 +162,11 @@ body.dark .success-msg{color:#3ddc97}
 .qtype-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--blue-light);color:var(--blue)}
 @keyframes scratchFlip{0%{transform:rotateY(0deg) scale(1)}45%{transform:rotateY(90deg) scale(.95)}55%{transform:rotateY(90deg) scale(.95)}100%{transform:rotateY(0deg) scale(1.04)}}
 .scratch-flip{animation:scratchFlip .7s ease-in-out forwards;transform-style:preserve-3d}
+@keyframes scratchBounce{0%{transform:translateX(-50%) scale(0.5);opacity:0}60%{transform:translateX(-50%) scale(1.12);opacity:1}80%{transform:translateX(-50%) scale(0.96)}100%{transform:translateX(-50%) scale(1);opacity:1}}
+.scratch-revealed{z-index:10!important;animation:scratchBounce .55s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes sparkleUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-70px) rotate(180deg) scale(0);opacity:0}}
+.review-links-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0}
+.review-links-sheet{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:20px 20px 40px}
 </style>
 </head>
 <body>
@@ -384,8 +390,8 @@ body.dark .success-msg{color:#3ddc97}
       <div class="divider"></div>
       <div onclick="show('s-survey')" class="list-item"><div class="li-icon" style="background:#f3f0ff">📝</div><div class="li-body"><div class="li-title">만족도 설문 <span style="background:#fff8e6;color:#f5b925;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;vertical-align:middle">⭐ 스탬프 적립</span></div><div class="li-sub" id="home-survey-sub">참여 시 스탬프 1개 적립</div></div><span class="li-arrow">›</span></div>
     </div>
-    <div class="card" onclick="show('s-naver')">
-      <div class="list-item"><div class="li-icon" style="background:#e8faf3;color:#03C75A;font-weight:900;font-size:22px">N</div><div class="li-body"><div class="li-title">네이버 플레이스</div><div class="li-sub">오늘 방문 경험 남기기</div></div><span class="li-arrow">›</span></div>
+    <div class="card" onclick="openReviewLinks()">
+      <div class="list-item"><div class="li-icon" style="background:#e8faf3;font-size:22px">✍️</div><div class="li-body"><div class="li-title" style="color:var(--blue);font-weight:800">리뷰 작성하러 가기</div><div class="li-sub">작성 후 직원을 불러주세요!</div></div><span class="li-arrow" style="color:var(--blue)">›</span></div>
     </div>
     <div style="height:16px"></div>
   </div>
@@ -659,6 +665,17 @@ body.dark .success-msg{color:#3ddc97}
   <div class="bottom-banner"><button class="btn-channel" onclick="goKakaoChannel()">💬 카카오 채널 구독하고 혜택받기</button></div>
 </div>
 
+<!-- ══════════ 리뷰 링크 모달 ══════════ -->
+<div id="review-links-modal" style="display:none" class="review-links-modal" onclick="if(event.target===this)closeReviewLinks()">
+  <div class="review-links-sheet">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 18px"></div>
+    <div style="font-size:18px;font-weight:900;color:var(--t1);margin-bottom:4px">✍️ 리뷰 작성하러 가기</div>
+    <div style="font-size:13px;color:var(--t3);margin-bottom:18px">방문해 주셔서 감사합니다! 리뷰 작성 후 직원을 불러주세요.</div>
+    <div id="review-links-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    <button onclick="closeReviewLinks()" class="btn btn-ghost" style="margin-top:16px">닫기</button>
+  </div>
+</div>
+
 <!-- ══════════ 스탬프 적립 팝업 ══════════ -->
 <div id="stamp-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center;padding:16px">
   <div style="background:var(--white);border-radius:24px;width:100%;max-width:360px;max-height:88vh;overflow-y:auto">
@@ -927,8 +944,8 @@ function migrateStore(s){
   if(!s.extraSpinLog)s.extraSpinLog={};
   if(!s.gameMode)s.gameMode='roulette';
   if(!s.profile.kakaoChatUrl)s.profile.kakaoChatUrl='';
-  if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:10,reward:'무료 메뉴 1개'}]};
-  if(!s.stampSettings.milestones||!s.stampSettings.milestones.length)s.stampSettings.milestones=[{goal:s.stampSettings.goal||10,reward:s.stampSettings.reward||'무료 메뉴 1개'}];
+  if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:10,reward:'무료 메뉴 1개'}]};
+  if(!s.stampSettings.milestones||!s.stampSettings.milestones.length)s.stampSettings.milestones=[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:s.stampSettings.goal||10,reward:s.stampSettings.reward||'무료 메뉴 1개'}];
   if(!s.stampCards)s.stampCards={};
   if(!s.crmTemplate)s.crmTemplate='(광고) {매장명}\n이벤트 상품 제공안내 🎁\n\n고객님 안녕하세요.\n매장에서 발급해드린 리뷰 이벤트 쿠폰이 곧 만료될 예정입니다.\n\n늦지 않게 매장에 식사하러 오시면 만족스러운 서비스를 제공해 드리겠습니다!\n\n항상 고객님의 만족을 최우선으로 하겠습니다.\n매장에서 기다리고 있겠습니다.\n오늘도 행복한 하루 보내세요!😊\n\n유효기간 : 이번주 까지\n무료수신거부 : 080-500-4233';
   // 구버전 이모지-rating 문항이 있으면 최신 형태로 교체
@@ -1020,7 +1037,7 @@ function createStore(){
   newStore.profile.bgImage='';
   newStore.adminEmail=email;
   newStore.adminPassword=pw;
-  newStore.coupons=[];newStore.users=[];newStore.surveys=[];newStore.staffLogs=[];newStore.spinLog=[];newStore.stamps=0;newStore.visits=0;newStore.vipCouponsIssued={};newStore.extraSpinLog={};newStore.extraEventLog=[];newStore.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:10,reward:'무료 메뉴 1개'}]};newStore.stampCards={};
+  newStore.coupons=[];newStore.users=[];newStore.surveys=[];newStore.staffLogs=[];newStore.spinLog=[];newStore.stamps=0;newStore.visits=0;newStore.vipCouponsIssued={};newStore.extraSpinLog={};newStore.extraEventLog=[];newStore.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:10,reward:'무료 메뉴 1개'}]};newStore.stampCards={};
   newStore.owner={name:owner,phone};
   newStore.naverPlaceUrl=naverUrl;
   newStore.approved=true; // MVP: 자동 승인 (총괄 관리자가 나중에 정지 가능)
@@ -1652,8 +1669,7 @@ function pickWinner(){
   // 꽝(benefit 없는 상품) 제외
   const prizes=allPrizes.filter(p=>p.benefit&&p.benefit.trim());
   if(!prizes.length)return allPrizes[allPrizes.length-1]||{benefit:'',name:'꽝'};
-  // 오늘 프리미엄 2회 이상이면 최하위 상품(4등) 강제
-  if(getTodayPremiumCount()>=2)return prizes[prizes.length-1];
+  // 설정한 확률을 무조건 따름
   const total=prizes.reduce((a,p)=>a+(+p.prob||0),0);
   const rand=Math.random()*(total>0?total:1);
   let cum=0,winner=prizes[prizes.length-1];
@@ -1686,13 +1702,14 @@ function followLadder(startCol,hconn,n){
 }
 function drawLadderMystery(ctx,n,W,H){
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='rgba(140,150,165,0.07)';ctx.beginPath();ctx.roundRect(0,0,W,H,12);ctx.fill();
-  const colW=W/n;
-  ctx.strokeStyle='rgba(140,150,165,0.3)';ctx.lineWidth=3;ctx.setLineDash([8,7]);
-  for(let i=0;i<n;i++){const x=colW*(i+0.5);ctx.beginPath();ctx.moveTo(x,12);ctx.lineTo(x,H-12);ctx.stroke();}
-  ctx.setLineDash([]);
-  ctx.fillStyle='rgba(140,150,165,0.45)';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let i=0;i<n;i++)ctx.fillText('?',colW*(i+0.5),H/2);
+  // 불투명 박스: 사다리 내용 숨김
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=isDark?'#2a2d33':'#dde1e8';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(0,0,W,H,12);else ctx.rect(0,0,W,H);ctx.fill();
+  // 안내 텍스트
+  ctx.fillStyle=isDark?'rgba(200,210,225,0.4)':'rgba(80,90,110,0.35)';
+  ctx.font='bold 14px Noto Sans KR,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('동물을 선택하고 시작 버튼을 눌러주세요',W/2,H/2);
 }
 function drawLadder(ctx,hconn,n,W,H,highlightPath,highlightCol){
   const colW=W/n,rowH=H/hconn.length;
@@ -1824,21 +1841,25 @@ function doLadderStart(){
   }
   const canvas=document.getElementById('ladder-canvas');
   const ctx=canvas.getContext('2d');
-  // 사다리 그리기
+  // 박스 페이드아웃 → 사다리 페이드인
   setTimeout(()=>{
-    drawLadder(ctx,hconn,n,340,260,null,-1);
-    playLadderBGM();
-    document.getElementById('ladder-status').textContent='경로가 펼쳐지고 있어요...';
-    // 경로 애니메이션
+    canvas.style.transition='opacity 0.35s ease';
+    canvas.style.opacity='0';
     setTimeout(()=>{
-      const path=getLadderPath(ladderPicked,hconn,n,260);
-      let step=0;
-      const iv=setInterval(()=>{
-        tick(0.12);
-        const partial=path.slice(0,step+2);
-        drawLadder(ctx,hconn,n,340,260,partial,ladderPicked);
-        step++;
-        if(step>=path.length-1){
+      drawLadder(ctx,hconn,n,340,260,null,-1);
+      canvas.style.opacity='1';
+      playLadderBGM();
+      document.getElementById('ladder-status').textContent='경로가 펼쳐지고 있어요...';
+      // 경로 애니메이션
+      setTimeout(()=>{
+        const path=getLadderPath(ladderPicked,hconn,n,260);
+        let step=0;
+        const iv=setInterval(()=>{
+          tick(0.12);
+          const partial=path.slice(0,step+2);
+          drawLadder(ctx,hconn,n,340,260,partial,ladderPicked);
+          step++;
+          if(step>=path.length-1){
           clearInterval(iv);
           stopLadderBGM();
           // 최종 위치 계산
@@ -1862,8 +1883,9 @@ function doLadderStart(){
           recordDailyPrize(_lp.findIndex(x=>x.id===finalPrize.id),_lp.length);
           setTimeout(()=>showResult(finalPrize),900);
         }
-      },70);
-    },600);
+        },70);
+      },600);
+    },350);
   },400);
 }
 
@@ -2131,10 +2153,23 @@ function revealScratch(){
   const _sp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
   recordDailyPrize(_sp.findIndex(x=>x.id===scratchWinner?.id),_sp.length);
   if(!isLose)winSound();
-  // 결과 레이어 카드 플립 애니메이션
+  // 결과 레이어를 캔버스 위로 올리고 펑 애니메이션
   const rl=document.getElementById('scratch-result-layer');
-  if(rl){rl.classList.add('scratch-flip');}
-  setTimeout(()=>showResult(scratchWinner),950);
+  if(rl){
+    rl.classList.remove('scratch-revealed');
+    void rl.offsetWidth; // reflow
+    rl.classList.add('scratch-revealed');
+    // 스파클 파티클
+    const container=rl.parentElement;
+    ['🌟','✨','🎉','⭐','💫'].forEach((em,i)=>{
+      const sp=document.createElement('div');
+      sp.textContent=em;
+      sp.style.cssText=`position:absolute;font-size:20px;pointer-events:none;z-index:15;left:${20+i*15}%;top:${10+Math.random()*30}%;animation:sparkleUp ${0.6+i*0.1}s ease-out ${i*0.08}s forwards`;
+      container.appendChild(sp);
+      setTimeout(()=>sp.remove(),1200);
+    });
+  }
+  setTimeout(()=>showResult(scratchWinner),1800);
 }
 
 function doScratch(){
@@ -2311,10 +2346,19 @@ function sCTab(tab,el){document.querySelectorAll('[id^="ctab"]').forEach(b=>b.cl
 function renderCoupons(tab){
   const coupons=STORE.coupons.filter(c=>c.status===tab);
   const el=document.getElementById('cpn-list');
-  if(!coupons.length){el.innerHTML='<div style="padding:48px 20px;text-align:center;color:var(--t3)">쿠폰이 없어요</div>';return}
-  el.innerHTML=coupons.map(c=>{
+  if(!coupons.length){
+    const tipHtml=tab==='available'?'<div style="margin:0 16px 12px;padding:12px 14px;background:var(--blue-light);border-radius:12px;font-size:13px;color:var(--blue);font-weight:600">💡 당일 3개까지 사용 가능! 남은 쿠폰은 다음 방문 시 사용하세요 🎁</div>':'';
+    el.innerHTML=tipHtml+'<div style="padding:48px 20px;text-align:center;color:var(--t3)">쿠폰이 없어요</div>';return;
+  }
+  const todayUsedCount=(STORE.coupons||[]).filter(c=>c.status==='used'&&c.uid===currentUser?.id&&(c.used_at||c.usedAt)===today()).length;
+  const canUseMore=todayUsedCount<3;
+  const tipHtml=tab==='available'?`<div style="margin:0 16px 12px;padding:12px 14px;background:${canUseMore?'var(--blue-light)':'var(--yellow-light)'};border-radius:12px;font-size:13px;color:${canUseMore?'var(--blue)':'#78350f'};font-weight:600">
+    ${canUseMore?`💡 오늘 ${3-todayUsedCount}개 더 사용 가능! 4번째 쿠폰은 다음 방문 시 사용해 다음에 또 오세요 🎁`:'✅ 오늘 3개 모두 사용하셨어요! 남은 쿠폰은 다음 방문 시 사용하세요 😊'}
+  </div>`:'';
+  el.innerHTML=tipHtml+coupons.map((c,idx)=>{
     const used=tab==='used',exp=tab==='expired';
-    return `<div style="${used||exp?'opacity:.6':''}" onclick="${used||exp?'':`showCpnDetail('${c.id}')`}"><div class="list-item card" style="margin:0 16px 10px;border-radius:14px"><div class="li-icon" style="background:${used||exp?'var(--bg)':'var(--blue-light)'}">🎟️</div><div class="li-body"><div class="li-title ${used||exp?'strike':''}">${c.name}</div><div class="li-sub">${c.benefit} · ${c.expires}까지</div></div><span class="li-badge ${used?'badge-gray':exp?'badge-red':'badge-blue'}">${used?'완료':exp?'만료':'가능'}</span>${!used&&!exp?'<span class="li-arrow">›</span>':''}</div></div>`;
+    const isNextVisit=tab==='available'&&idx>=Math.max(0,3-todayUsedCount);
+    return `<div style="${used||exp||isNextVisit?'opacity:.7':''}" onclick="${used||exp||isNextVisit?'':`showCpnDetail('${c.id}')`}"><div class="list-item card" style="margin:0 16px 10px;border-radius:14px"><div class="li-icon" style="background:${used||exp?'var(--bg)':isNextVisit?'var(--yellow-light)':'var(--blue-light)'}">🎟️</div><div class="li-body"><div class="li-title ${used||exp?'strike':''}">${c.name}</div><div class="li-sub">${isNextVisit?'다음 방문 시 사용 가능':c.benefit+' · '+c.expires+'까지'}</div></div><span class="li-badge ${used?'badge-gray':exp?'badge-red':isNextVisit?'badge-yellow':'badge-blue'}">${used?'완료':exp?'만료':isNextVisit?'다음방문':'가능'}</span>${!used&&!exp&&!isNextVisit?'<span class="li-arrow">›</span>':''}</div></div>`;
   }).join('');
 }
 function showCpnDetail(cid){
@@ -2702,7 +2746,7 @@ function pickExtraWinner(){
   const allPrizes=currentExtraEvent.prizes||[];
   const prizes=allPrizes.filter(p=>p.benefit&&p.benefit.trim());
   if(!prizes.length)return allPrizes[allPrizes.length-1]||{benefit:'',name:'꽝'};
-  if(getTodayPremiumCount()>=2)return prizes[prizes.length-1];
+  // 설정한 확률을 무조건 따름
   const total=prizes.reduce((a,p)=>a+(+p.prob||0),0);
   const rand=Math.random()*(total>0?total:1);
   let cum=0,winner=prizes[prizes.length-1];
@@ -2974,6 +3018,38 @@ function showExtraResult(winner){
 
 function openNaver(){window.open(STORE.profile.naverUrl,'_blank')}
 function goKakaoChannel(){window.open(STORE.profile.kakaoUrl,'_blank')}
+function openReviewLinks(){
+  const modal=document.getElementById('review-links-modal');
+  const list=document.getElementById('review-links-list');
+  if(!modal||!list)return;
+  // 네이버 리뷰 URL
+  const naverUrl=STORE.naverReviewUrl||(STORE.naverLinked?STORE.profile?.naverUrl:'');
+  // 추가이벤트에서 플랫폼별 링크
+  const events=STORE.events||[];
+  const kakaoEv=events.find(e=>e.platform==='kakao'&&e.active&&e.link);
+  const googleEv=events.find(e=>e.platform==='google'&&e.active&&e.link);
+  const tmapEv=events.find(e=>e.platform==='tmap'&&e.active&&e.link);
+  const links=[
+    {label:'네이버 플레이스 리뷰',icon:'<svg viewBox="0 0 22 22" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="22" rx="5" fill="#03C75A"/><path d="M5 17V5h3.8l5.4 8.2V5H17v12h-3.8L7.8 8.8V17z" fill="white"/></svg>',url:naverUrl,color:'#03C75A'},
+    {label:'카카오맵 리뷰',icon:'<span style="font-size:18px">🟡</span>',url:kakaoEv?.link,color:'#FEE500'},
+    {label:'구글 지도 리뷰',icon:'<img src="https://www.google.com/favicon.ico" width="20" height="20" style="border-radius:4px">',url:googleEv?.link,color:'#4285F4'},
+    {label:'티맵 리뷰',icon:'<span style="font-size:18px">🗺️</span>',url:tmapEv?.link,color:'#e74c3c'},
+  ].filter(l=>l.url&&l.url.trim()&&l.url!=='#');
+  if(!links.length){
+    list.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3)">등록된 리뷰 링크가 없어요.<br>관리자에서 네이버/추가이벤트 링크를 설정해 주세요.</div>';
+  }else{
+    list.innerHTML=links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--border);background:var(--white);text-decoration:none;cursor:pointer" onclick="closeReviewLinks()">
+      <div style="width:36px;height:36px;border-radius:10px;background:${l.color}15;display:flex;align-items:center;justify-content:center">${l.icon}</div>
+      <div style="flex:1;font-size:15px;font-weight:700;color:var(--t1)">${l.label}</div>
+      <span style="color:var(--t4);font-size:18px">›</span>
+    </a>`).join('');
+  }
+  modal.style.display='flex';
+}
+function closeReviewLinks(){
+  const modal=document.getElementById('review-links-modal');
+  if(modal)modal.style.display='none';
+}
 function shareToKakaoChannel(){
   const btn=document.getElementById('kakao-share-btn');
   const prize=btn?.dataset.prize||'당첨';
@@ -3011,6 +3087,48 @@ function buildCrmMsg(c,u){
     .replace(/\{쿠폰명\}/g,c.name||'')
     .replace(/\{쿠폰번호\}/g,c.id||'')
     .replace(/\{유효기간\}/g,c.expires||'');
+}
+function selAdminCpnTab(tab,el){
+  document.querySelectorAll('[id^="actab"]').forEach(b=>b.className='chip off');
+  el.className='chip on';renderAdminCoupons(tab);
+}
+function renderAdminCoupons(tab){
+  const el=document.getElementById('admin-cpn-list');if(!el)return;
+  const coupons=STORE.coupons.filter(c=>c.status===tab);
+  if(!coupons.length){el.innerHTML='<div style="padding:32px;text-align:center;color:var(--t3);font-size:14px">해당 쿠폰이 없어요</div>';return;}
+  el.innerHTML='<div class="card">'+coupons.map((c,i)=>{
+    const u=STORE.users.find(x=>x.id===c.uid);
+    const isAvail=c.status==='available';
+    const statusBadge=isAvail?'badge-blue':c.status==='used'?'badge-gray':'badge-red';
+    const statusLabel=isAvail?'미사용':c.status==='used'?'사용완료':'만료';
+    return `<div style="border-bottom:1px solid var(--border2)">
+      <div style="padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleAdminCpnRow('acr-${i}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;color:var(--t1)" class="${!isAvail?'strike':''}">${c.name}</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:2px">${u?u.name+' · ':'-'}${u?u.phone:''}</div>
+        </div>
+        <span class="li-badge ${statusBadge}">${statusLabel}</span>
+        <span style="color:var(--t4);font-size:12px">${isAvail?'▾':''}</span>
+      </div>
+      ${isAvail&&u?`<div id="acr-${i}" style="display:none;padding:4px 14px 12px;border-top:1px solid var(--border2);background:var(--bg)">
+        <div style="font-size:12px;color:var(--t4);margin-bottom:8px">발급일: ${c.issued||'-'} · 만료: ${c.expires||'-'}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;min-width:80px" onclick="copyCouponMessage('${c.id}')">📋 문구 복사</button>
+          <a href="sms:${u.phone.replace(/-/g,'')}?body=${encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)')}" style="flex:1;text-decoration:none;min-width:80px">
+            <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:var(--blue);border-color:var(--blue)">💬 문자 보내기</button>
+          </a>
+          ${c.sentAt?
+            `<span style="font-size:11px;color:var(--green);font-weight:600;padding:8px 0">✅ 발송완료</span>`:
+            `<button onclick="markCouponSent('${c.id}')" style="flex-shrink:0;padding:8px 10px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--t3);cursor:pointer">발송완료 체크</button>`
+          }
+        </div>
+      </div>`:''}
+    </div>`;
+  }).join('')+'</div>';
+}
+function toggleAdminCpnRow(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
 }
 function copyCouponMessage(cid){
   const c=STORE.coupons.find(x=>x.id===cid);
@@ -3139,9 +3257,12 @@ function renderCustomersTab(el){
       </div>
 
       <!-- 방문/미방문 토글 -->
-      <div style="display:flex;gap:8px;margin-bottom:16px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
         <button onclick="setCustVisitMode('visited')" style="flex:1;padding:10px;border-radius:10px;border:2px solid ${_custVisitMode==='visited'?'var(--blue)':'var(--border)'};background:${_custVisitMode==='visited'?'var(--blue-light)':'var(--white)'};color:${_custVisitMode==='visited'?'var(--blue)':'var(--t3)'};font-size:13px;font-weight:700;cursor:pointer;font-family:Noto Sans KR,sans-serif">방문 고객</button>
         <button onclick="setCustVisitMode('notvisit')" style="flex:1;padding:10px;border-radius:10px;border:2px solid ${_custVisitMode==='notvisit'?'var(--red)':'var(--border)'};background:${_custVisitMode==='notvisit'?'var(--red-light)':'var(--white)'};color:${_custVisitMode==='notvisit'?'var(--red)':'var(--t3)'};font-size:13px;font-weight:700;cursor:pointer;font-family:Noto Sans KR,sans-serif">미방문 고객</button>
+      </div>
+      <div style="margin-bottom:12px">
+        <button onclick="setCustThisMonth()" style="padding:8px 14px;border-radius:10px;border:1.5px solid ${_custVisitMode==='visited'?'var(--blue)':'var(--border)'};background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;font-family:Noto Sans KR,sans-serif">📅 이번달 방문 고객 보기</button>
       </div>
 
       <!-- 기간 슬라이더 바 -->
@@ -3191,6 +3312,11 @@ function renderCustomersTab(el){
 
 function setCustVisitMode(mode){
   _custVisitMode=mode;_custDays=0;
+  renderCustomersTab(document.getElementById('admin-body'));
+}
+function setCustThisMonth(){
+  _custVisitMode='visited';
+  const d=new Date();_custDays=d.getDate(); // 이번달 1일부터 = 오늘 날짜 수만큼
   renderCustomersTab(document.getElementById('admin-body'));
 }
 function setCustDays(days){
@@ -3535,30 +3661,13 @@ function renderAdmin(tab){
         <div class="stat-cell"><div class="stat-num">${availCount}</div><div class="stat-label">발송 대기(미사용)</div></div>
         <div class="stat-cell"><div class="stat-num">${STORE.coupons.filter(c=>c.sentAt).length}</div><div class="stat-label">CRM 발송완료</div></div>
       </div>
-      <div class="card">${STORE.coupons.map(c=>{
-        const u=STORE.users.find(x=>x.id===c.uid);
-        const isAvail=c.status==='available';
-        return `<div style="padding:14px 16px;border-bottom:1px solid var(--border2)">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="flex:1;min-width:0">
-              <div style="font-size:14px;font-weight:700;color:var(--t1)" class="${!isAvail?'strike':''}">${c.name}</div>
-              <div style="font-size:12px;color:var(--t3)">${c.id} · ${u?u.name:'-'} · ${u?u.phone:''}</div>
-            </div>
-            <span class="li-badge ${c.status==='available'?'badge-blue':c.status==='used'?'badge-gray':'badge-red'}">${c.status==='available'?'가능':c.status==='used'?'완료':'만료'}</span>
-          </div>
-          ${isAvail&&u?`
-          <div style="margin-top:8px;display:flex;gap:6px;align-items:center">
-            <button class="btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px" onclick="copyCouponMessage('${c.id}')">📋 문구 복사</button>
-            <a href="sms:${u.phone.replace(/-/g,'')}?body=${encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)')}" style="flex:1;text-decoration:none">
-              <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:var(--blue);border-color:var(--blue)">💬 문자 보내기</button>
-            </a>
-            ${c.sentAt?
-              `<span style="font-size:11px;color:var(--green);white-space:nowrap;font-weight:600">✅ ${c.sentAt}</span>`:
-              `<button onclick="markCouponSent('${c.id}')" style="width:auto;flex-shrink:0;padding:8px 10px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--t3);cursor:pointer">발송완료 체크</button>`
-            }
-          </div>`:''}
-        </div>`;
-      }).join('')}</div>`;
+      <div class="chips" style="margin-bottom:10px">
+        <button class="chip on" id="actab-avail" onclick="selAdminCpnTab('available',this)">미사용 (${availCount})</button>
+        <button class="chip off" id="actab-used" onclick="selAdminCpnTab('used',this)">사용완료 (${STORE.coupons.filter(c=>c.status==='used').length})</button>
+        <button class="chip off" id="actab-exp" onclick="selAdminCpnTab('expired',this)">만료 (${STORE.coupons.filter(c=>c.status==='expired').length})</button>
+      </div>
+      <div id="admin-cpn-list"></div>`;
+    renderAdminCoupons('available');
   }else if(tab==='survey'){
     renderSurveyAdmin(el);
   }else if(tab==='events'){
