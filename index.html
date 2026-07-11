@@ -286,8 +286,8 @@ body.dark .success-msg{color:#3ddc97}
   <div class="scroll" style="background:var(--white);padding:24px 20px">
     <div style="font-size:22px;font-weight:900;color:var(--t1);margin-bottom:6px;line-height:1.3">반갑습니다 😊<br>이름과 번호를 입력해주세요</div>
     <div style="font-size:14px;color:var(--t3);margin-bottom:24px">이벤트 쿠폰 발급과 문자 발송에 사용됩니다</div>
-    <div class="field"><label>닉네임 (이름)</label><input id="l-name" placeholder="홍길동" maxlength="10"></div>
-    <div class="field" style="margin-bottom:20px"><label>휴대폰 번호</label><input id="l-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
+    <div class="field"><label for="l-name">닉네임 (이름)</label><input id="l-name" placeholder="홍길동" maxlength="10" autocomplete="name"></div>
+    <div class="field" style="margin-bottom:20px"><label for="l-phone">휴대폰 번호</label><input id="l-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric" autocomplete="tel"></div>
     <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
       <input type="checkbox" id="l-marketing" checked style="width:20px;height:20px;margin-top:2px;flex-shrink:0;accent-color:var(--blue)">
       <label for="l-marketing" style="font-size:13px;color:var(--t2);line-height:1.5;cursor:pointer">이벤트·마케팅 정보 수신 및 제3자 제공 동의 <span style="color:var(--t4)">(선택)</span></label>
@@ -434,10 +434,10 @@ body.dark .success-msg{color:#3ddc97}
     <div style="display:flex;justify-content:center;padding:0 20px 16px;position:relative">
       <canvas id="scratch-canvas" width="320" height="220"
         style="border-radius:20px;display:block;touch-action:none;cursor:crosshair;box-shadow:0 8px 32px rgba(0,0,0,.15)"></canvas>
-      <div id="scratch-result-layer" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:320px;height:220px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a2236,#1e3a5f);z-index:-1">
-        <div style="font-size:48px" id="scratch-emoji">🎁</div>
-        <div style="font-size:20px;font-weight:900;color:#fff;margin-top:8px" id="scratch-prize-name">???</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:4px" id="scratch-prize-benefit"></div>
+      <div id="scratch-result-layer" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:320px;height:220px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff8e1,#ffe082);z-index:-1">
+        <div style="font-size:72px;line-height:1" id="scratch-emoji">🐷</div>
+        <div style="font-size:20px;font-weight:900;color:#78350f;margin-top:10px" id="scratch-prize-name">긁어서 확인하세요!</div>
+        <div style="font-size:13px;color:#92400e;margin-top:4px" id="scratch-prize-benefit"></div>
       </div>
     </div>
     <div style="padding:0 20px 8px;text-align:center">
@@ -467,7 +467,7 @@ body.dark .success-msg{color:#3ddc97}
       <div style="font-size:13px;color:var(--blue);font-weight:700;margin-bottom:8px;letter-spacing:.5px">오늘의 이벤트</div>
       <div style="font-size:24px;font-weight:900;color:var(--t1);margin-bottom:6px" id="card-status">어떤 상품이 있는지 확인하세요!</div>
     </div>
-    <div id="card-track" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px 16px;min-height:110px"></div>
+    <div id="card-track" style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:14px 16px"></div>
     <div id="card-result-msg" style="text-align:center;font-size:16px;font-weight:700;color:var(--t2);min-height:26px;margin:8px 0"></div>
     <div style="padding:8px 20px;text-align:center">
       <div id="card-error" style="min-height:20px;margin-bottom:6px"></div>
@@ -629,7 +629,8 @@ body.dark .success-msg{color:#3ddc97}
       <div class="hero-desc">약 30초면 완료됩니다</div>
     </div>
     <div style="padding:0 20px" id="survey-questions"></div>
-    <div style="padding:0 20px 24px"><button class="btn btn-blue" onclick="submitSurvey()">제출하기</button></div>
+    <div id="survey-submit-error" style="padding:0 20px 4px"></div>
+    <div style="padding:0 20px 24px"><button class="btn btn-blue" onclick="submitSurvey()">제출하기 ✓</button></div>
   </div>
   <div class="bottom-banner"><button class="btn-channel" onclick="goKakaoChannel()">💬 카카오 채널 구독하고 혜택받기</button></div>
 </div>
@@ -731,8 +732,8 @@ body.dark .success-msg{color:#3ddc97}
   <div class="topbar"><button class="tb-back" onclick="show('s-landing')">‹</button><div class="tb-title">관리자 로그인</div></div>
   <div class="scroll" style="background:var(--white);padding:24px 20px">
     <div style="margin-bottom:32px"><div style="font-size:24px;font-weight:900;color:var(--t1);margin-bottom:6px">관리자 대시보드</div><div style="font-size:15px;color:var(--t3)">매장 및 이벤트 관리</div></div>
-    <div class="field"><label>이메일</label><input id="a-email" placeholder="admin@example.com"></div>
-    <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
+    <div class="field"><label for="a-email">아이디</label><input id="a-email" placeholder="아이디 입력" autocomplete="username"></div>
+    <div class="field" style="margin-bottom:28px"><label for="a-pw">비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30" autocomplete="current-password"></div>
     <div id="admin-error"></div>
     <button class="btn btn-blue" onclick="adminLogin()">로그인</button>
   </div>
@@ -811,10 +812,10 @@ function seedDemoStore(){
     ],
     surveyQuestions:[
       {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
-      {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다!',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
+      {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (최대 별5개)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ],
-    adminEmail:'admin@example.com',adminPassword:'admin1234',
+    adminEmail:'jayden',adminPassword:'194360',
     staff:[{code:'STAFF001',pin:'1234',name:'김직원',active:true}],
     coupons:[
       {id:'CPN-001',uid:'u1',name:'아메리카노 무료',benefit:'아메리카노 1잔 무료',expires:'2025-12-31',cond:'1인 1매',status:'available',created:'2025-06-10'},
@@ -909,7 +910,7 @@ function migrateStore(s){
   if(!s.surveyQuestions||!s.surveyQuestions.length||s.surveyQuestions.some(q=>q.type==='rating')){
     s.surveyQuestions=[
       {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
-      {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다!',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
+      {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (최대 별5개)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ];
   }
@@ -1086,6 +1087,7 @@ function show(id){
     else errEl.innerHTML='';
   }
   if(id==='s-landing')renderLanding();
+  if(id==='s-admin-login'){const _sid=localStorage.getItem('admin_saved_id');if(_sid)setTimeout(()=>{const _el=document.getElementById('a-email');if(_el&&!_el.value)_el.value=_sid;},30);}
   if(id==='s-home')refreshHome();
   if(id==='s-roulette')setTimeout(initWheel,60);
   if(id==='s-scratch')initScratchCard();
@@ -1175,9 +1177,16 @@ function adminPreviewCustomer(){
 function adminLogin(){
   const e=document.getElementById('a-email').value.trim(),p=document.getElementById('a-pw').value.trim();
   const el=document.getElementById('admin-error');
-  if(!validateEmail(e)){el.innerHTML='<div class="error-msg">올바른 이메일 형식이 아닙니다</div>';return}
-  if(e===STORE.adminEmail&&p===STORE.adminPassword){el.innerHTML='';platformManagingStore=null;const lb=document.getElementById('admin-logout-btn');if(lb)lb.textContent='로그아웃';document.getElementById('admin-store-title').textContent=STORE.profile.name+' 관리';show('s-admin')}
-  else el.innerHTML='<div class="error-msg">이메일 또는 비밀번호가 올바르지 않습니다</div>';
+  // 총괄 관리자 자격증명이면 총괄 대시보드로 이동
+  if(PLATFORM&&e===PLATFORM.email&&p===PLATFORM.password){el.innerHTML='';show('s-platform');renderPlatform();return}
+  if(e===STORE.adminEmail&&p===STORE.adminPassword){
+    el.innerHTML='';
+    localStorage.setItem('admin_saved_id',e);
+    platformManagingStore=null;
+    const lb=document.getElementById('admin-logout-btn');if(lb)lb.textContent='로그아웃';
+    document.getElementById('admin-store-title').textContent=STORE.profile.name+' 관리';
+    show('s-admin');
+  }else el.innerHTML='<div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다</div>';
 }
 let platformManagingStore=null; // 총괄이 대신 관리 중인 매장 ID
 function platformManageStore(id){
@@ -1446,9 +1455,9 @@ function refreshHome(){
         const meta=platformMeta[ev.platform]||{icon:'🎁',color:'#8b5cf6',bg:'#f3f0ff',label:ev.label};
         const done=!!(STORE.extraSpinLog[currentUser?.id+'_'+ev.platform+'_'+todayKey]);
         const active=ev.active;
-        return `<div${idx>0?' style="border-top:1px solid var(--border2)"':''}><div class="list-item" style="opacity:${active?1:.4};cursor:${active&&!done?'pointer':'default'}" onclick="${active&&!done?`openExtraRoulette('${ev.id}')`:''}">`+
-          `<div class="li-icon" style="background:${meta.bg};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${meta.icon}</div>`+
-          `<div class="li-body"><div class="li-title">${meta.label}<span style="font-size:10px;font-weight:600;color:var(--t4);margin-left:6px">${active?'':'(비활성)'}</span></div>`+
+        return `<div${idx>0?' style="border-top:1px solid var(--border2)"':''}><div class="list-item" style="opacity:${active?1:.4};cursor:${active&&!done?'pointer':'default'};padding:10px 14px" onclick="${active&&!done?`openExtraRoulette('${ev.id}')`:''}">`+
+          `<div class="li-icon" style="background:${meta.bg};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;width:40px;height:40px;border-radius:12px">${meta.icon}</div>`+
+          `<div class="li-body"><div class="li-title" style="font-size:14px">${meta.label}<span style="font-size:10px;font-weight:600;color:var(--t4);margin-left:6px">${active?'':'(비활성)'}</span></div>`+
           `<div class="li-sub" style="color:${done?'var(--green)':'var(--t3)'}">` +
           (done?'오늘 이미 참여했어요 ✅':(active?'리뷰 작성 후 게임 참여':'현재 비활성화됨'))+`</div></div>`+
           `<span style="font-size:18px;color:${done?'var(--green)':'var(--t4)'}">${done?'✅':'›'}</span></div></div>`;
@@ -1596,6 +1605,17 @@ function pickWinner(){
 /* ════════════════════ 메인 카드뽑기 ════════════════════ */
 let mainCardBusy=false;
 window.__mainCardPrizes=null;
+function getPrizeColor(rank){
+  const defs=[
+    {bg:'linear-gradient(135deg,#FFD700,#F59E0B)',emoji:'🥇',label:'1등'},
+    {bg:'linear-gradient(135deg,#C0C0C0,#9CA3AF)',emoji:'🥈',label:'2등'},
+    {bg:'linear-gradient(135deg,#cd7f32,#92400E)',emoji:'🥉',label:'3등'},
+    {bg:'linear-gradient(135deg,#60a5fa,#2563EB)',emoji:'🎁',label:'4등'},
+    {bg:'linear-gradient(135deg,#9ca3af,#6B7280)',emoji:'🎁',label:'5등'},
+  ];
+  const idx=rank<0?defs.length-1:Math.min(rank,defs.length-1);
+  return defs[idx];
+}
 function initMainCard(){
   mainCardBusy=false;
   const last=localStorage.getItem('lastSpin_'+STORE_ID);
@@ -1605,14 +1625,22 @@ function initMainCard(){
   const track=document.getElementById('card-track');
   const prizes=STORE.prizes;
   const N=5;
-  const cardPrizes=Array.from({length:N},(_,i)=>prizes[i%prizes.length]);
-  window.__mainCardPrizes=cardPrizes;
+  // 상품을 섞어서 카드에 배치
+  const basePrizes=Array.from({length:N},(_,i)=>prizes[i%prizes.length]);
+  for(let j=basePrizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[basePrizes[j],basePrizes[k]]=[basePrizes[k],basePrizes[j]];}
+  window.__mainCardPrizes=basePrizes;
   document.getElementById('card-status').textContent='어떤 상품이 있는지 확인하세요!';
   document.getElementById('card-result-msg').textContent='';
-  track.innerHTML=cardPrizes.map((p,i)=>{
-    const isLose=!p.benefit||!p.benefit.trim();
-    return `<div class="main-card" data-idx="${i}" style="width:80px;height:114px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${isLose?'#e8ebed':'linear-gradient(135deg,#f5b925,#f97316)'};font-size:14px;font-weight:800;color:${isLose?'var(--t3)':'#fff'};text-align:center;padding:6px;box-shadow:0 4px 12px rgba(0,0,0,.14);transition:transform .4s">
-      <div style="font-size:28px;margin-bottom:4px">${isLose?'💨':'🎁'}</div>${isLose?'꽝':(p.name.length>7?p.name.slice(0,6)+'…':p.name)}
+  // 3+2 그리드 (앞면 노출 - 등수별 색상)
+  track.innerHTML=basePrizes.map((p,i)=>{
+    const pRank=(prizes||[]).findIndex(x=>x.id===p?.id);
+    const col=getPrizeColor(pRank);
+    const span=i<3?'span 2':'span 3';
+    const name=p.name.length>8?p.name.slice(0,7)+'…':p.name;
+    return `<div class="main-card" data-idx="${i}" style="grid-column:${span};border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${col.bg};color:#fff;text-align:center;padding:10px 6px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:transform .35s,opacity .3s;min-height:130px;cursor:default;user-select:none">
+      <div style="font-size:32px;margin-bottom:6px">${col.emoji}</div>
+      <div style="font-size:10px;font-weight:800;opacity:.75;letter-spacing:.5px;margin-bottom:3px">${col.label}</div>
+      <div style="font-size:12px;font-weight:900;line-height:1.3">${name}</div>
     </div>`;
   }).join('');
   if(last===today()){
@@ -1633,24 +1661,35 @@ function doMainCardStart(){
   btn.disabled=true;btn.textContent='카드를 섞는 중...';
   document.getElementById('card-status').textContent='카드를 섞고 있어요...';
   const cards=[...document.querySelectorAll('#card-track .main-card')];
-  cards.forEach(c=>{c.style.background='linear-gradient(135deg,#3182f6,#1b64da)';c.innerHTML='<div style="font-size:28px">🃏</div>';});
-  let n=0;
-  const iv=setInterval(()=>{
-    tick(0.25);
+  // Phase 1: 모두 중앙으로 모아 축소
+  cards.forEach(c=>{
+    c.style.transition='transform .4s cubic-bezier(.4,0,.2,1),opacity .4s';
+    c.style.transform='scale(0)';c.style.opacity='0';
+  });
+  setTimeout(()=>{
+    // 실제 셔플
+    const prizes=window.__mainCardPrizes;
+    for(let j=prizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[prizes[j],prizes[k]]=[prizes[k],prizes[j]];}
+    // 뒷면(파란 🃏)으로 교체
     cards.forEach(c=>{
-      const dir=Math.random()>0.5?1:-1;
-      c.style.transform=`translateX(${dir*(8+Math.random()*12)}px) rotate(${dir*7}deg)`;
+      c.style.background='linear-gradient(135deg,#3182f6,#1b64da)';
+      c.innerHTML='<div style="font-size:36px;color:#fff">🃏</div>';
     });
-    n++;
-    if(n>=10){
-      clearInterval(iv);
-      cards.forEach(c=>c.style.transform='translateX(0) rotate(0)');
-      document.getElementById('card-status').textContent='카드 1장을 선택하세요!';
-      btn.style.display='none';
-      mainCardBusy=false;
-      cards.forEach((c,i)=>{c.style.cursor='pointer';c.onclick=()=>pickMainCard(i)});
-    }
-  },160);
+    // Phase 2: 각자 자리로 펼치기 (스프링)
+    setTimeout(()=>{
+      cards.forEach(c=>{
+        c.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s';
+        c.style.transform='scale(1)';c.style.opacity='1';
+      });
+      setTimeout(()=>{
+        cards.forEach(c=>{c.style.transition='transform .35s,opacity .3s';});
+        document.getElementById('card-status').textContent='카드 1장을 선택하세요!';
+        btn.style.display='none';
+        mainCardBusy=false;
+        cards.forEach((c,i)=>{c.style.cursor='pointer';c.onclick=()=>pickMainCard(i);});
+      },560);
+    },80);
+  },450);
 }
 function pickMainCard(idx){
   if(mainCardBusy)return;
@@ -1660,33 +1699,45 @@ function pickMainCard(idx){
   const winner=pickWinner();
   const isWin=!!(winner.benefit&&winner.benefit.trim());
   initAudio();tick(0.5);
+  const prizes=STORE.prizes||[];
   const picked=cards[idx];
-  picked.style.transition='transform .5s';
-  picked.style.transform='scale(1.15) translateY(-8px)';
-  picked.style.background=isWin?'linear-gradient(135deg,#f5b925,#f97316)':'#e8ebed';
-  picked.innerHTML=`<div style="font-size:22px;margin-bottom:2px">${isWin?'🎁':'💨'}</div>${isWin?'':'꽝'}`;
+  // 앞으로 뒤집기 (rotateY 0→90→0)
+  picked.style.transition='transform .3s ease-in';
+  picked.style.transform='scale(1.08) rotateY(90deg)';
   setTimeout(()=>{
-    if(isWin)winSound();
-    document.getElementById('card-result-msg').textContent=isWin?'🎉 당첨! '+winner.benefit:'😢 아쉽게도 꽝이에요';
-    cards.forEach((c,i)=>{
-      if(i===idx)return;
-      const p=window.__mainCardPrizes[i];
-      const lose=!p.benefit||!p.benefit.trim();
-      c.style.background=lose?'#e8ebed':'linear-gradient(135deg,#f5b925,#f97316)';
-      c.style.opacity='.55';
-      c.innerHTML=`<div style="font-size:18px">${lose?'💨':'🎁'}</div>${lose?'꽝':p.name}`;
-    });
-    // 방문 카운트 + 로그 (기존 룰렛/복권과 동일 패턴)
-    STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
-    if(!STORE.spinLog)STORE.spinLog=[];
-    STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
-    checkVipUpgrade(currentUser);
-    localStorage.setItem('lastSpin_'+STORE_ID,today());
-    saveState();
-    const _cp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
-    recordDailyPrize(_cp.findIndex(x=>x.id===winner.id),_cp.length);
-    setTimeout(()=>showResult(winner),700);
-  },650);
+    const pRank=prizes.findIndex(x=>x.id===winner.id);
+    const col=getPrizeColor(pRank);
+    const name=winner.name.length>8?winner.name.slice(0,7)+'…':winner.name;
+    picked.style.background=col.bg;
+    picked.innerHTML=`<div style="font-size:32px;margin-bottom:6px">${col.emoji}</div><div style="font-size:10px;font-weight:800;opacity:.75;letter-spacing:.5px;margin-bottom:3px;color:#fff">${col.label}</div><div style="font-size:12px;font-weight:900;line-height:1.3;color:#fff">${name}</div>`;
+    picked.style.transition='transform .35s ease-out';
+    picked.style.transform='scale(1.08) rotateY(0deg)';
+    setTimeout(()=>{
+      picked.style.transform='scale(1.1) translateY(-6px)';
+      if(isWin)winSound();
+      document.getElementById('card-result-msg').textContent=isWin?'🎉 당첨! '+winner.benefit:'😢 아쉽게도 꽝이에요';
+      // 나머지 카드 색상 공개
+      cards.forEach((c,i)=>{
+        if(i===idx)return;
+        const p=window.__mainCardPrizes[i];
+        const pR=prizes.findIndex(x=>x.id===p?.id);
+        const pCol=getPrizeColor(pR);
+        const pName=(p?.name||'').length>8?(p?.name||'').slice(0,7)+'…':(p?.name||'');
+        c.style.opacity='.42';
+        c.style.background=pCol.bg;
+        c.innerHTML=`<div style="font-size:28px;margin-bottom:4px">${pCol.emoji}</div><div style="font-size:10px;font-weight:800;opacity:.7;margin-bottom:2px;color:#fff">${pCol.label}</div><div style="font-size:11px;font-weight:700;color:#fff">${pName}</div>`;
+      });
+      STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
+      if(!STORE.spinLog)STORE.spinLog=[];
+      STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
+      checkVipUpgrade(currentUser);
+      localStorage.setItem('lastSpin_'+STORE_ID,today());
+      saveState();
+      const _cp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
+      recordDailyPrize(_cp.findIndex(x=>x.id===winner.id),_cp.length);
+      setTimeout(()=>showResult(winner),800);
+    },360);
+  },310);
 }
 
 function initScratchCard(){
@@ -1728,13 +1779,13 @@ function initScratchCard(){
 }
 
 function drawSilverLayer(ctx,fresh){
-  // 은박 그라데이션
+  // 황금 긁기 레이어
   const canvas=ctx.canvas;
   const grad=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-  grad.addColorStop(0,'#d0d0d0');
-  grad.addColorStop(0.3,'#f0f0f0');
-  grad.addColorStop(0.6,'#c8c8c8');
-  grad.addColorStop(1,'#e8e8e8');
+  grad.addColorStop(0,'#f5c842');
+  grad.addColorStop(0.3,'#fde68a');
+  grad.addColorStop(0.6,'#f59e0b');
+  grad.addColorStop(1,'#fbbf24');
   ctx.fillStyle=grad;
   ctx.fillRect(0,0,canvas.width,canvas.height);
   // 텍스처 패턴
@@ -1827,9 +1878,11 @@ function doScratch(){
   // 당첨 미리 결정 후 배경에 표시
   scratchWinner=pickWinner();
   const isLose=!scratchWinner.benefit||!scratchWinner.benefit.trim();
-  document.getElementById('scratch-emoji').textContent=isLose?'😢':'🎉';
-  document.getElementById('scratch-prize-name').textContent=isLose?'꽝':scratchWinner.benefit;
-  document.getElementById('scratch-prize-benefit').textContent=isLose?'아쉽지만 다음 기회에!':'쿠폰이 자동 발급됩니다';
+  document.getElementById('scratch-emoji').textContent='🐷';
+  document.getElementById('scratch-prize-name').textContent=isLose?'아쉽게도 꽝이에요':scratchWinner.benefit;
+  document.getElementById('scratch-prize-benefit').textContent=isLose?'다음 기회에 도전해요!':'쿠폰이 자동 발급됩니다';
+  const pnEl=document.getElementById('scratch-prize-name');
+  if(pnEl)pnEl.style.color=isLose?'#9ca3af':'#78350f';
 
   // 긁기 활성화
   const canvas=document.getElementById('scratch-canvas');
@@ -2112,18 +2165,16 @@ function renderSurveyQuestions(){
         <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:14px">${q.label}</div>
         <div style="background:var(--bg);border-radius:16px;overflow:hidden">
         ${(q.items||[]).map((it,idx)=>`
-          <div style="padding:14px 16px;${idx>0?'border-top:1px solid var(--border2)':''}">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:14px;font-weight:600;color:var(--t1)">${it}</div>
-              <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px">
-                ${[1,2,3,4,5].map(n=>`
-                <span data-star="${n}" style="position:relative;display:inline-block;font-size:30px;line-height:1;width:30px;flex-shrink:0">
-                  <span style="color:#d1d5db">★</span>
-                  <span class="star-fill" style="position:absolute;left:0;top:0;overflow:hidden;color:#f5b925;white-space:nowrap;width:0%;pointer-events:none">★</span>
-                  <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n}-0.5,this.closest('.star-row'))" style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
-                  <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
-                </span>`).join('')}
-              </div>
+          <div style="padding:10px 14px;${idx>0?'border-top:1px solid var(--border2)':''}">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">${it}</div>
+            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:4px;justify-content:flex-end">
+              ${[1,2,3,4,5].map(n=>`
+              <span data-star="${n}" style="position:relative;display:inline-block;font-size:38px;line-height:1;width:38px;flex-shrink:0">
+                <span style="color:#d1d5db">★</span>
+                <span class="star-fill" style="position:absolute;left:0;top:0;overflow:hidden;color:#f5b925;white-space:nowrap;width:0%;pointer-events:none">★</span>
+                <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n}-0.5,this.closest('.star-row'))" style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
+                <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
+              </span>`).join('')}
             </div>
           </div>
         `).join('')}
@@ -2134,7 +2185,7 @@ function renderSurveyQuestions(){
       return `<div style="margin-bottom:24px"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px">${q.label} <span style="color:var(--t4);font-weight:400;font-size:12px">(복수선택)</span></div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
         ${(q.options||[]).map((o,i)=>`
-          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;background:var(--white)" onclick="toggleMultiCheck(event,'${q.id}','${o.replace(/'/g,"\\'")}',this)">
+          <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;background:var(--white)" onclick="toggleMultiCheck(event,'${q.id}','${o.replace(/'/g,"\\'")}',this)">
             <span class="mc-box" style="width:20px;height:20px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff"></span>
             <span style="font-size:14px;color:var(--t1)">${o}</span>
           </label>
@@ -2146,8 +2197,8 @@ function renderSurveyQuestions(){
       <div class="chips">${q.options.map((o,i)=>`<button class="chip ${i===0?'on':'off'}" onclick="setSurveyChoice('${q.id}','${o.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div></div>`;
     }else{
       curSurveyAnswers[q.id]='';
-      return `<div style="margin-bottom:24px"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:10px">${q.label} <span style="color:var(--t4);font-weight:400;font-size:13px">(선택)</span></div>
-      <textarea rows="3" placeholder="의견을 남겨주세요" oninput="curSurveyAnswers['${q.id}']=this.value" style="width:100%;border:1.5px solid var(--border);background:var(--white);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--t1);resize:none;outline:none;font-family:'Noto Sans KR',sans-serif;line-height:1.6"></textarea></div>`;
+      return `<div style="margin-bottom:24px"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">${q.label} <span style="color:var(--accent);font-weight:700;font-size:11px;background:var(--accent-light);padding:2px 7px;border-radius:8px;margin-left:4px">필수 · 스탬프 적립</span></div>
+      <textarea rows="3" placeholder="의견을 꼭 남겨주세요 — 스탬프가 적립됩니다 ✍️" oninput="curSurveyAnswers['${q.id}']=this.value;document.getElementById('survey-submit-error').innerHTML=''" style="width:100%;border:1.5px solid var(--border);background:var(--white);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--t1);resize:none;outline:none;font-family:'Noto Sans KR',sans-serif;line-height:1.6"></textarea></div>`;
     }
   }).join('');
 }
@@ -2184,6 +2235,14 @@ function setSurveyChoice(qid,val,el){
 }
 function submitSurvey(){
   const cfg=STORE.stampSettings||{grantStamp:'survey'};
+  // 텍스트 필드 필수 체크 (스탬프 적립 조건)
+  const textQ=STORE.surveyQuestions.find(q=>q.type==='text');
+  if(textQ&&cfg.grantStamp==='survey'&&(!curSurveyAnswers[textQ.id]||!String(curSurveyAnswers[textQ.id]).trim())){
+    const errEl=document.getElementById('survey-submit-error');
+    if(errEl)errEl.innerHTML='<div class="error-msg" style="margin-bottom:0">아쉬운 부분을 입력해야 스탬프가 적립됩니다 ✍️</div>';
+    errEl.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
   const card=getMyStampCard();
   const surveyKey='survey_'+today()+'_'+(currentUser?.id||'guest');
   const alreadySurveyed=card.history&&card.history.some(h=>h.reason===surveyKey);
@@ -3890,16 +3949,14 @@ if(osPhoneEl)osPhoneEl.addEventListener('input',function(e){e.target.value=forma
 
 /* ════════════════════ 초기화 ════════════════════ */
 applyDarkPref();
-document.getElementById('p-email').value=PLATFORM.email;
-document.getElementById('p-pw').value=PLATFORM.password;
-if(STORE){
-  // 보안: 관리자 이메일/비밀번호 자동입력 제거
-  document.getElementById('s-code').value='';
-  document.getElementById('s-pin').value='';
-  show('s-landing');
-}else{
-  show('s-notfound');
-}
+document.getElementById('s-code').value='';
+document.getElementById('s-pin').value='';
+(function(){
+  const _p=new URLSearchParams(location.search).get('admin');
+  if(_p==='platform'){show('s-platform-login');}
+  else if(STORE){show('s-landing');}
+  else{show('s-notfound');}
+})();
 </script>
 </body>
 </html>
