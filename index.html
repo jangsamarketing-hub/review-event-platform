@@ -946,6 +946,7 @@ function migrateStore(s){
   if(!s.profile.kakaoChatUrl)s.profile.kakaoChatUrl='';
   if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:10,reward:'무료 메뉴 1개'}]};
   if(!s.stampSettings.milestones||!s.stampSettings.milestones.length)s.stampSettings.milestones=[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:s.stampSettings.goal||10,reward:s.stampSettings.reward||'무료 메뉴 1개'}];
+  else if(!s.stampSettings.milestones.some(m=>m.goal<=5))s.stampSettings.milestones.unshift({goal:5,reward:'무료 사이드 메뉴 1개'});
   if(!s.stampCards)s.stampCards={};
   if(!s.crmTemplate)s.crmTemplate='(광고) {매장명}\n이벤트 상품 제공안내 🎁\n\n고객님 안녕하세요.\n매장에서 발급해드린 리뷰 이벤트 쿠폰이 곧 만료될 예정입니다.\n\n늦지 않게 매장에 식사하러 오시면 만족스러운 서비스를 제공해 드리겠습니다!\n\n항상 고객님의 만족을 최우선으로 하겠습니다.\n매장에서 기다리고 있겠습니다.\n오늘도 행복한 하루 보내세요!😊\n\n유효기간 : 이번주 까지\n무료수신거부 : 080-500-4233';
   // 구버전 이모지-rating 문항이 있으면 최신 형태로 교체
@@ -1645,6 +1646,7 @@ function goToMainGame(){
 
 /* ════════════════════ 긁는 복권 ════════════════════ */
 let scratchWinner=null,scratchRevealed=false,scratchIsDrawing=false,scratchCtx=null;
+let _selCoupIds=new Set();
 const SCRATCH_SILVER='#c0c0c0';
 
 // 오늘 프리미엄(최하위 제외) 상품 당첨 횟수 조회
@@ -1702,14 +1704,15 @@ function followLadder(startCol,hconn,n){
 }
 function drawLadderMystery(ctx,n,W,H){
   ctx.clearRect(0,0,W,H);
-  // 불투명 박스: 사다리 내용 숨김
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  ctx.fillStyle=isDark?'#2a2d33':'#dde1e8';
-  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(0,0,W,H,12);else ctx.rect(0,0,W,H);ctx.fill();
-  // 안내 텍스트
-  ctx.fillStyle=isDark?'rgba(200,210,225,0.4)':'rgba(80,90,110,0.35)';
-  ctx.font='bold 14px Noto Sans KR,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('동물을 선택하고 시작 버튼을 눌러주세요',W/2,H/2);
+  const py=18;
+  ctx.fillStyle=isDark?'rgba(42,45,51,0.95)':'rgba(222,227,233,0.97)';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(0,py,W,H-py*2,14);else ctx.rect(0,py,W,H-py*2);ctx.fill();
+  ctx.font='26px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('🎰',W/2,H/2-17);
+  ctx.fillStyle=isDark?'rgba(200,210,225,0.5)':'rgba(80,90,110,0.42)';
+  ctx.font='bold 13px Noto Sans KR,sans-serif';
+  ctx.fillText('동물을 선택하고 시작 버튼을 눌러주세요',W/2,H/2+13);
 }
 function drawLadder(ctx,hconn,n,W,H,highlightPath,highlightCol){
   const colW=W/n,rowH=H/hconn.length;
@@ -1869,8 +1872,19 @@ function doLadderStart(){
           winSound();
           document.getElementById('ladder-status').textContent='결과 확인!';
           document.getElementById('ladder-result-msg').textContent='🎉 '+finalPrize.benefit+' 당첨!';
-          // 당첨 상품 박스 강조
-          const pb=document.getElementById('lad-p-'+prizeIdx);
+          // 상품 라벨을 사다리 결과에 맞게 교체 (경로 끝 열 = 실제 상품)
+          prizes.slice(0,n).forEach((_,col)=>{
+            const pElem=document.getElementById('lad-p-'+col);
+            if(!pElem)return;
+            const mIdx=ladderPrizeMap[col];
+            const p=prizes[mIdx];if(!p)return;
+            const gc=getPrizeColor(mIdx);
+            const nm=p.name.length>5?p.name.slice(0,4)+'…':p.name;
+            const inner=pElem.querySelector('div');
+            if(inner){inner.style.background=gc.bg;inner.innerHTML=gc.emoji+'<br>'+nm;}
+          });
+          // 경로가 끝나는 열 강조 (이제 레이블과 실제 상품이 일치)
+          const pb=document.getElementById('lad-p-'+finalCol);
           if(pb){pb.style.transform='scale(1.18)';pb.style.transition='transform .3s';}
           // 게임 로그
           STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
@@ -2134,13 +2148,14 @@ function checkScratchProgress(){
 function revealScratch(){
   if(scratchRevealed)return;
   scratchRevealed=true;
-  // 은박 완전 제거
   const canvas=document.getElementById('scratch-canvas');
   scratchCtx.clearRect(0,0,canvas.width,canvas.height);
   canvas.style.pointerEvents='none';
+  // 캔버스 페이드아웃으로 결과 레이어가 부드럽게 등장
+  canvas.style.transition='opacity 0.3s ease';
+  canvas.style.opacity='0';
   document.getElementById('scratch-pct').textContent='100';
   document.getElementById('scratch-progress').style.width='100%';
-  // 당첨 처리
   initAudio();
   const isLose=!scratchWinner||!scratchWinner.benefit||!scratchWinner.benefit.trim();
   // 방문 카운트 + 로그
@@ -2153,11 +2168,12 @@ function revealScratch(){
   const _sp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
   recordDailyPrize(_sp.findIndex(x=>x.id===scratchWinner?.id),_sp.length);
   if(!isLose)winSound();
-  // 결과 레이어를 캔버스 위로 올리고 펑 애니메이션
+  // 결과 레이어 z-index 강제 지정 후 펑 애니메이션
   const rl=document.getElementById('scratch-result-layer');
   if(rl){
+    rl.style.zIndex='5';
     rl.classList.remove('scratch-revealed');
-    void rl.offsetWidth; // reflow
+    void rl.offsetWidth;
     rl.classList.add('scratch-revealed');
     // 스파클 파티클
     const container=rl.parentElement;
@@ -2342,7 +2358,12 @@ function renderQR(elId,text){
   el.innerHTML='';
   try{new QRCode(el,{text:text,width:160,height:160,colorDark:'#191f28',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){el.innerHTML='<div style="font-size:12px;color:var(--t4)">QR 생성 실패</div>'}
 }
-function sCTab(tab,el){document.querySelectorAll('[id^="ctab"]').forEach(b=>b.className='chip off');el.className='chip on';renderCoupons(tab)}
+function sCTab(tab,el){document.querySelectorAll('[id^="ctab"]').forEach(b=>b.className='chip off');el.className='chip on';if(tab==='available')_selCoupIds=new Set();renderCoupons(tab)}
+function toggleCoupSel(id){
+  if(_selCoupIds.has(id)){_selCoupIds.delete(id);}
+  else{if(_selCoupIds.size>=3){toast('오늘 사용할 쿠폰은 최대 3개까지 선택 가능해요');return;}_selCoupIds.add(id);}
+  renderCoupons('available');
+}
 function renderCoupons(tab){
   const coupons=STORE.coupons.filter(c=>c.status===tab);
   const el=document.getElementById('cpn-list');
@@ -2351,13 +2372,34 @@ function renderCoupons(tab){
     el.innerHTML=tipHtml+'<div style="padding:48px 20px;text-align:center;color:var(--t3)">쿠폰이 없어요</div>';return;
   }
   const todayUsedCount=(STORE.coupons||[]).filter(c=>c.status==='used'&&c.uid===currentUser?.id&&(c.used_at||c.usedAt)===today()).length;
+  const usableSlots=Math.max(0,3-todayUsedCount);
+  if(tab==='available'&&coupons.length>usableSlots&&usableSlots>0){
+    // 선택 모드: 고객이 원하는 쿠폰 선택 (최대 usableSlots개)
+    if(_selCoupIds.size===0){coupons.slice(0,usableSlots).forEach(c=>_selCoupIds.add(c.id));}
+    const selCount=_selCoupIds.size;
+    const tipHtml=`<div style="margin:0 16px 12px;padding:12px 14px;background:var(--blue-light);border-radius:12px;font-size:13px;color:var(--blue);font-weight:600">
+      🎯 오늘 사용할 쿠폰을 선택하세요 (${selCount}/${usableSlots}개) — 나머지는 다음 방문 시 사용해요 🎁</div>`;
+    el.innerHTML=tipHtml+coupons.map((c)=>{
+      const isSel=_selCoupIds.has(c.id);
+      const canSel=isSel||selCount<usableSlots;
+      return `<div onclick="${canSel?`toggleCoupSel('${c.id}')`:'toast(\'오늘 사용 쿠폰은 '+usableSlots+'개까지 선택 가능해요\')'}">
+        <div class="list-item card" style="margin:0 16px 10px;border-radius:14px;${isSel?'':'opacity:.65'}">
+          <div class="li-icon" style="background:${isSel?'var(--blue-light)':'var(--yellow-light)'}">🎟️</div>
+          <div class="li-body"><div class="li-title">${c.name}</div>
+          <div class="li-sub">${isSel?c.benefit+' · '+c.expires+'까지':'다음 방문 시 사용 가능'}</div></div>
+          <span class="li-badge ${isSel?'badge-blue':'badge-yellow'}">${isSel?'오늘 사용':'다음방문'}</span>
+          ${isSel?'<span style="font-size:18px;color:var(--blue);margin-left:4px">✓</span>':''}
+        </div></div>`;
+    }).join('');
+    return;
+  }
   const canUseMore=todayUsedCount<3;
   const tipHtml=tab==='available'?`<div style="margin:0 16px 12px;padding:12px 14px;background:${canUseMore?'var(--blue-light)':'var(--yellow-light)'};border-radius:12px;font-size:13px;color:${canUseMore?'var(--blue)':'#78350f'};font-weight:600">
-    ${canUseMore?`💡 오늘 ${3-todayUsedCount}개 더 사용 가능! 4번째 쿠폰은 다음 방문 시 사용해 다음에 또 오세요 🎁`:'✅ 오늘 3개 모두 사용하셨어요! 남은 쿠폰은 다음 방문 시 사용하세요 😊'}
+    ${canUseMore?`💡 오늘 ${usableSlots}개 더 사용 가능! 4번째 쿠폰은 다음 방문 시 사용해 다음에 또 오세요 🎁`:'✅ 오늘 3개 모두 사용하셨어요! 남은 쿠폰은 다음 방문 시 사용하세요 😊'}
   </div>`:'';
   el.innerHTML=tipHtml+coupons.map((c,idx)=>{
     const used=tab==='used',exp=tab==='expired';
-    const isNextVisit=tab==='available'&&idx>=Math.max(0,3-todayUsedCount);
+    const isNextVisit=tab==='available'&&idx>=usableSlots;
     return `<div style="${used||exp||isNextVisit?'opacity:.7':''}" onclick="${used||exp||isNextVisit?'':`showCpnDetail('${c.id}')`}"><div class="list-item card" style="margin:0 16px 10px;border-radius:14px"><div class="li-icon" style="background:${used||exp?'var(--bg)':isNextVisit?'var(--yellow-light)':'var(--blue-light)'}">🎟️</div><div class="li-body"><div class="li-title ${used||exp?'strike':''}">${c.name}</div><div class="li-sub">${isNextVisit?'다음 방문 시 사용 가능':c.benefit+' · '+c.expires+'까지'}</div></div><span class="li-badge ${used?'badge-gray':exp?'badge-red':isNextVisit?'badge-yellow':'badge-blue'}">${used?'완료':exp?'만료':isNextVisit?'다음방문':'가능'}</span>${!used&&!exp&&!isNextVisit?'<span class="li-arrow">›</span>':''}</div></div>`;
   }).join('');
 }
@@ -2484,14 +2526,10 @@ function renderSurveyQuestions(){
         ${(q.items||[]).map((it,idx)=>`
           <div style="padding:10px 14px;${idx>0?'border-top:1px solid var(--border2)':''}">
             <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">${it}</div>
-            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:4px;justify-content:flex-end">
-              ${[1,2,3,4,5].map(n=>`
-              <span data-star="${n}" style="position:relative;display:inline-block;font-size:38px;line-height:1;width:38px;flex-shrink:0">
-                <span style="color:#d1d5db">★</span>
-                <span class="star-fill" style="position:absolute;left:0;top:0;overflow:hidden;color:#f5b925;white-space:nowrap;width:0%;pointer-events:none">★</span>
-                <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n}-0.5,this.closest('.star-row'))" style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
-                <span onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"></span>
-              </span>`).join('')}
+            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px;justify-content:flex-end;flex-wrap:wrap">
+              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
+              <span data-star="${n}" onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n*0.5},this.closest('.star-row'))"
+                style="font-size:27px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block">★</span>`).join('')}
             </div>
           </div>
         `).join('')}
@@ -2520,11 +2558,11 @@ function renderSurveyQuestions(){
   }).join('');
 }
 function setMatrixRating(qid,item,val,rowEl){
+  if(!curSurveyAnswers[qid])curSurveyAnswers[qid]={};
   curSurveyAnswers[qid][item]=val;
   rowEl.querySelectorAll('[data-star]').forEach(starEl=>{
-    const n=parseFloat(starEl.dataset.star);
-    const fill=val>=n?100:(val>=n-0.5?50:0);
-    starEl.querySelector('.star-fill').style.width=fill+'%';
+    const n=parseFloat(starEl.dataset.star)*0.5;
+    starEl.style.color=val>=n?'#f5b925':'#d1d5db';
   });
 }
 function toggleMultiCheck(e,qid,opt,labelEl){
