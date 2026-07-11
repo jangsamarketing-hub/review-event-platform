@@ -207,9 +207,8 @@ body.dark .success-msg{color:#3ddc97}
   <div class="scroll" style="background:var(--bg);padding:28px 20px">
     <button class="btn btn-blue" style="font-size:17px;padding:18px" onclick="show('s-login')">🎁 리뷰이벤트 게임 시작</button>
     <button class="btn btn-ghost" style="margin-top:12px" onclick="show('s-owner-signup')">🏪 사장님 회원가입</button>
-    <div style="margin-top:28px;display:flex;justify-content:center;gap:16px">
-      <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">사장님 로그인</button>
-      <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">총괄관리자</button>
+    <div style="margin-top:28px;display:flex;justify-content:center">
+      <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:12px;color:var(--t4);cursor:pointer;padding:6px 12px;text-decoration:underline">사장님이신가요?</button>
     </div>
     <div class="store-switcher" id="store-switcher-wrap"></div>
     <div style="margin-top:24px;font-size:11px;color:var(--t4);text-align:center;line-height:1.6">개인정보는 이벤트 참여 목적으로만 사용되며<br>안전하게 보관됩니다</div>
@@ -251,11 +250,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>이메일</label><input id="p-email" placeholder="platform@admin.com"></div>
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="p-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="platform-error"></div>
-    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
-      <div style="font-size:12px;color:#78350f;line-height:1.8">이메일: <b>platform@admin.com</b><br>비밀번호: <b>platform1234</b></div>
-      <button onclick="document.getElementById('p-email').value='platform@admin.com';document.getElementById('p-pw').value='platform1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
-    </div>
     <button class="btn btn-blue" onclick="platformLogin()">로그인</button>
   </div>
 </div>
@@ -364,10 +358,13 @@ body.dark .success-msg{color:#3ddc97}
   </div>
   <div id="home-rank-bar" style="background:var(--white);padding:10px 20px 14px;border-bottom:1px solid var(--border2)"></div>
   <div class="scroll" style="background:var(--bg)">
-    <div style="margin:14px 16px;background:linear-gradient(135deg,#1a2236 0%,#1e3a5f 100%);border-radius:20px;padding:24px;cursor:pointer;position:relative;overflow:hidden" onclick="goToMainGame()">
-      <div style="position:absolute;right:-10px;top:-10px;font-size:90px;opacity:.12;line-height:1;pointer-events:none">🎡</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:8px;letter-spacing:.5px">📝 리뷰 이벤트</div>
-      <div style="font-size:23px;font-weight:900;color:#fff;margin-bottom:16px;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.3)" id="home-banner-title">리뷰 쓰고<br>상품 받아가세요 🎁</div>
+    <div style="margin:14px 16px;background:linear-gradient(135deg,#0a3d1f 0%,#03612f 100%);border-radius:20px;padding:24px;cursor:pointer;position:relative;overflow:hidden" onclick="goToMainGame()">
+      <div style="position:absolute;right:-8px;top:-8px;opacity:.1;pointer-events:none"><svg viewBox="0 0 100 100" width="90" height="90" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#03C75A"/><path d="M20 76V24h16l27 40V24H79v52H63L36 36V76z" fill="white"/></svg></div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+        <svg viewBox="0 0 22 22" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="22" rx="5" fill="#03C75A"/><path d="M5 17V5h3.8l5.4 8.2V5H17v12h-3.8L7.8 8.8V17z" fill="white"/></svg>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.5px">네이버 리뷰 이벤트</div>
+      </div>
+      <div style="font-size:23px;font-weight:900;color:#fff;margin-bottom:16px;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.3)" id="home-banner-title">네이버 리뷰 쓰고<br>상품 받아가세요! 🎁</div>
       <div style="display:flex;align-items:center;gap:10px">
         <div style="background:#3182f6;color:#fff;font-size:14px;font-weight:700;padding:10px 20px;border-radius:11px;box-shadow:0 4px 12px rgba(49,130,246,.4)" id="home-game-label">참여하기</div>
         <div style="font-size:12px;color:rgba(255,255,255,.5)" id="home-spin-left">하루 1회</div>
@@ -637,22 +634,18 @@ body.dark .success-msg{color:#3ddc97}
 </div>
 
 <!-- ══════════ 스탬프 적립 팝업 ══════════ -->
-<div id="stamp-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:24px">
-  <div style="background:var(--white);border-radius:24px;width:100%;max-width:360px;padding:32px 24px;text-align:center">
-    <div style="font-size:64px;margin-bottom:8px">⭐</div>
-    <div style="font-size:22px;font-weight:900;color:var(--t1);margin-bottom:6px">스탬프 적립!</div>
-    <div style="font-size:14px;color:var(--t3);margin-bottom:24px">설문 참여해주셔서 감사합니다</div>
-    <div style="background:var(--blue-light);border-radius:16px;padding:20px;margin-bottom:20px">
-      <div style="font-size:13px;color:var(--blue);font-weight:700;margin-bottom:12px">📅 적립일: <span id="stamp-popup-date"></span></div>
-      <div style="font-size:36px;font-weight:900;color:var(--blue)"><span id="stamp-popup-count">0</span><span style="font-size:16px;color:var(--t3);font-weight:400"> / </span><span id="stamp-popup-goal" style="font-size:20px;color:var(--t3);font-weight:600">10</span></div>
-      <div style="font-size:13px;color:var(--t3);margin-top:4px">누적 스탬프</div>
+<div id="stamp-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--white);border-radius:24px;width:100%;max-width:360px;max-height:88vh;overflow-y:auto">
+    <div style="padding:26px 24px 14px;text-align:center;position:sticky;top:0;background:var(--white);border-radius:24px 24px 0 0;border-bottom:1px solid var(--border2)">
+      <div style="font-size:28px;margin-bottom:4px">⭐</div>
+      <div style="font-size:20px;font-weight:900;color:var(--t1);margin-bottom:2px">스탬프 적립!</div>
+      <div style="font-size:13px;color:var(--t3)">설문 참여해주셔서 감사합니다</div>
     </div>
-    <div style="background:var(--yellow-light);border-radius:12px;padding:14px;margin-bottom:24px">
-      <div style="font-size:12px;color:var(--t3);margin-bottom:4px">달성 보상</div>
-      <div style="font-size:15px;font-weight:700;color:var(--t1)">🎁 <span id="stamp-popup-reward"></span></div>
-      <div style="font-size:12px;color:var(--t4);margin-top:4px"><span id="stamp-popup-achieved">0</span>회 달성</div>
+    <div id="stamp-popup-grid" style="padding:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
+    <div id="stamp-popup-milestones" style="border-top:1px solid var(--border2);padding:0 20px"></div>
+    <div style="padding:14px 20px 24px">
+      <button class="btn btn-blue" onclick="closeStampPopup()">스탬프 카드 확인하기 →</button>
     </div>
-    <button class="btn btn-blue" onclick="closeStampPopup()">스탬프 카드 확인하기 →</button>
   </div>
 </div>
 
@@ -694,11 +687,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>직원 코드</label><input id="s-code" placeholder="STAFF001" maxlength="20"></div>
     <div class="field" style="margin-bottom:28px"><label>PIN 번호</label><input id="s-pin" type="password" placeholder="4자리" maxlength="4" inputmode="numeric"></div>
     <div id="staff-error"></div>
-    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
-      <div style="font-size:12px;color:#78350f;line-height:1.8">직원코드: <b>STAFF001</b><br>PIN: <b>1234</b></div>
-      <button onclick="document.getElementById('s-code').value='STAFF001';document.getElementById('s-pin').value='1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
-    </div>
     <button class="btn btn-blue" onclick="staffLogin()">로그인</button>
   </div>
 </div>
@@ -745,11 +733,6 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field"><label>이메일</label><input id="a-email" placeholder="admin@example.com"></div>
     <div class="field" style="margin-bottom:28px"><label>비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30"></div>
     <div id="admin-error"></div>
-    <div style="background:#fff8e6;border:1.5px solid #f5b925;border-radius:12px;padding:12px 14px;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#b45309;margin-bottom:4px">🔧 개발 기본 로그인 정보</div>
-      <div style="font-size:12px;color:#78350f;line-height:1.8">이메일: <b>admin@example.com</b><br>비밀번호: <b>admin1234</b></div>
-      <button onclick="document.getElementById('a-email').value='admin@example.com';document.getElementById('a-pw').value='admin1234'" style="margin-top:8px;padding:5px 12px;background:#f5b925;border:none;border-radius:8px;font-size:11px;font-weight:700;color:#78350f;cursor:pointer;font-family:'Noto Sans KR',sans-serif">자동 입력</button>
-    </div>
     <button class="btn btn-blue" onclick="adminLogin()">로그인</button>
   </div>
 </div>
@@ -844,7 +827,7 @@ function seedDemoStore(){
     spinLog,
     stamps:3,visits:2,
     gameMode:'roulette',
-    stampSettings:{goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'},
+    stampSettings:{goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'음료 1잔 무료'},{goal:10,reward:'무료 메뉴 1개'}]},
     stampCards:{'u1':{count:3,history:[]}},
     vipBenefits:{10:'실버 달성 기념 음료 1잔 무료',20:'골드 달성 기념 사이드메뉴 1개 무료',30:'플래티넘 달성 기념 메인메뉴 1개 무료',50:'다이아 달성 기념 식사권 1회 무료'},
     vipCouponsIssued:{},
@@ -918,7 +901,8 @@ function migrateStore(s){
   if(!s.extraSpinLog)s.extraSpinLog={};
   if(!s.gameMode)s.gameMode='roulette';
   if(!s.profile.kakaoChatUrl)s.profile.kakaoChatUrl='';
-  if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'};
+  if(!s.stampSettings)s.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:10,reward:'무료 메뉴 1개'}]};
+  if(!s.stampSettings.milestones||!s.stampSettings.milestones.length)s.stampSettings.milestones=[{goal:s.stampSettings.goal||10,reward:s.stampSettings.reward||'무료 메뉴 1개'}];
   if(!s.stampCards)s.stampCards={};
   if(!s.crmTemplate)s.crmTemplate='안녕하세요 {고객명}님 😊\n{매장명}입니다!\n\n{쿠폰명} 쿠폰이 발급되었어요 🎁\n매장 방문 시 직원에게 보여주세요.\n\n쿠폰번호: {쿠폰번호}\n유효기간: {유효기간}';
   // 구버전 이모지-rating 문항이 있으면 최신 형태로 교체
@@ -1003,7 +987,7 @@ function createStore(){
   newStore.profile.bgImage='';
   newStore.adminEmail=email;
   newStore.adminPassword=pw;
-  newStore.coupons=[];newStore.users=[];newStore.surveys=[];newStore.staffLogs=[];newStore.spinLog=[];newStore.stamps=0;newStore.visits=0;newStore.vipCouponsIssued={};newStore.extraSpinLog={};newStore.extraEventLog=[];newStore.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'};newStore.stampCards={};
+  newStore.coupons=[];newStore.users=[];newStore.surveys=[];newStore.staffLogs=[];newStore.spinLog=[];newStore.stamps=0;newStore.visits=0;newStore.vipCouponsIssued={};newStore.extraSpinLog={};newStore.extraEventLog=[];newStore.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:10,reward:'무료 메뉴 1개'}]};newStore.stampCards={};
   newStore.owner={name:owner,phone};
   newStore.naverPlaceUrl=naverUrl;
   newStore.approved=true; // MVP: 자동 승인 (총괄 관리자가 나중에 정지 가능)
@@ -1065,6 +1049,7 @@ function nowStr(){
   const mi=String(d.getMinutes()).padStart(2,'0');
   return yy+'.'+mm+'.'+dd+' '+hh+':'+mi;
 }
+function stampFmt(dt){if(!dt)return '';return dt.replace(/\./g,'/').replace(' ','_');}
 function genId(){return 'CPN-'+Math.floor(1000+Math.random()*9000)}
 function expDate(d=30){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0]}
 function validatePhone(p){return /^01[0-9]\d{7,8}$/.test(p.replace(/-/g,''))}
@@ -1416,9 +1401,11 @@ function refreshHome(){
   document.getElementById('home-coupon-badge').textContent=avail+'개';
   document.getElementById('home-coupon-sub').textContent='사용 가능한 쿠폰 '+avail+'개';
   const _cfg=STORE.stampSettings||{goal:10};
+  const _mss=((_cfg.milestones&&_cfg.milestones.length)?_cfg.milestones:[{goal:_cfg.goal||10}]).slice().sort((a,b)=>a.goal-b.goal);
   const _card=getMyStampCard();
-  const _cur=_card.count%(_cfg.goal||10);
-  document.getElementById('home-stamp-sub').textContent=_cur+' / '+(_cfg.goal||10)+'개 적립';
+  const _cur=_card.count||0;
+  const _nextMs=_mss.find(m=>m.goal>_cur)||_mss[_mss.length-1];
+  document.getElementById('home-stamp-sub').textContent=_cur+' / '+_nextMs.goal+'개 적립';
   const last=localStorage.getItem('lastSpin_'+STORE_ID);
   document.getElementById('home-spin-left').textContent=last===today()?'오늘 이미 참여됨':'하루 1회';
   // 게임 모드별 홈 UI
@@ -1443,10 +1430,15 @@ function refreshHome(){
     if(!STORE.extraSpinLog)STORE.extraSpinLog={};
     const todayKey=today();
     const allEvents=STORE.events||[];
+    const _naverSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#03C75A"/><path d="M9 27V9h5l9 14V9H28v18h-5L14 13V27z" fill="white"/></svg>`;
+    const _kakaoSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#FEE500"/><ellipse cx="18" cy="16" rx="11" ry="10" fill="#3C1E1E"/><circle cx="13.5" cy="15" r="2" fill="#FEE500"/><circle cx="22.5" cy="15" r="2" fill="#FEE500"/><path d="M13 20 Q18 23.5 23 20" stroke="#FEE500" stroke-width="2" fill="none" stroke-linecap="round"/><polygon points="15,25 18,29 21,25" fill="#FEE500"/></svg>`;
+    const _googleSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="white" stroke="#e0e0e0" stroke-width="1"/><path d="M28.4 18.3c0-.8-.07-1.57-.2-2.3H18v4.35h5.8c-.25 1.35-1 2.5-2.15 3.27v2.72h3.48c2.04-1.88 3.27-4.65 3.27-8.04z" fill="#4285F4"/><path d="M18 31c2.9 0 5.33-.96 7.1-2.6l-3.48-2.7c-.96.64-2.18 1.02-3.62 1.02-2.79 0-5.15-1.88-5.99-4.41H8.4v2.79C10.16 28.65 13.82 31 18 31z" fill="#34A853"/><path d="M12.01 22.31c-.22-.64-.34-1.32-.34-2.02s.12-1.38.34-2.02v-2.79H8.4C7.51 17.03 7 18.46 7 20s.51 2.97 1.4 4.52l3.61-2.21z" fill="#FBBC05"/><path d="M18 13.58c1.57 0 2.98.54 4.09 1.6l3.06-3.06C23.32 10.42 20.9 9 18 9c-4.18 0-7.84 2.35-9.6 5.79l3.61 2.79C12.85 15.46 15.21 13.58 18 13.58z" fill="#EA4335"/></svg>`;
+    const _tmapSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#E8002D"/><rect x="10" y="9" width="16" height="4" rx="2" fill="white"/><rect x="15" y="13" width="6" height="15" rx="2" fill="white"/></svg>`;
     const platformMeta={
-      kakao:{icon:'🗺️',color:'#FEE500',bg:'#fffbcc',label:'카카오맵 리뷰'},
-      google:{icon:'🔍',color:'#4285F4',bg:'#eaf1ff',label:'구글 리뷰'},
-      tmap:{icon:'📍',color:'#00BCD4',bg:'#e0f8fb',label:'티맵 리뷰'}
+      naver:{icon:_naverSVG,color:'#03C75A',bg:'#e8faf3',label:'네이버지도 리뷰'},
+      kakao:{icon:_kakaoSVG,color:'#FEE500',bg:'#fffbcc',label:'카카오맵 리뷰'},
+      google:{icon:_googleSVG,color:'#4285F4',bg:'#fff',label:'구글 리뷰'},
+      tmap:{icon:_tmapSVG,color:'#E8002D',bg:'#fff0f3',label:'티맵 리뷰'}
     };
     if(!allEvents.length){
       extraEl.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--t4)">추가 이벤트가 설정되지 않았습니다</div>';
@@ -1456,7 +1448,7 @@ function refreshHome(){
         const done=!!(STORE.extraSpinLog[currentUser?.id+'_'+ev.platform+'_'+todayKey]);
         const active=ev.active;
         return `<div${idx>0?' style="border-top:1px solid var(--border2)"':''}><div class="list-item" style="opacity:${active?1:.4};cursor:${active&&!done?'pointer':'default'}" onclick="${active&&!done?`openExtraRoulette('${ev.id}')`:''}">`+
-          `<div class="li-icon" style="background:${meta.bg};font-size:20px">${meta.icon}</div>`+
+          `<div class="li-icon" style="background:${meta.bg};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0">${meta.icon}</div>`+
           `<div class="li-body"><div class="li-title">${meta.label}<span style="font-size:10px;font-weight:600;color:var(--t4);margin-left:6px">${active?'':'(비활성)'}</span></div>`+
           `<div class="li-sub" style="color:${done?'var(--green)':'var(--t3)'}">` +
           (done?'오늘 이미 참여했어요 ✅':(active?'리뷰 작성 후 게임 참여':'현재 비활성화됨'))+`</div></div>`+
@@ -2003,60 +1995,60 @@ function getMyStampCard(){
 }
 function renderStamps(){
   const cfg=STORE.stampSettings||{goal:10,reward:'무료 메뉴 1개',grantStamp:'survey'};
-  const goal=cfg.goal||10;
+  const milestones=((cfg.milestones&&cfg.milestones.length)?cfg.milestones:[{goal:cfg.goal||10,reward:cfg.reward||'무료 메뉴 1개'}]).slice().sort((a,b)=>a.goal-b.goal);
+  const maxGoal=milestones[milestones.length-1].goal;
   const card=getMyStampCard();
   const n=card.count;
-  const completed=Math.floor(n/goal);
-  const current=n%goal;
-  const isFull=current===0&&n>0;
-  document.getElementById('stamp-hero').textContent=
-    isFull?'다 모았어요! 🎁':current+'개 모았어요';
-  document.getElementById('stamp-cnt-label').textContent=current+' / '+goal;
-  document.getElementById('stamp-bar').style.width=Math.round(current/goal*100)+'%';
-  document.getElementById('stamp-goal-reward').textContent=goal+'개 → '+cfg.reward;
+  const nextMs=milestones.find(m=>m.goal>n)||milestones[milestones.length-1];
+  const allDone=n>=maxGoal;
+  const doneCount=milestones.filter(m=>n>=m.goal).length;
+  document.getElementById('stamp-hero').textContent=allDone?'모두 달성했어요! 🎁':n+'개 모았어요';
+  document.getElementById('stamp-cnt-label').textContent=n+' / '+nextMs.goal;
+  document.getElementById('stamp-bar').style.width=Math.min(Math.round(n/nextMs.goal*100),100)+'%';
+  document.getElementById('stamp-goal-reward').textContent=nextMs.goal+'개 → '+nextMs.reward;
   const grantLabel=cfg.grantStamp==='survey'?'만족도 설문 참여 시 자동 적립':'직원에게 스탬프 요청';
-  document.getElementById('stamp-guide-text').textContent=grantLabel+(completed>0?' · 누적 '+completed+'회 달성':'');
-  // 그리드
+  document.getElementById('stamp-guide-text').textContent=grantLabel+(doneCount>0?' · '+doneCount+'단계 달성':'');
+  // 그리드 (최고 목표까지 표시, 마일스톤 칸 강조)
   document.getElementById('stamp-grid').innerHTML=
-    Array.from({length:goal},(_,i)=>'<div class="stamp '+(i<current?'on':'')+'">'+
-    (i<current?'⭐':'○')+'</div>').join('');
-  // 꽉 찼을 때 배너 + 보상 이미지
+    Array.from({length:maxGoal},(_,i)=>{
+      const isMilestone=milestones.some(m=>m.goal===i+1);
+      return '<div class="stamp '+(i<n?'on':'')+(isMilestone?' milestone':'')+'">'+
+        (i<n?'⭐':'○')+'</div>';
+    }).join('');
+  // 달성 배너
   const banner=document.getElementById('stamp-full-banner');
-  if(banner)banner.style.display=isFull?'block':'none';
-  if(isFull){
+  if(banner)banner.style.display=allDone?'block':'none';
+  if(allDone){
+    const lastMs=milestones[milestones.length-1];
     const imgWrap=document.getElementById('stamp-reward-img-wrap');
     const img=document.getElementById('stamp-reward-img');
     const rname=document.getElementById('stamp-reward-name');
-    if(rname)rname.textContent=cfg.reward||'무료 메뉴 1개';
-    if(cfg.rewardImage&&img&&imgWrap){
-      img.src=cfg.rewardImage;imgWrap.style.display='block';
-    }else if(imgWrap){
-      imgWrap.style.display='none';
-    }
+    if(rname)rname.textContent=lastMs.reward||'무료 메뉴 1개';
+    if(cfg.rewardImage&&img&&imgWrap){img.src=cfg.rewardImage;imgWrap.style.display='block';}
+    else if(imgWrap){imgWrap.style.display='none';}
   }
 }
 function grantStamp(reason){
   if(!currentUser)return;
   const cfg=STORE.stampSettings||{goal:10,reward:'무료 메뉴 1개'};
-  const goal=cfg.goal||10;
+  const milestones=((cfg.milestones&&cfg.milestones.length)?cfg.milestones:[{goal:cfg.goal||10,reward:cfg.reward||'무료 메뉴 1개'}]).slice().sort((a,b)=>a.goal-b.goal);
   const card=getMyStampCard();
   card.count++;
   card.history.push({date:today(),datetime:nowStr(),reason:reason||'manual'});
   saveState();
   renderStamps();
-  const current=card.count%goal;
-  if(current===0){
-    // 달성!
-    setTimeout(()=>{
-      const msg='🎉 스탬프 '+goal+'개 달성! '+cfg.reward+' 쿠폰이 발급되었어요';
-      toast(msg);
-      const cid=genId();
-      STORE.coupons.unshift({id:cid,uid:currentUser.id,name:'⭐ 스탬프 달성: '+cfg.reward,benefit:cfg.reward,expires:expDate(60),cond:'1인 1회',status:'available',created:today(),isStamp:true});
-      saveState();
-      const banner=document.getElementById('stamp-full-banner');
-      if(banner)banner.style.display='block';
-    },200);
-  }
+  milestones.forEach(m=>{
+    if(card.count===m.goal){
+      setTimeout(()=>{
+        toast('🎉 스탬프 '+m.goal+'개 달성! '+m.reward+' 쿠폰이 발급되었어요');
+        const cid=genId();
+        STORE.coupons.unshift({id:cid,uid:currentUser.id,name:'⭐ 스탬프 달성: '+m.reward,benefit:m.reward,expires:expDate(60),cond:'1인 1회',status:'available',created:today(),isStamp:true});
+        saveState();
+        const banner=document.getElementById('stamp-full-banner');
+        if(banner)banner.style.display='block';
+      },200);
+    }
+  });
 }
 function addStamp(){
   // 테스트 버튼 (사장님 PIN 필요 없이 관리자 환경에서만 노출 예정)
@@ -2171,15 +2163,30 @@ function submitSurvey(){
 }
 function showStampPopup(){
   const card=getMyStampCard();
-  const goal=STORE.stampSettings?.goal||10;
+  const cfg=STORE.stampSettings||{goal:10,reward:'무료 메뉴 1개'};
+  const milestones=((cfg.milestones&&cfg.milestones.length)?cfg.milestones:[{goal:cfg.goal||10,reward:cfg.reward||'무료 메뉴 1개'}]).slice().sort((a,b)=>a.goal-b.goal);
+  const maxGoal=milestones[milestones.length-1].goal;
   const count=card.count||0;
-  const reward=STORE.stampSettings?.reward||'무료 메뉴 1개';
-  const achieved=Math.floor(count/goal);
-  document.getElementById('stamp-popup-count').textContent=count;
-  document.getElementById('stamp-popup-goal').textContent=goal;
-  document.getElementById('stamp-popup-reward').textContent=reward;
-  document.getElementById('stamp-popup-achieved').textContent=achieved;
-  document.getElementById('stamp-popup-date').textContent=today();
+  const history=card.history||[];
+  // Stamp grid
+  document.getElementById('stamp-popup-grid').innerHTML=Array.from({length:maxGoal},(_,i)=>{
+    const h=history[i];
+    const fdt=stampFmt(h?(h.datetime||h.date):'');
+    const parts=fdt.split('_');
+    const isMilestone=milestones.some(m=>m.goal===i+1);
+    const outline=isMilestone?';outline:3px solid var(--blue);outline-offset:2px':'';
+    if(i<count){
+      return `<div style="text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f5b925,#f97316);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto;box-shadow:0 2px 8px rgba(245,185,37,.35)${outline}">🏅</div><div style="font-size:8px;color:var(--t3);margin-top:3px;line-height:1.4">${parts[0]||''}</div><div style="font-size:8px;color:var(--t4);line-height:1.3">${parts[1]||''}</div></div>`;
+    }else{
+      return `<div style="text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:var(--bg);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto;color:var(--t4)${outline}">·</div><div style="font-size:8px;color:transparent;margin-top:3px;line-height:1.4">-</div><div style="font-size:8px;color:transparent;line-height:1.3">-</div></div>`;
+    }
+  }).join('');
+  // Milestones info
+  document.getElementById('stamp-popup-milestones').innerHTML=milestones.map((m,idx)=>{
+    const done=count>=m.goal;
+    const rem=m.goal-count;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0${idx>0?';border-top:1px solid var(--border2)':''}"><div style="font-size:20px">${done?'✅':'🎯'}</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:${done?'var(--green)':'var(--t1)'}">${m.goal}개 달성 → ${m.reward}</div><div style="font-size:11px;color:var(--t4)">${done?'달성 완료! 🎉':rem+'개 더 모으면 받아요'}</div></div></div>`;
+  }).join('');
   document.getElementById('stamp-popup').style.display='flex';
 }
 function closeStampPopup(){
@@ -3602,7 +3609,7 @@ function renderSettingsAdmin(el){
 
     <div class="card card-pad" style="border-color:var(--green)">
       <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">⭐ 스탬프 카드 설정</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">고객이 스탬프를 몇 개 모아야 보상을 받는지, 보상 내용을 설정하세요.</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">스탬프 단계별 보상을 설정하세요. 5개·10개 등 여러 단계로 추가할 수 있습니다.</div>
       <div class="field">
         <label>스탬프 적립 방식</label>
         <select id="st-stamp-grant" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;font-size:14px;outline:none;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif">
@@ -3610,16 +3617,13 @@ function renderSettingsAdmin(el){
           <option value="manual" ${(STORE.stampSettings?.grantStamp||'survey')==='manual'?'selected':''}>직원이 직접 적립 (수동)</option>
         </select>
       </div>
-      <div class="field">
-        <label>목표 개수 (몇 개를 모아야 보상)</label>
-        <input type="number" id="st-stamp-goal" value="${STORE.stampSettings?.goal||10}" min="3" max="50" placeholder="예) 10">
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">달성 보상 단계</div>
+      <div id="stamp-milestones-admin">
+        ${(()=>{const ms=((STORE.stampSettings?.milestones&&STORE.stampSettings.milestones.length)?STORE.stampSettings.milestones:[{goal:STORE.stampSettings?.goal||10,reward:STORE.stampSettings?.reward||'무료 메뉴 1개'}]).slice().sort((a,b)=>a.goal-b.goal);return ms.map((m,i)=>`<div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:10px"><div style="width:72px;flex-shrink:0"><div style="font-size:10px;color:var(--t3);margin-bottom:4px">${i+1}단계 개수</div><input type="number" id="stamp-ms-goal-${i}" value="${m.goal}" min="1" max="200" style="width:100%;padding:10px 8px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;text-align:center;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none"></div><div style="font-size:18px;color:var(--t3);margin-bottom:12px;flex-shrink:0">→</div><div style="flex:1"><div style="font-size:10px;color:var(--t3);margin-bottom:4px">보상 내용</div><input id="stamp-ms-reward-${i}" value="${m.reward.replace(/"/g,'&quot;')}" placeholder="예) 아메리카노 1잔" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none"></div>${i>0?`<button onclick="removeMilestone(${i})" style="flex-shrink:0;background:var(--red-light);border:none;color:var(--red);font-size:15px;width:34px;height:38px;border-radius:10px;cursor:pointer;margin-bottom:2px">✕</button>`:''}</div>`).join('');})()}
       </div>
-      <div class="field" style="margin-bottom:12px">
-        <label>보상 내용</label>
-        <input id="st-stamp-reward" value="${(STORE.stampSettings?.reward||'무료 메뉴 1개').replace(/"/g,'&quot;')}" placeholder="예) 아메리카노 1잔 무료">
-      </div>
+      <button onclick="addMilestone()" style="display:block;width:100%;padding:10px;background:none;border:1.5px dashed var(--border);border-radius:10px;font-size:13px;color:var(--t3);cursor:pointer;font-family:Noto Sans KR,sans-serif;margin-bottom:14px">+ 단계 추가</button>
       <div class="field" style="margin-bottom:14px">
-        <label>보상 메뉴 사진 (선택) — 달성 시 고객에게 표시</label>
+        <label>보상 메뉴 사진 (선택) — 최고 단계 달성 시 고객에게 표시</label>
         ${STORE.stampSettings?.rewardImage?
           `<div style="margin-bottom:8px;border-radius:12px;overflow:hidden;height:120px;background:#000"><img src="${STORE.stampSettings.rewardImage}" style="width:100%;height:100%;object-fit:cover"></div>
           <button class="btn btn-ghost" style="width:auto;padding:8px 14px;font-size:12px" onclick="removeStampRewardImage()">사진 제거</button>`:
@@ -3675,14 +3679,38 @@ function removeStampRewardImage(){
   saveState();
   renderSettingsAdmin(document.getElementById('admin-body'));
 }
-function saveStampSettings(){
-  const goal=parseInt(document.getElementById('st-stamp-goal').value)||10;
-  const reward=document.getElementById('st-stamp-reward').value.trim()||'무료 메뉴 1개';
-  const grantStamp=document.getElementById('st-stamp-grant').value;
-  if(goal<3||goal>50){toast('목표 개수는 3~50 사이로 입력해주세요');return}
+function readMilestonesFromUI(){
+  const list=[];let i=0;
+  while(document.getElementById('stamp-ms-goal-'+i)){
+    const goal=parseInt(document.getElementById('stamp-ms-goal-'+i).value)||10;
+    const reward=(document.getElementById('stamp-ms-reward-'+i).value||'').trim()||'무료 메뉴 1개';
+    list.push({goal,reward});i++;
+  }
+  return list.sort((a,b)=>a.goal-b.goal);
+}
+function addMilestone(){
+  const ms=readMilestonesFromUI();
+  const lastGoal=ms.length?ms[ms.length-1].goal:5;
+  ms.push({goal:lastGoal+5,reward:''});
   if(!STORE.stampSettings)STORE.stampSettings={};
-  STORE.stampSettings.goal=goal;
-  STORE.stampSettings.reward=reward;
+  STORE.stampSettings.milestones=ms;
+  renderSettingsAdmin(document.getElementById('admin-body'));
+}
+function removeMilestone(i){
+  const ms=readMilestonesFromUI();
+  ms.splice(i,1);
+  if(!STORE.stampSettings)STORE.stampSettings={};
+  STORE.stampSettings.milestones=ms;
+  renderSettingsAdmin(document.getElementById('admin-body'));
+}
+function saveStampSettings(){
+  const milestones=readMilestonesFromUI();
+  if(!milestones.length){toast('보상 단계를 1개 이상 추가해주세요');return}
+  const grantStamp=document.getElementById('st-stamp-grant').value;
+  if(!STORE.stampSettings)STORE.stampSettings={};
+  STORE.stampSettings.milestones=milestones;
+  STORE.stampSettings.goal=milestones[milestones.length-1].goal;
+  STORE.stampSettings.reward=milestones[milestones.length-1].reward;
   STORE.stampSettings.grantStamp=grantStamp;
   saveState();
   toast('✅ 스탬프 설정이 저장되었습니다');
