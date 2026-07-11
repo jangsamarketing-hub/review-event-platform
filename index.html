@@ -495,6 +495,7 @@ body.dark .success-msg{color:#3ddc97}
       <div id="res-coupon" style="width:100%"></div>
       <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:16px">
         <button id="extra-event-btn" class="btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:800;display:none;box-shadow:0 6px 16px rgba(118,75,162,.35)" onclick="openExtraEventPopup()">&#x1F381; 추가 이벤트 참여하기</button>
+        <a id="extra-review-link-btn" class="btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none;background:linear-gradient(135deg,#00c471,#005f35);color:#fff;font-weight:800;text-decoration:none;text-align:center;box-shadow:0 6px 16px rgba(0,196,113,.35)">📝 리뷰 작성하러 가기</a>
         <button id="kakao-share-btn" class="btn" style="background:#FEE500;color:#191f28;font-weight:800;display:none;box-shadow:0 6px 16px rgba(254,229,0,.4)" onclick="shareToKakaoChannel()">💬 당첨내역 카카오채널에 보내기</button>
         <button class="btn btn-blue" onclick="show('s-coupons')" style="font-weight:700">🎟️ 내 쿠폰들 확인하기</button>
         <button class="btn" style="background:var(--bg);border:1.5px solid var(--border);color:var(--t2);font-weight:600" onclick="show('s-home')">🏠 홈으로</button>
@@ -806,8 +807,7 @@ function seedDemoStore(){
       {id:'r1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료 (직원 확인 후 제공)'},
       {id:'r2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},
       {id:'r3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},
-      {id:'r4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},
-      {id:'r5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}
+      {id:'r4',name:'음료수 1개',prob:38,color:'#f5b925',benefit:'음료수 1개 무료'}
     ],
     surveyQuestions:[
       {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
@@ -832,9 +832,9 @@ function seedDemoStore(){
     vipBenefits:{10:'실버 달성 기념 음료 1잔 무료',20:'골드 달성 기념 사이드메뉴 1개 무료',30:'플래티넘 달성 기념 메인메뉴 1개 무료',50:'다이아 달성 기념 식사권 1회 무료'},
     vipCouponsIssued:{},
     events:[
-      {id:'ev-kakao',platform:'kakao',label:'카카오맵 리뷰',emoji:'🗺️',color:'#FEE500',textColor:'#191f28',active:false,link:'',prizes:[{id:'ek1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'ek2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'ek3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'ek4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},{id:'ek5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}]},
-      {id:'ev-google',platform:'google',label:'구글 리뷰',emoji:'🔍',color:'#4285F4',textColor:'#fff',active:false,link:'',prizes:[{id:'eg1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'eg2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'eg3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'eg4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},{id:'eg5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}]},
-      {id:'ev-tmap',platform:'tmap',label:'티맵 리뷰',emoji:'🧭',color:'#E8002D',textColor:'#fff',active:false,link:'',prizes:[{id:'et1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'et2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'et3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'et4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},{id:'et5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}]}
+      {id:'ev-kakao',platform:'kakao',label:'카카오맵 리뷰',emoji:'🗺️',color:'#FEE500',textColor:'#191f28',active:false,link:'',prizes:[{id:'ek1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'ek2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'ek3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'ek4',name:'음료수 1개',prob:38,color:'#f5b925',benefit:'음료수 1개 무료'}]},
+      {id:'ev-google',platform:'google',label:'구글 리뷰',emoji:'🔍',color:'#4285F4',textColor:'#fff',active:false,link:'',prizes:[{id:'eg1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'eg2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'eg3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'eg4',name:'음료수 1개',prob:38,color:'#f5b925',benefit:'음료수 1개 무료'}]},
+      {id:'ev-tmap',platform:'tmap',label:'티맵 리뷰',emoji:'🧭',color:'#E8002D',textColor:'#fff',active:false,link:'',prizes:[{id:'et1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료'},{id:'et2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},{id:'et3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},{id:'et4',name:'음료수 1개',prob:38,color:'#f5b925',benefit:'음료수 1개 무료'}]}
     ]
   };
 }
@@ -894,9 +894,9 @@ function migrateStore(s){
   };
   if(!s.vipCouponsIssued)s.vipCouponsIssued={};
   if(!s.events)s.events=[
-    {id:'ev-kakao',platform:'kakao',label:'카카오맵 리뷰',emoji:'🗺️',color:'#FEE500',textColor:'#191f28',active:false,link:'',prizes:[{id:'ek1',name:'음료무료',prob:15,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'ek2',name:'5%할인',prob:25,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'ek3',name:'꽝',prob:60,color:'#b0b8c1',benefit:''}]},
-    {id:'ev-google',platform:'google',label:'구글 리뷰',emoji:'🔍',color:'#4285F4',textColor:'#fff',active:false,link:'',prizes:[{id:'eg1',name:'음료무료',prob:10,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'eg2',name:'5%할인',prob:20,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'eg3',name:'꽝',prob:70,color:'#b0b8c1',benefit:''}]},
-    {id:'ev-tmap',platform:'tmap',label:'티맵 리뷰',emoji:'🧭',color:'#E8002D',textColor:'#fff',active:false,link:'',prizes:[{id:'et1',name:'음료무료',prob:8,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'et2',name:'5%할인',prob:15,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'et3',name:'꽝',prob:77,color:'#b0b8c1',benefit:''}]}
+    {id:'ev-kakao',platform:'kakao',label:'카카오맵 리뷰',emoji:'🗺️',color:'#FEE500',textColor:'#191f28',active:false,link:'',prizes:[{id:'ek1',name:'음료무료',prob:15,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'ek2',name:'5%할인',prob:25,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'ek3',name:'소음료',prob:60,color:'#f5b925',benefit:'소음료 1잔 무료'}]},
+    {id:'ev-google',platform:'google',label:'구글 리뷰',emoji:'🔍',color:'#4285F4',textColor:'#fff',active:false,link:'',prizes:[{id:'eg1',name:'음료무료',prob:10,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'eg2',name:'5%할인',prob:20,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'eg3',name:'소음료',prob:70,color:'#f5b925',benefit:'소음료 1잔 무료'}]},
+    {id:'ev-tmap',platform:'tmap',label:'티맵 리뷰',emoji:'🧭',color:'#E8002D',textColor:'#fff',active:false,link:'',prizes:[{id:'et1',name:'음료무료',prob:8,color:'#3182f6',benefit:'음료 1잔 무료'},{id:'et2',name:'5%할인',prob:15,color:'#00c471',benefit:'5% 할인 쿠폰'},{id:'et3',name:'소음료',prob:77,color:'#f5b925',benefit:'소음료 1잔 무료'}]}
   ];
   if(!s.extraSpinLog)s.extraSpinLog={};
   if(!s.gameMode)s.gameMode='roulette';
@@ -913,15 +913,14 @@ function migrateStore(s){
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ];
   }
-  // 구버전 상품 확률 (꽝 없는 3개짜리) 이면 기본값으로 교체
+  // 구버전 상품 확률 (3개 이하) 이면 기본값으로 교체
   const mg=s.mainGame;
-  if(mg&&mg.prizes&&mg.prizes.length<4){
+  if(mg&&mg.prizes&&mg.prizes.length<3){
     mg.prizes=[
       {id:'r1',name:'희망 메뉴 1개',prob:2,color:'#8b5cf6',benefit:'희망 메뉴 1개 무료 (직원 확인 후 제공)'},
       {id:'r2',name:'희망 사이드',prob:20,color:'#3182f6',benefit:'희망 사이드 메뉴 1개 무료'},
       {id:'r3',name:'지정 사이드',prob:40,color:'#00c471',benefit:'지정 사이드 메뉴 무료'},
-      {id:'r4',name:'음료수 1개',prob:25,color:'#f5b925',benefit:'음료수 1개 무료'},
-      {id:'r5',name:'꽝',prob:13,color:'#b0b8c1',benefit:''}
+      {id:'r4',name:'음료수 1개',prob:38,color:'#f5b925',benefit:'음료수 1개 무료'}
     ];
   }
   return s;
@@ -1563,8 +1562,30 @@ function goToMainGame(){
 let scratchWinner=null,scratchRevealed=false,scratchIsDrawing=false,scratchCtx=null;
 const SCRATCH_SILVER='#c0c0c0';
 
+// 오늘 프리미엄(최하위 제외) 상품 당첨 횟수 조회
+function getTodayPremiumCount(){
+  if(!currentUser)return 0;
+  if(!STORE.dailyPrizeLog)STORE.dailyPrizeLog={};
+  const key=currentUser.id+'_'+today();
+  const log=STORE.dailyPrizeLog[key]||[];
+  return log.filter(e=>e.prizeIdx<e.totalPrizes-1).length;
+}
+// 당첨 결과 일별 기록 (크로스게임 추적)
+function recordDailyPrize(prizeIdx,totalPrizes){
+  if(!currentUser||prizeIdx<0)return;
+  if(!STORE.dailyPrizeLog)STORE.dailyPrizeLog={};
+  const key=currentUser.id+'_'+today();
+  if(!STORE.dailyPrizeLog[key])STORE.dailyPrizeLog[key]=[];
+  STORE.dailyPrizeLog[key].push({prizeIdx,totalPrizes});
+  saveState();
+}
 function pickWinner(){
-  const prizes=STORE.prizes;
+  const allPrizes=STORE.prizes||[];
+  // 꽝(benefit 없는 상품) 제외
+  const prizes=allPrizes.filter(p=>p.benefit&&p.benefit.trim());
+  if(!prizes.length)return allPrizes[allPrizes.length-1]||{benefit:'',name:'꽝'};
+  // 오늘 프리미엄 2회 이상이면 최하위 상품(4등) 강제
+  if(getTodayPremiumCount()>=2)return prizes[prizes.length-1];
   const total=prizes.reduce((a,p)=>a+(+p.prob||0),0);
   const rand=Math.random()*(total>0?total:1);
   let cum=0,winner=prizes[prizes.length-1];
@@ -1636,7 +1657,7 @@ function pickMainCard(idx){
   mainCardBusy=true;
   const cards=[...document.querySelectorAll('#card-track .main-card')];
   cards.forEach(c=>c.onclick=null);
-  const winner=window.__mainCardPrizes[idx];
+  const winner=pickWinner();
   const isWin=!!(winner.benefit&&winner.benefit.trim());
   initAudio();tick(0.5);
   const picked=cards[idx];
@@ -1662,6 +1683,8 @@ function pickMainCard(idx){
     checkVipUpgrade(currentUser);
     localStorage.setItem('lastSpin_'+STORE_ID,today());
     saveState();
+    const _cp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
+    recordDailyPrize(_cp.findIndex(x=>x.id===winner.id),_cp.length);
     setTimeout(()=>showResult(winner),700);
   },650);
 }
@@ -1789,6 +1812,8 @@ function revealScratch(){
   checkVipUpgrade(currentUser);
   localStorage.setItem('lastSpin_'+STORE_ID,today());
   saveState();
+  const _sp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
+  recordDailyPrize(_sp.findIndex(x=>x.id===scratchWinner?.id),_sp.length);
   if(!isLose)winSound();
   setTimeout(()=>showResult(scratchWinner),600);
 }
@@ -1824,10 +1849,8 @@ function doSpin(){
   isSpinning=true;
   const btn=document.getElementById('spin-btn');btn.disabled=true;btn.textContent='두근두근...';
   const prizes=STORE.prizes;
-  const totalProb=prizes.reduce((a,p)=>a+(+p.prob||0),0);
-  const rand=Math.random()*(totalProb>0?totalProb:1);let cum=0,winner=prizes[prizes.length-1];
-  for(const p of prizes){cum+=(+p.prob||0);if(rand<cum){winner=p;break}}
-  const wi=prizes.findIndex(x=>x.id===winner.id);
+  const winner=pickWinner();
+  const wi=Math.max(0,prizes.findIndex(x=>x.id===winner.id));
   const sl=2*Math.PI/prizes.length;
   const target=-(wi*sl+sl/2)+(Math.PI*1.5);
   const total=Math.PI*2*9+target-spinAngle;
@@ -1851,6 +1874,8 @@ function doSpin(){
       STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
       checkVipUpgrade(currentUser);
       saveState();
+      const _rp=(STORE.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
+      recordDailyPrize(_rp.findIndex(x=>x.id===winner.id),_rp.length);
       setTimeout(()=>{const isLose=!winner.benefit||!winner.benefit.trim();if(!isLose)winSound();showResult(winner)},500);
     }
   }
@@ -1910,6 +1935,9 @@ function showResult(winner){
     saveState();
     area.innerHTML=renderCouponCard({id:cid,name:winner.benefit,benefit:winner.benefit,expires:expDate(30)});
   }else area.innerHTML='';
+  // 리뷰 링크 버튼 숨김 (메인게임 결과에는 표시 안함)
+  const reviewLinkBtn=document.getElementById('extra-review-link-btn');
+  if(reviewLinkBtn)reviewLinkBtn.style.display='none';
   // 추가 이벤트 버튼 노출 (활성 이벤트 있을 때)
   const extraBtn=document.getElementById('extra-event-btn');
   if(extraBtn){
@@ -2008,12 +2036,20 @@ function renderStamps(){
   document.getElementById('stamp-goal-reward').textContent=nextMs.goal+'개 → '+nextMs.reward;
   const grantLabel=cfg.grantStamp==='survey'?'만족도 설문 참여 시 자동 적립':'직원에게 스탬프 요청';
   document.getElementById('stamp-guide-text').textContent=grantLabel+(doneCount>0?' · '+doneCount+'단계 달성':'');
-  // 그리드 (최고 목표까지 표시, 마일스톤 칸 강조)
+  // 그리드 (최고 목표까지 표시, 마일스톤 칸 강조, 날짜 표시)
+  const history=card.history||[];
   document.getElementById('stamp-grid').innerHTML=
     Array.from({length:maxGoal},(_,i)=>{
       const isMilestone=milestones.some(m=>m.goal===i+1);
-      return '<div class="stamp '+(i<n?'on':'')+(isMilestone?' milestone':'')+'">'+
-        (i<n?'⭐':'○')+'</div>';
+      const h=history[i];
+      const fdt=stampFmt(h?(h.datetime||h.date):'');
+      const parts=fdt.split('_');
+      const msStyle=isMilestone?';outline:2px solid var(--blue);outline-offset:2px':'';
+      if(i<n){
+        return `<div style="text-align:center;padding:2px 0"><div class="stamp on${isMilestone?' milestone':''}" style="${msStyle}">🏅</div><div style="font-size:8px;color:var(--t3);margin-top:3px;line-height:1.4">${parts[0]||''}</div><div style="font-size:8px;color:var(--t4);line-height:1.3">${parts[1]||''}</div></div>`;
+      }else{
+        return `<div style="text-align:center;padding:2px 0"><div class="stamp${isMilestone?' milestone':''}">○</div><div style="font-size:8px;color:transparent;margin-top:3px;line-height:1.4">-</div><div style="font-size:8px;color:transparent;line-height:1.3">-</div></div>`;
+      }
     }).join('');
   // 달성 배너
   const banner=document.getElementById('stamp-full-banner');
@@ -2330,7 +2366,10 @@ function drawExtraWheel(ctx,rot,prizes){
   ctx.fillText('GO',cx,cy+5);
 }
 function pickExtraWinner(){
-  const prizes=currentExtraEvent.prizes;
+  const allPrizes=currentExtraEvent.prizes||[];
+  const prizes=allPrizes.filter(p=>p.benefit&&p.benefit.trim());
+  if(!prizes.length)return allPrizes[allPrizes.length-1]||{benefit:'',name:'꽝'};
+  if(getTodayPremiumCount()>=2)return prizes[prizes.length-1];
   const total=prizes.reduce((a,p)=>a+(+p.prob||0),0);
   const rand=Math.random()*(total>0?total:1);
   let cum=0,winner=prizes[prizes.length-1];
@@ -2541,6 +2580,8 @@ function finishExtraGame(winner){
   if(!STORE.extraEventLog)STORE.extraEventLog=[];
   STORE.extraEventLog.push({date:today(),datetime:nowStr(),platform:currentExtraEvent.platform,uid:currentUser?.id||'guest',prize:winner.benefit||'꽝'});
   saveState();
+  const _ep=(currentExtraEvent?.prizes||[]).filter(p=>p.benefit&&p.benefit.trim());
+  recordDailyPrize(_ep.findIndex(x=>x.id===winner.id),_ep.length);
   const isLose=!winner.benefit||!winner.benefit.trim();
   setTimeout(()=>showExtraResult(winner),isLose?900:1300);
 }
@@ -2566,6 +2607,17 @@ function showExtraResult(winner){
     const hasChatUrl=!!(STORE.profile.kakaoChatUrl&&STORE.profile.kakaoChatUrl.trim());
     kakaoBtn.style.display=(hasChatUrl&&!isLose)?'block':'none';
     if(hasChatUrl&&!isLose)kakaoBtn.dataset.prize=winner.benefit;
+  }
+  // 리뷰 링크 버튼 — 추가이벤트 참여 후 해당 플랫폼 리뷰 링크로 이동
+  const reviewLinkBtn=document.getElementById('extra-review-link-btn');
+  if(reviewLinkBtn){
+    const evLink=currentExtraEvent?.link;
+    if(evLink&&evLink.trim()){
+      reviewLinkBtn.href=evLink.trim();
+      reviewLinkBtn.style.display='flex';
+    }else{
+      reviewLinkBtn.style.display='none';
+    }
   }
   const remaining=getActiveEvents().filter(ev=>{
     const k=currentUser?.id+'_'+ev.platform+'_'+today();
