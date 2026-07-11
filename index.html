@@ -584,8 +584,8 @@ body.dark .success-msg{color:#3ddc97}
     <!-- 게임 뷰: 긁는복권 -->
     <div id="extra-view-scratch" style="display:none;padding:0 16px">
       <div style="display:flex;justify-content:center;position:relative">
-        <canvas id="extra-scratch-canvas" width="300" height="200" style="border-radius:16px;touch-action:none;cursor:crosshair;box-shadow:0 8px 24px rgba(0,0,0,.12)"></canvas>
-        <div id="extra-scratch-bg" style="position:absolute;top:0;width:300px;height:200px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a2236,#1e3a5f);z-index:-1">
+        <canvas id="extra-scratch-canvas" width="300" height="200" style="border-radius:16px;touch-action:none;cursor:crosshair;box-shadow:0 8px 24px rgba(0,0,0,.12);position:relative;z-index:2"></canvas>
+        <div id="extra-scratch-bg" style="position:absolute;top:0;width:300px;height:200px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a2236,#1e3a5f);z-index:1">
           <div style="font-size:40px" id="extra-scratch-emoji">🎁</div>
           <div style="font-size:17px;font-weight:900;color:#fff;margin-top:6px" id="extra-scratch-prizename">???</div>
         </div>
@@ -1994,22 +1994,16 @@ function initMainCard(){
   const track=document.getElementById('card-track');
   const prizes=STORE.prizes;
   const N=5;
-  // 상품을 섞어서 카드에 배치
   const basePrizes=Array.from({length:N},(_,i)=>prizes[i%prizes.length]);
   for(let j=basePrizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[basePrizes[j],basePrizes[k]]=[basePrizes[k],basePrizes[j]];}
   window.__mainCardPrizes=basePrizes;
-  document.getElementById('card-status').textContent='어떤 상품이 있는지 확인하세요!';
+  document.getElementById('card-status').textContent='버튼을 눌러 카드를 섞어보세요!';
   document.getElementById('card-result-msg').textContent='';
-  // 3+2 그리드 (앞면 노출 - 등수별 색상)
-  track.innerHTML=basePrizes.map((p,i)=>{
-    const pRank=(prizes||[]).findIndex(x=>x.id===p?.id);
-    const col=getPrizeColor(pRank);
+  // 처음부터 뒷면(파란 카드)으로 표시 — 상품 미공개
+  track.innerHTML=Array.from({length:N},(_,i)=>{
     const span=i<3?'span 2':'span 3';
-    const name=p.name.length>8?p.name.slice(0,7)+'…':p.name;
-    return `<div class="main-card" data-idx="${i}" style="grid-column:${span};border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${col.bg};color:#fff;text-align:center;padding:10px 6px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:transform .35s,opacity .3s;min-height:130px;cursor:default;user-select:none">
-      <div style="font-size:32px;margin-bottom:6px">${col.emoji}</div>
-      <div style="font-size:10px;font-weight:800;opacity:.75;letter-spacing:.5px;margin-bottom:3px">${col.label}</div>
-      <div style="font-size:12px;font-weight:900;line-height:1.3">${name}</div>
+    return `<div class="main-card" data-idx="${i}" style="grid-column:${span};border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#3182f6,#1b64da);color:#fff;text-align:center;padding:10px 6px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:transform .35s,opacity .3s;min-height:130px;cursor:default;user-select:none">
+      <div style="font-size:36px">🃏</div>
     </div>`;
   }).join('');
   if(last===today()){
@@ -2030,35 +2024,40 @@ function doMainCardStart(){
   btn.disabled=true;btn.textContent='카드를 섞는 중...';
   document.getElementById('card-status').textContent='카드를 섞고 있어요...';
   const cards=[...document.querySelectorAll('#card-track .main-card')];
-  // Phase 1: 모두 중앙으로 모아 축소
-  cards.forEach(c=>{
-    c.style.transition='transform .4s cubic-bezier(.4,0,.2,1),opacity .4s';
-    c.style.transform='scale(0)';c.style.opacity='0';
-  });
-  setTimeout(()=>{
-    // 실제 셔플
-    const prizes=window.__mainCardPrizes;
-    for(let j=prizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[prizes[j],prizes[k]]=[prizes[k],prizes[j]];}
-    // 뒷면(파란 🃏)으로 교체
-    cards.forEach(c=>{
-      c.style.background='linear-gradient(135deg,#3182f6,#1b64da)';
-      c.innerHTML='<div style="font-size:36px;color:#fff">🃏</div>';
+  // 카드가 좌우로 실제 움직이며 섞이는 셔플 애니메이션
+  let shuffleCount=0;
+  const dirs=[1,-1,1,-1,-1,1,-1,1,1,-1,1,-1];
+  const shuffleIv=setInterval(()=>{
+    tick(0.22);
+    cards.forEach((c,i)=>{
+      const dir=dirs[(shuffleCount+i)%dirs.length];
+      const tx=dir*(20+Math.random()*22);
+      const ty=(Math.random()-0.5)*10;
+      const rot=dir*(4+Math.random()*6);
+      c.style.transition='transform 0.18s ease';
+      c.style.transform=`translateX(${tx}px) translateY(${ty}px) rotate(${rot}deg)`;
     });
-    // Phase 2: 각자 자리로 펼치기 (스프링)
-    setTimeout(()=>{
-      cards.forEach(c=>{
-        c.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s';
-        c.style.transform='scale(1)';c.style.opacity='1';
-      });
+    shuffleCount++;
+    if(shuffleCount>=10){
+      clearInterval(shuffleIv);
       setTimeout(()=>{
-        cards.forEach(c=>{c.style.transition='transform .35s,opacity .3s';});
-        document.getElementById('card-status').textContent='카드 1장을 선택하세요!';
-        btn.style.display='none';
-        mainCardBusy=false;
-        cards.forEach((c,i)=>{c.style.cursor='pointer';c.onclick=()=>pickMainCard(i);});
-      },560);
-    },80);
-  },450);
+        // 상품 배열 재셔플
+        const prizes=window.__mainCardPrizes;
+        for(let j=prizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[prizes[j],prizes[k]]=[prizes[k],prizes[j]];}
+        cards.forEach(c=>{
+          c.style.transition='transform 0.4s cubic-bezier(.34,1.56,.64,1)';
+          c.style.transform='translateX(0) translateY(0) rotate(0)';
+        });
+        setTimeout(()=>{
+          cards.forEach(c=>{c.style.transition='transform .35s,opacity .3s';});
+          document.getElementById('card-status').textContent='카드 1장을 선택하세요!';
+          btn.style.display='none';
+          mainCardBusy=false;
+          cards.forEach((c,i)=>{c.style.cursor='pointer';c.onclick=()=>pickMainCard(i);});
+        },420);
+      },100);
+    }
+  },160);
 }
 function pickMainCard(idx){
   if(mainCardBusy)return;
@@ -3860,7 +3859,7 @@ function renderAdmin(tab){
         <button class="chip off" id="actab-exp" onclick="selAdminCpnTab('expired',this)">만료 (${STORE.coupons.filter(c=>c.status==='expired').length})</button>
       </div>
       <div id="admin-cpn-list"></div>`;
-    renderAdminCoupons('used');
+    renderAdminCoupons('used','');
   }else if(tab==='survey'){
     renderSurveyAdmin(el);
   }else if(tab==='events'){
