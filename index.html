@@ -165,6 +165,8 @@ body.dark .success-msg{color:#3ddc97}
 @keyframes scratchBounce{0%{transform:translateX(-50%) scale(0.3);opacity:0}50%{transform:translateX(-50%) scale(1.18);opacity:1}70%{transform:translateX(-50%) scale(0.92)}85%{transform:translateX(-50%) scale(1.06)}100%{transform:translateX(-50%) scale(1);opacity:1}}
 .scratch-revealed{z-index:10!important;animation:scratchBounce .7s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes scratchShake{0%,100%{transform:scale(1) rotate(0deg)}20%{transform:scale(1.03) rotate(-2deg)}40%{transform:scale(1.03) rotate(2deg)}60%{transform:scale(1.02) rotate(-1.5deg)}80%{transform:scale(1.02) rotate(1.5deg)}}
+@keyframes scratchRevealOut{0%{transform:scale(1);opacity:1}60%{transform:scale(1.2) rotate(3deg);opacity:.5}100%{transform:scale(1.5) rotate(-2deg);opacity:0}}
+.scratch-reveal-out{animation:scratchRevealOut 0.55s cubic-bezier(.25,.46,.45,.94) forwards!important;pointer-events:none!important}
 @keyframes sparkleUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-90px) rotate(200deg) scale(0);opacity:0}}
 @keyframes sparkleOut{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
 .review-links-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0}
@@ -1524,6 +1526,8 @@ function resetStoreData(id){
   fresh.approved=old.approved??true;
   fresh.premium=old.premium??false;
   fresh.plan=old.plan||'free';
+  fresh.extraSpinLog={};
+  fresh.extraEventLog=[];
   storesDB[id]=migrateStore(fresh);
   saveStoresDB();
   if(STORE_ID===id){STORE=storesDB[id];}
@@ -2138,6 +2142,11 @@ function initScratchCard(){
   // 이벤트 리스너 교체 (중복 방지)
   const newCanvas=canvas.cloneNode(true);
   canvas.parentNode.replaceChild(newCanvas,canvas);
+  // 이전 reveal 애니메이션 잔재 완전 초기화
+  newCanvas.style.cssText=newCanvas.style.cssText.replace(/animation[^;]*;?/g,'').replace(/transition[^;]*;?/g,'');
+  newCanvas.style.opacity='1';
+  newCanvas.style.transform='none';
+  newCanvas.classList.remove('scratch-reveal-out');
   scratchCtx=newCanvas.getContext('2d');
   drawSilverLayer(scratchCtx,true);
   attachScratchEvents(newCanvas);
@@ -2228,37 +2237,28 @@ function revealScratch(){
   const canvas=document.getElementById('scratch-canvas');
   canvas.style.pointerEvents='none';
 
-  // 1단계: 캔버스 흔들기
-  canvas.style.animation='scratchShake 0.3s ease';
+  // CSS 클래스 방식 — inline transition 충돌 없이 확실하게 동작
+  canvas.classList.add('scratch-reveal-out');
+  if(!isLose)winSound();
 
+  // position:fixed 파티클 (z-index 9999, 어떤 레이어도 뚫음)
+  const emojis=isLose?['💨','😅','🤞','😢']:['🎊','🎉','🌟','✨','💫','⭐','🎈','🥳'];
+  const cnt=isLose?7:24;
+  for(let i=0;i<cnt;i++){
+    const sp=document.createElement('div');
+    sp.textContent=emojis[i%emojis.length];
+    const tx=(Math.random()*300-150)+'px';
+    const ty=(-(80+Math.random()*200))+'px';
+    sp.style.cssText=`position:fixed;font-size:${18+Math.random()*22}px;left:${5+Math.random()*90}%;top:${15+Math.random()*60}%;z-index:9999;pointer-events:none;--tx:${tx};--ty:${ty};animation:sparkleOut ${0.8+Math.random()*1.0}s ease-out ${i*0.06}s forwards`;
+    document.body.appendChild(sp);
+    setTimeout(()=>sp.remove(),2200);
+  }
+
+  // 결과 화면 이동 (애니메이션 끝난 후)
   setTimeout(()=>{
-    // 2단계: 캔버스 scale+fade (void offsetWidth로 transition 강제 트리거)
-    canvas.style.animation='none';
-    void canvas.offsetWidth;
-    canvas.style.transition='transform 0.45s ease-out,opacity 0.4s ease-out';
-    canvas.style.transform='scale(1.3)';
-    canvas.style.opacity='0';
-    if(!isLose)winSound();
-
-    // 3단계: position:fixed 파티클 (z-index 문제 완전 우회)
-    const emojis=isLose?['💨','😅','🤞','😢']:['🎊','🎉','🌟','✨','💫','⭐','🎈','🥳'];
-    const cnt=isLose?6:22;
-    for(let i=0;i<cnt;i++){
-      const sp=document.createElement('div');
-      sp.textContent=emojis[i%emojis.length];
-      const tx=(Math.random()*280-140)+'px';
-      const ty=(-(60+Math.random()*200))+'px';
-      sp.style.cssText=`position:fixed;font-size:${16+Math.random()*20}px;left:${8+Math.random()*84}%;top:${20+Math.random()*55}%;z-index:9999;pointer-events:none;--tx:${tx};--ty:${ty};animation:sparkleOut ${0.7+Math.random()*1.0}s ease-out ${i*0.05}s forwards`;
-      document.body.appendChild(sp);
-      setTimeout(()=>sp.remove(),2000);
-    }
-
-    // 4단계: 결과 화면 이동
-    setTimeout(()=>{
-      scratchCtx&&scratchCtx.clearRect(0,0,canvas.width,canvas.height);
-      showResult(scratchWinner);
-    },1800);
-  },300);
+    scratchCtx&&scratchCtx.clearRect(0,0,canvas.width,canvas.height);
+    showResult(scratchWinner);
+  },1800);
 }
 
 function doScratch(){
@@ -2615,9 +2615,9 @@ function renderSurveyQuestions(){
         ${(q.items||[]).map((it,idx)=>`
           <div style="padding:10px 14px;${idx>0?'border-top:1px solid var(--border2)':''}">
             <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">${it}</div>
-            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px;justify-content:flex-end;flex-wrap:wrap">
+            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:1px;justify-content:flex-end;flex-wrap:wrap">
               ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
-              <span data-star="${n}" onclick="setMatrixRating('${q.id}','${it.replace(/'/g,"\\'")}',${n*0.5},this.closest('.star-row'))"
+              <span data-star="${n}" onclick="handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))"
                 style="font-size:27px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block">★</span>`).join('')}
             </div>
           </div>
@@ -2646,12 +2646,33 @@ function renderSurveyQuestions(){
     }
   }).join('');
 }
+function handleStarHalf(e,qid,item,n,rowEl){
+  const rect=e.currentTarget.getBoundingClientRect();
+  const isLeft=(e.clientX-rect.left)<rect.width/2;
+  setMatrixRating(qid,item,isLeft?n-0.5:n,rowEl);
+}
 function setMatrixRating(qid,item,val,rowEl){
   if(!curSurveyAnswers[qid])curSurveyAnswers[qid]={};
   curSurveyAnswers[qid][item]=val;
   rowEl.querySelectorAll('[data-star]').forEach(starEl=>{
-    const n=parseFloat(starEl.dataset.star)*0.5;
-    starEl.style.color=val>=n?'#f5b925':'#d1d5db';
+    const n=parseFloat(starEl.dataset.star); // 1-10 scale
+    if(val>=n){
+      starEl.style.backgroundImage='none';
+      starEl.style.webkitBackgroundClip='initial';
+      starEl.style.backgroundClip='initial';
+      starEl.style.color='#f5b925';
+    }else if(val>=n-0.5){
+      // 반별점: 그라디언트로 왼쪽 절반만 노란색
+      starEl.style.backgroundImage='linear-gradient(to right,#f5b925 50%,#d1d5db 50%)';
+      starEl.style.webkitBackgroundClip='text';
+      starEl.style.backgroundClip='text';
+      starEl.style.color='transparent';
+    }else{
+      starEl.style.backgroundImage='none';
+      starEl.style.webkitBackgroundClip='initial';
+      starEl.style.backgroundClip='initial';
+      starEl.style.color='#d1d5db';
+    }
   });
 }
 function toggleMultiCheck(e,qid,opt,labelEl){
@@ -3220,12 +3241,15 @@ let _curCpnTab='used';
 function selAdminCpnTab(tab,el){
   _curCpnTab=tab;
   document.querySelectorAll('[id^="actab"]').forEach(b=>b.className='chip off');
-  el.className='chip on';renderAdminCoupons(tab);
+  el.className='chip on';
+  renderAdminCoupons(tab,''); // 빈 문자열 = 전체 표시 (탭 클릭 시)
 }
 function renderAdminCoupons(tab,q){
   const el=document.getElementById('admin-cpn-list');if(!el)return;
-  const query=(q!==undefined?q:(document.getElementById('cpn-search')?.value||'')).trim().toLowerCase();
-  if(!query){el.innerHTML='<div style="padding:32px;text-align:center;color:var(--t3);font-size:14px">🔍 고객 이름이나 쿠폰명을 검색하세요</div>';return;}
+  const rawQ=(q!==undefined?q:(document.getElementById('cpn-search')?.value||''));
+  const query=rawQ.trim().toLowerCase();
+  // q가 undefined일 때만 (검색창 입력) 빈 쿼리 → 힌트 표시
+  if(q===undefined&&!query){el.innerHTML='<div style="padding:32px;text-align:center;color:var(--t3);font-size:14px">🔍 고객 이름이나 쿠폰명을 검색하세요</div>';return;}
   let coupons=STORE.coupons.filter(c=>c.status===tab);
   coupons=coupons.filter(c=>{
     const u=STORE.users.find(x=>x.id===c.uid);
@@ -3425,7 +3449,7 @@ function renderCustomersTab(el){
       <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px" id="bulk-count-label">0명 선택됨</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button onclick="bulkCopyMessages()" class="btn btn-blue btn-sm">📋 선택 고객 문구 전체 복사</button>
-        <button onclick="${isPremium()?'bulkSendSMS()':'showVipModal()'}" class="btn btn-light btn-sm" style="${isPremium()?'':'opacity:0.7'}">${isPremium()?'💬 전체 문자 앱 열기':'👑 전체 문자 앱 열기 (VIP)'}</button>
+        <button onclick="${isPremium()?'bulkSendSMS()':'showVipModal()'}" class="btn btn-light btn-sm" style="${isPremium()?'':'opacity:0.75;border-color:#f97316;color:#f97316'}">${isPremium()?'📱 고객에게 메시지 보내기':'👑 고객에게 메시지 보내기 (VIP)'}</button>
       </div>
     </div>
 
@@ -3771,16 +3795,19 @@ function renderAdmin(tab){
         </div>
         <div class="chips" style="margin-bottom:12px">
           <button class="chip ${statsGranularity==='day'?'on':'off'}" onclick="setStatsGranularity('day')">일별</button>
-          <button class="chip ${statsGranularity==='week'?'on':'off'}" onclick="setStatsGranularity('week')">주별</button>
-          <button class="chip ${statsGranularity==='month'?'on':'off'}" onclick="setStatsGranularity('month')">월별</button>
+          <button class="chip ${statsGranularity==='week'?'on':'off'}" onclick="${isPremium()?'setStatsGranularity(\'week\')':'showVipModal()'}">주별${isPremium()?'':' 👑'}</button>
+          <button class="chip ${statsGranularity==='month'?'on':'off'}" onclick="${isPremium()?'setStatsGranularity(\'month\')':'showVipModal()'}">월별${isPremium()?'':' 👑'}</button>
         </div>
         <div id="participation-chart">${renderParticipationChart()}</div>
         <div style="font-size:11px;color:var(--t4);margin-top:8px;line-height:1.6">💡 이 수치를 네이버 플레이스에 실제로 등록된 리뷰 수와 비교해보세요</div>
       </div>
 
-      <div class="card card-pad">
+      <div class="card card-pad" style="position:relative;overflow:hidden">
         <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">리뷰 이벤트 참여 대비 설문 응답 비율</div>
-        ${renderSurveyRatio()}
+        <div style="${isPremium()?'':'filter:blur(5px);pointer-events:none;user-select:none'}">
+          ${renderSurveyRatio()}
+        </div>
+        ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.08)"><div style="background:rgba(255,255,255,.95);border:2px solid #f97316;border-radius:12px;padding:10px 18px;text-align:center"><div style="font-size:18px;margin-bottom:4px">👑</div><div style="font-size:12px;font-weight:700;color:#f97316">VIP 기능 — 탭하여 문의</div></div></div>'}
       </div>
 
       <div class="card card-pad">
@@ -3967,20 +3994,7 @@ function normalizeProbs(){
 
 /* ════════════════════ 추가 이벤트 관리 ════════════════════ */
 function renderEventsAdmin(el){
-  if(!isPremium()){
-    el.innerHTML=`<div style="margin:8px 16px;background:linear-gradient(135deg,#ff9900,#f97316);border-radius:20px;padding:28px 20px;text-align:center">
-      <div style="font-size:44px;margin-bottom:12px">👑</div>
-      <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:8px">VIP 회원 전용 기능</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.9);line-height:1.8;margin-bottom:18px">
-        카카오맵 / 구글 / 티맵 추가이벤트 3종<br>
-        플랫폼별 독립 게임·상품·확률 설정<br>
-        고객 CRM 문자 발송 · 설문 자유 편집
-      </div>
-      <button onclick="showVipModal()" style="padding:14px 28px;background:#fff;border:none;border-radius:14px;font-size:15px;font-weight:800;color:#f97316;cursor:pointer;font-family:Noto Sans KR,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15)">👑 VIP 전환 문의하기</button>
-      <div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:14px">월 9,900원 × 6개월 단위 결제</div>
-    </div>`;
-    return;
-  }
+  const locked=!isPremium();
   const events=STORE.events||[];
   const gameModes=[
     {id:'roulette',icon:'🎡',label:'룰렛'},
@@ -3988,37 +4002,47 @@ function renderEventsAdmin(el){
     {id:'card',icon:'🃏',label:'카드뽑기'},
   ];
   el.innerHTML=`
-    <div class="card card-pad">
-      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">추가 이벤트 관리</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">플랫폼별로 ON/OFF, 링크, 게임 방식, 상품·확률을 따로 설정하세요.<br>중요도: 카카오맵 > 구글 > 티맵 순으로 좋은 상품 추천</div>
-      ${events.map((ev,ei)=>`
-        <div style="border:2px solid ${ev.active?ev.color:'var(--border)'};border-radius:16px;padding:16px;margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-            <div style="width:40px;height:40px;background:${ev.color};border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.emoji}</div>
-            <div style="flex:1;font-size:15px;font-weight:700;color:var(--t1)">${ev.label}</div>
-            <button onclick="toggleEvent(${ei})" class="li-badge ${ev.active?'badge-green':'badge-gray'}" style="border:none;cursor:pointer;font-family:Noto Sans KR,sans-serif;padding:8px 14px">${ev.active?'ON':'OFF'}</button>
-          </div>
-          <div style="margin-bottom:10px">
-            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">매장 링크 (고객이 이동할 URL)</div>
-            <input value="${(ev.link||'').replace(/"/g,'&quot;')}" placeholder="https://place.map.kakao.com/..." oninput="updateEventLink(${ei},this.value)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none;box-sizing:border-box">
-          </div>
-          <div style="margin-bottom:12px">
-            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">게임 방식</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-              ${gameModes.map(gm=>`<div onclick="setEventGameMode(${ei},'${gm.id}')" style="padding:10px 8px;border-radius:10px;border:2px solid ${(ev.gameMode||'roulette')===gm.id?ev.color:'var(--border)'};background:${(ev.gameMode||'roulette')===gm.id?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
-                <div style="font-size:18px">${gm.icon}</div>
-                <div style="font-size:12px;font-weight:700;color:${(ev.gameMode||'roulette')===gm.id?'var(--blue)':'var(--t3)'};margin-top:2px">${gm.label}</div>
-              </div>`).join('')}
+    <div style="position:relative">
+      <div class="card card-pad" style="${locked?'pointer-events:none;user-select:none;opacity:0.7':''}">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">추가 이벤트 관리</div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">플랫폼별로 ON/OFF, 링크, 게임 방식, 상품·확률을 따로 설정하세요.<br>중요도: 카카오맵 > 구글 > 티맵 순으로 좋은 상품 추천</div>
+        ${events.map((ev,ei)=>`
+          <div style="border:2px solid ${ev.active?ev.color:'var(--border)'};border-radius:16px;padding:16px;margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+              <div style="width:40px;height:40px;background:${ev.color};border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.emoji}</div>
+              <div style="flex:1;font-size:15px;font-weight:700;color:var(--t1)">${ev.label}</div>
+              <button onclick="toggleEvent(${ei})" class="li-badge ${ev.active?'badge-green':'badge-gray'}" style="border:none;cursor:pointer;font-family:Noto Sans KR,sans-serif;padding:8px 14px">${ev.active?'ON':'OFF'}</button>
+            </div>
+            <div style="margin-bottom:10px">
+              <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">매장 링크 (고객이 이동할 URL)</div>
+              <input value="${(ev.link||'').replace(/"/g,'&quot;')}" placeholder="https://place.map.kakao.com/..." oninput="updateEventLink(${ei},this.value)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none;box-sizing:border-box">
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">게임 방식</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                ${gameModes.map(gm=>`<div onclick="setEventGameMode(${ei},'${gm.id}')" style="padding:10px 8px;border-radius:10px;border:2px solid ${(ev.gameMode||'roulette')===gm.id?ev.color:'var(--border)'};background:${(ev.gameMode||'roulette')===gm.id?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
+                  <div style="font-size:18px">${gm.icon}</div>
+                  <div style="font-size:12px;font-weight:700;color:${(ev.gameMode||'roulette')===gm.id?'var(--blue)':'var(--t3)'};margin-top:2px">${gm.label}</div>
+                </div>`).join('')}
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">상품 & 확률</div>
+            ${renderEventPrizes(ev,ei)}
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button onclick="addEventPrize(${ei})" class="btn btn-light" style="flex:1;font-size:13px">+ 상품 추가</button>
+              <button onclick="normalizeEventProbs(${ei})" class="btn btn-ghost" style="flex:0 0 auto;width:auto;padding:10px 12px;font-size:12px">100% 맞추기</button>
             </div>
           </div>
-          <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">상품 & 확률</div>
-          ${renderEventPrizes(ev,ei)}
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button onclick="addEventPrize(${ei})" class="btn btn-light" style="flex:1;font-size:13px">+ 상품 추가</button>
-            <button onclick="normalizeEventProbs(${ei})" class="btn btn-ghost" style="flex:0 0 auto;width:auto;padding:10px 12px;font-size:12px">100% 맞추기</button>
-          </div>
+        `).join('')}
+      </div>
+      ${locked?`<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.18);border-radius:20px">
+        <div style="background:linear-gradient(135deg,#ff9900,#f97316);border-radius:18px;padding:20px 28px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.22)">
+          <div style="font-size:32px;margin-bottom:8px">👑</div>
+          <div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:4px">VIP 전용 기능</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:12px">탭하여 업그레이드 문의</div>
+          <div style="background:#fff;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:800;color:#f97316">💬 문의하기</div>
         </div>
-      `).join('')}
+      </div>`:''}
     </div>
   `;
 }
@@ -4214,8 +4238,11 @@ function renderSurveyCharts(){
       const items=q.items||[];
       const rows=items.map((item,i)=>{
         const scores=surveys.map(s=>{const v=s.answers[q.id]?.[item];return(v!==undefined&&v>0)?v:null;}).filter(v=>v!==null);
-        const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0;
-        const pct=Math.round(avg/5*100);
+        const rawAvg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0;
+        // 구버전 데이터(0-5스케일) 자동 감지: 최댓값이 5이하면 ×2로 10점 환산
+        const maxScore=scores.length?Math.max(...scores):0;
+        const avg=maxScore>0&&maxScore<=5?rawAvg*2:rawAvg;
+        const pct=Math.round(avg/10*100);
         return `<div style="margin-bottom:12px">
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
             <span style="color:var(--t1);font-weight:600">${item}</span>
