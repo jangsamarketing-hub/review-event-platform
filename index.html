@@ -3329,11 +3329,13 @@ let _custVisitMode='visited'; // 'visited' | 'notvisit'
 let _custDays=0; // 0=전체
 
 function getLastVisit(u){
-  // 스탬프 이력 → 스핀 로그 → 가입일 순으로 가장 최근 날짜 반환
+  // 스탬프 이력 → 스핀 로그 → 쿠폰 발급일 → 설문일 → 가입일 순으로 가장 최근 날짜 반환
   const sc=STORE.stampCards&&STORE.stampCards[u.id];
   const stampLast=sc&&sc.history&&sc.history.length?sc.history[sc.history.length-1].datetime||sc.history[sc.history.length-1].date:null;
-  const spinLast=(STORE.spinLog||[]).filter(s=>s.uid===u.id).map(s=>s.date).sort().pop()||null;
-  const dates=[stampLast,spinLast,u.joined].filter(Boolean).sort();
+  const spinLast=(STORE.spinLog||[]).filter(s=>s.uid===u.id).map(s=>s.date).filter(Boolean).sort().pop()||null;
+  const couponLast=(STORE.coupons||[]).filter(c=>c.uid===u.id&&c.issued).map(c=>c.issued).sort().pop()||null;
+  const surveyLast=(STORE.surveys||[]).filter(s=>s.userId===u.id&&s.date).map(s=>s.date).sort().pop()||null;
+  const dates=[stampLast,spinLast,couponLast,surveyLast,u.joined].filter(Boolean).sort();
   return dates.length?dates[dates.length-1]:null;
 }
 
@@ -3424,8 +3426,8 @@ function renderCustomersTab(el){
         <button onclick="setCustThisMonth()" style="padding:8px 14px;border-radius:10px;border:1.5px solid ${_custVisitMode==='visited'?'var(--blue)':'var(--border)'};background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;font-family:Noto Sans KR,sans-serif">📅 이번달 방문 고객 보기</button>
       </div>
 
-      <!-- 기간 슬라이더 바 -->
-      <div style="background:var(--bg);border-radius:14px;padding:16px 14px 12px">
+      <!-- 기간 슬라이더 바 (VIP) -->
+      <div style="background:var(--bg);border-radius:14px;padding:16px 14px 12px;position:relative;${isPremium()?'':'overflow:hidden'}">${isPremium()?'':''}
         <div style="position:relative;margin-bottom:8px">
           <div style="height:4px;background:var(--border);border-radius:4px;margin:0 4px"></div>
           <div style="position:absolute;top:0;left:4px;height:4px;background:${_custVisitMode==='visited'?'var(--blue)':'var(--red)'};border-radius:4px;width:${selIdx===0?0:Math.round((selIdx/(periods.length-1))*100)}%;transition:width .2s"></div>
@@ -3441,6 +3443,11 @@ function renderCustomersTab(el){
         <div style="margin-top:10px;text-align:center;font-size:13px;font-weight:700;color:var(--t1)">
           ${_custDays===0?'모든 고객':(_custVisitMode==='visited'?`최근 ${periods[selIdx].label} 이내 방문`:`${periods[selIdx].label} 이상 미방문`)} · <span style="color:${_custVisitMode==='visited'?'var(--blue)':'var(--red)'}">${filtered.length}명</span>
         </div>
+        ${isPremium()?'':
+          `<div onclick="showVipModal()" style="position:absolute;inset:0;z-index:5;cursor:pointer;background:rgba(255,255,255,0.85);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+            <span style="font-size:16px">👑</span>
+            <span style="font-size:13px;font-weight:800;color:#f97316">기간 필터 — VIP 전용</span>
+          </div>`}
       </div>
     </div>
 
@@ -3719,6 +3726,57 @@ function renderParticipationChart(){
   }).join('');
   return `<div style="overflow-x:auto"><svg viewBox="0 0 ${Math.max(chartW,260)} ${chartH}" style="width:100%;min-width:${chartW}px;height:140px">${bars}</svg></div>`;
 }
+function renderStatsSurveySummary(){
+  const surveys=STORE.surveys||[];
+  if(!surveys.length)return '<div style="font-size:13px;color:var(--t4);padding:8px 0">아직 설문 응답이 없습니다</div>';
+  const qs=STORE.surveyQuestions||[];
+  let html='';
+  qs.forEach(q=>{
+    if(q.type==='multicheck'){
+      const opts=q.options||[];
+      const counts={};opts.forEach(o=>{counts[o]=0;});
+      surveys.forEach(s=>{const a=s.answers&&s.answers[q.id];if(Array.isArray(a))a.forEach(v=>{if(counts[v]!==undefined)counts[v]++;});});
+      const sorted=opts.map(o=>({o,c:counts[o]})).sort((a,b)=>b.c-a.c).filter(x=>x.c>0);
+      if(!sorted.length)return;
+      html+=`<div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">${q.label}</div>
+        ${sorted.slice(0,4).map(x=>{
+          const pct=Math.round(x.c/surveys.length*100);
+          return `<div style="margin-bottom:5px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--t2)">${x.o}</span><span style="color:var(--t3);font-weight:600">${x.c}명 (${pct}%)</span></div>
+            <div style="height:6px;background:var(--border);border-radius:3px"><div style="height:6px;background:var(--blue);border-radius:3px;width:${pct}%"></div></div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }else if(q.type==='matrix'){
+      const items=q.items||[];
+      const avgs=items.map(it=>{
+        const scores=surveys.map(s=>s.answers&&s.answers[q.id]&&s.answers[q.id][it]).filter(v=>v!=null&&v>0);
+        if(!scores.length)return{it,avg:0,n:0};
+        const rawAvg=scores.reduce((a,b)=>a+b,0)/scores.length;
+        const maxScore=Math.max(...scores);
+        const avg=maxScore<=5?rawAvg*2:rawAvg;
+        return{it,avg:Math.round(avg*10)/10,n:scores.length};
+      }).filter(x=>x.n>0);
+      if(!avgs.length)return;
+      html+=`<div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">${q.label}</div>
+        ${avgs.map(x=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="flex:1;font-size:12px;color:var(--t2)">${x.it}</div>
+          <div style="font-size:13px;font-weight:800;color:${x.avg>=8?'var(--green)':x.avg>=6?'var(--blue)':'var(--red)'}">${x.avg}<span style="font-size:10px;font-weight:400;color:var(--t4)">/10</span></div>
+        </div>`).join('')}
+      </div>`;
+    }else if(q.type==='text'){
+      const comments=surveys.map(s=>s.answers&&s.answers[q.id]).filter(v=>v&&v.trim()).slice(-3).reverse();
+      if(!comments.length)return;
+      html+=`<div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">${q.label} (최근 3개)</div>
+        ${comments.map(c=>`<div style="font-size:12px;color:var(--t2);background:var(--bg);border-radius:8px;padding:8px 10px;margin-bottom:6px;line-height:1.5">"${c}"</div>`).join('')}
+      </div>`;
+    }
+  });
+  return html||'<div style="font-size:13px;color:var(--t4)">분석할 설문 데이터가 없습니다</div>';
+}
 function renderSurveyRatio(){
   const totalParticipants=(STORE.spinLog&&STORE.spinLog.length)||STORE.visits||0;
   const surveyCount=STORE.surveys.length;
@@ -3783,7 +3841,7 @@ function renderAdmin(tab){
         <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">날짜별 리뷰 이벤트 참여인원</div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <button class="chip ${statsRangeMode==='all'?'on':'off'}" onclick="setStatsRangeMode('all')">총계</button>
-          <button class="chip ${statsRangeMode==='range'?'on':'off'}" onclick="setStatsRangeMode('range')">기간별 보기</button>
+          <button class="chip ${statsRangeMode==='range'?'on':'off'}" onclick="${isPremium()?'setStatsRangeMode(\'range\')':'showVipModal()'}">${isPremium()?'기간별 보기':'기간별 보기 👑'}</button>
         </div>
         <div id="stats-range-picker" style="display:${statsRangeMode==='range'?'flex':'none'};gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
           <input type="date" id="stats-from" value="${statsRangeFrom}" style="flex:1;min-width:110px;padding:7px 9px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:var(--white);color:var(--t1)">
@@ -3799,6 +3857,14 @@ function renderAdmin(tab){
         </div>
         <div id="participation-chart">${renderParticipationChart()}</div>
         <div style="font-size:11px;color:var(--t4);margin-top:8px;line-height:1.6">💡 이 수치를 네이버 플레이스에 실제로 등록된 리뷰 수와 비교해보세요</div>
+      </div>
+
+      <div class="card card-pad">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:14px;font-weight:700;color:var(--t1)">📋 설문 응답 요약</div>
+          <div style="font-size:12px;color:var(--t3)">총 ${(STORE.surveys||[]).length}건</div>
+        </div>
+        ${renderStatsSurveySummary()}
       </div>
 
       <div class="card card-pad" style="position:relative;overflow:hidden">
@@ -4001,47 +4067,41 @@ function renderEventsAdmin(el){
     {id:'card',icon:'🃏',label:'카드뽑기'},
   ];
   el.innerHTML=`
-    <div style="position:relative">
-      <div class="card card-pad" style="${locked?'pointer-events:none;user-select:none;opacity:0.7':''}">
-        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">추가 이벤트 관리</div>
-        <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">플랫폼별로 ON/OFF, 링크, 게임 방식, 상품·확률을 따로 설정하세요.<br>중요도: 카카오맵 > 구글 > 티맵 순으로 좋은 상품 추천</div>
-        ${events.map((ev,ei)=>`
-          <div style="border:2px solid ${ev.active?ev.color:'var(--border)'};border-radius:16px;padding:16px;margin-bottom:14px">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-              <div style="width:40px;height:40px;background:${ev.color};border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.emoji}</div>
-              <div style="flex:1;font-size:15px;font-weight:700;color:var(--t1)">${ev.label}</div>
-              <button onclick="toggleEvent(${ei})" class="li-badge ${ev.active?'badge-green':'badge-gray'}" style="border:none;cursor:pointer;font-family:Noto Sans KR,sans-serif;padding:8px 14px">${ev.active?'ON':'OFF'}</button>
-            </div>
-            <div style="margin-bottom:10px">
-              <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">매장 링크 (고객이 이동할 URL)</div>
-              <input value="${(ev.link||'').replace(/"/g,'&quot;')}" placeholder="https://place.map.kakao.com/..." oninput="updateEventLink(${ei},this.value)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none;box-sizing:border-box">
-            </div>
-            <div style="margin-bottom:12px">
-              <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">게임 방식</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-                ${gameModes.map(gm=>`<div onclick="setEventGameMode(${ei},'${gm.id}')" style="padding:10px 8px;border-radius:10px;border:2px solid ${(ev.gameMode||'roulette')===gm.id?ev.color:'var(--border)'};background:${(ev.gameMode||'roulette')===gm.id?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
-                  <div style="font-size:18px">${gm.icon}</div>
-                  <div style="font-size:12px;font-weight:700;color:${(ev.gameMode||'roulette')===gm.id?'var(--blue)':'var(--t3)'};margin-top:2px">${gm.label}</div>
-                </div>`).join('')}
-              </div>
-            </div>
-            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">상품 & 확률</div>
-            ${renderEventPrizes(ev,ei)}
-            <div style="display:flex;gap:8px;margin-top:10px">
-              <button onclick="addEventPrize(${ei})" class="btn btn-light" style="flex:1;font-size:13px">+ 상품 추가</button>
-              <button onclick="normalizeEventProbs(${ei})" class="btn btn-ghost" style="flex:0 0 auto;width:auto;padding:10px 12px;font-size:12px">100% 맞추기</button>
+    <div class="card card-pad">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">추가 이벤트 관리</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">플랫폼별로 ON/OFF, 링크, 게임 방식, 상품·확률을 따로 설정하세요.<br>중요도: 카카오맵 > 구글 > 티맵 순으로 좋은 상품 추천</div>
+      ${events.map((ev,ei)=>`
+        <div style="position:relative;border:2px solid ${ev.active?ev.color:'var(--border)'};border-radius:16px;padding:16px;margin-bottom:14px${locked?';opacity:0.78':''}">
+          ${locked?`<div onclick="showVipModal()" style="position:absolute;top:10px;right:10px;z-index:6;background:linear-gradient(135deg,#ff9900,#f97316);border-radius:10px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.18)">
+            <span style="font-size:14px">👑</span><span style="font-size:12px;font-weight:900;color:#fff">VIP 전용</span>
+          </div>
+          <div onclick="showVipModal()" style="position:absolute;inset:0;z-index:5;cursor:pointer;border-radius:16px"></div>`:''}
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;pointer-events:${locked?'none':'auto'}">
+            <div style="width:40px;height:40px;background:${ev.color};border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${ev.emoji}</div>
+            <div style="flex:1;font-size:15px;font-weight:700;color:var(--t1)">${ev.label}</div>
+            <button onclick="toggleEvent(${ei})" class="li-badge ${ev.active?'badge-green':'badge-gray'}" style="border:none;cursor:pointer;font-family:Noto Sans KR,sans-serif;padding:8px 14px">${ev.active?'ON':'OFF'}</button>
+          </div>
+          <div style="margin-bottom:10px;pointer-events:${locked?'none':'auto'}">
+            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">매장 링크 (고객이 이동할 URL)</div>
+            <input value="${(ev.link||'').replace(/"/g,'&quot;')}" placeholder="https://place.map.kakao.com/..." oninput="updateEventLink(${ei},this.value)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--white);color:var(--t1);font-family:Noto Sans KR,sans-serif;outline:none;box-sizing:border-box">
+          </div>
+          <div style="margin-bottom:12px;pointer-events:${locked?'none':'auto'}">
+            <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">게임 방식</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              ${gameModes.map(gm=>`<div onclick="setEventGameMode(${ei},'${gm.id}')" style="padding:10px 8px;border-radius:10px;border:2px solid ${(ev.gameMode||'roulette')===gm.id?ev.color:'var(--border)'};background:${(ev.gameMode||'roulette')===gm.id?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
+                <div style="font-size:18px">${gm.icon}</div>
+                <div style="font-size:12px;font-weight:700;color:${(ev.gameMode||'roulette')===gm.id?'var(--blue)':'var(--t3)'};margin-top:2px">${gm.label}</div>
+              </div>`).join('')}
             </div>
           </div>
-        `).join('')}
-      </div>
-      ${locked?`<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.18);border-radius:20px">
-        <div style="background:linear-gradient(135deg,#ff9900,#f97316);border-radius:18px;padding:20px 28px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.22)">
-          <div style="font-size:32px;margin-bottom:8px">👑</div>
-          <div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:4px">VIP 전용 기능</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:12px">탭하여 업그레이드 문의</div>
-          <div style="background:#fff;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:800;color:#f97316">💬 문의하기</div>
+          <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;pointer-events:${locked?'none':'auto'}">상품 & 확률</div>
+          <div style="pointer-events:${locked?'none':'auto'}">${renderEventPrizes(ev,ei)}</div>
+          <div style="display:flex;gap:8px;margin-top:10px;pointer-events:${locked?'none':'auto'}">
+            <button onclick="addEventPrize(${ei})" class="btn btn-light" style="flex:1;font-size:13px">+ 상품 추가</button>
+            <button onclick="normalizeEventProbs(${ei})" class="btn btn-ghost" style="flex:0 0 auto;width:auto;padding:10px 12px;font-size:12px">100% 맞추기</button>
+          </div>
         </div>
-      </div>`:''}
+      `).join('')}
     </div>
   `;
 }
