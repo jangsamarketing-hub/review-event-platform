@@ -22,6 +22,12 @@
 4. **단일 HTML 파일 유지** — 별도 JS/CSS 파일 분리하지 말 것 (Supabase 이전 시점에 같이 논의)
 5. 로컬 개발: `python -m http.server 8420` → http://localhost:8420
 
+### 토큰 절약 전략 (search-first · tdd-workflow · strategic-compact)
+
+6. **search-first** — 코드를 읽기 전에 Grep/Glob으로 먼저 위치를 찾는다. 파일 전체를 Read하기 전에 검색으로 범위를 좁혀라.
+7. **tdd-workflow** — 기능 추가 시 변경할 함수/섹션만 파악 후 최소 범위만 Edit. 전체 파일 재작성 금지.
+8. **strategic-compact** — 컨텍스트가 길어지면 이전 탐색 결과·중간 출력은 참조하지 말고 버려라. 필요한 것만 다시 검색. 긴 파일(index.html)은 offset+limit으로 필요한 줄만 읽어라.
+
 ---
 
 ## 완료된 기능 전체 목록 (V2-3 기준, 2026-07-11)

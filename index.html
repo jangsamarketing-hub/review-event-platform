@@ -199,153 +199,75 @@ body.dark .success-msg{color:#3ddc97}
 <div class="scr" id="s-notfound">
  <div class="scroll" style="background:#F7F6F3;padding:0;display:block">
 
-  <!-- ① HERO — 페인포인트 훅 -->
-  <section style="background:#0D1B2A;padding:44px 18px 36px;overflow:hidden">
-   <div style="font-size:10px;font-weight:600;color:rgba(255,107,0,0.85);letter-spacing:2px;margin-bottom:14px;text-transform:uppercase">AEO · GEO · AI 검색 시대</div>
-   <!-- 좌우 2단 레이아웃 -->
-   <div style="display:flex;gap:12px;align-items:flex-start">
-    <!-- 왼쪽: 텍스트 + CTA -->
-    <div style="flex:1;min-width:0">
-     <div style="font-size:25px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-1px;margin-bottom:12px">AI 시대,<br>더 이상<br><span style="color:#FF6B00">검색만</span><br>하지 않습니다</div>
-     <div style="border-left:3px solid #FF6B00;padding:8px 0 8px 12px;margin-bottom:14px">
-      <div style="font-size:12.5px;font-weight:800;color:rgba(255,255,255,0.92);line-height:1.6">리뷰, 아직도<br>말로만<br>제안하시나요?</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;line-height:1.6">게임으로 자발적인<br>리뷰를 유도하세요</div>
-     </div>
-     <button onclick="show('s-owner-signup')" style="width:100%;padding:13px 6px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:12px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(255,107,0,0.45)">무료로 시작하기 →</button>
-    </div>
-    <!-- 오른쪽: 실제 폰 프레임 + 인터랙티브 게임 -->
-    <div style="flex-shrink:0;width:138px">
-     <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 24px 60px rgba(0,0,0,0.8),0 0 0 1px #2a2a2a">
-      <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-      <!-- 스크린: 실제 게임 화면 -->
-      <div style="background:#fff;border-radius:20px;overflow:hidden">
-       <!-- 룰렛 게임 화면 (기본) -->
-       <div id="h-game-roulette">
-        <div style="background:#3182f6;padding:7px 8px;text-align:center">
-         <div style="font-size:7px;color:rgba(255,255,255,0.7)">오늘의 이벤트</div>
-         <div style="font-size:10px;font-weight:900;color:#fff;margin-top:1px">럭키 룰렛 🎰</div>
-         <div style="font-size:6.5px;color:rgba(255,255,255,0.6);margin-top:1px">하루에 한 번, 행운의 쿠폰</div>
-        </div>
-        <div style="padding:7px;display:flex;flex-direction:column;align-items:center;gap:4px">
-         <div style="font-size:14px;color:#E8002D;line-height:1">▼</div>
-         <canvas id="h-wheel" width="110" height="110" style="border-radius:50%;box-shadow:0 3px 12px rgba(0,0,0,0.12)"></canvas>
-         <button onclick="hDoSpin()" style="background:#3182f6;border:none;border-radius:9px;padding:8px 0;font-size:10px;font-weight:800;color:#fff;width:100%;cursor:pointer;font-family:inherit">돌리기</button>
-         <div id="h-spin-res" style="font-size:8.5px;font-weight:800;color:#FF6B00;min-height:13px;text-align:center;padding:1px 0"></div>
-        </div>
-       </div>
-       <!-- 카드뽑기 게임 화면 (숨김) -->
-       <div id="h-game-card" style="display:none">
-        <div style="background:#3182f6;padding:7px 8px;text-align:center">
-         <div style="font-size:7px;color:rgba(255,255,255,0.7)">카드를 선택하세요</div>
-         <div style="font-size:10px;font-weight:900;color:#fff;margin-top:1px">행운의 카드 🃏</div>
-        </div>
-        <div style="padding:8px;min-height:168px">
-         <div id="h-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px"></div>
-         <div id="h-card-res" style="font-size:9px;font-weight:800;color:#FF6B00;text-align:center;min-height:12px"></div>
-        </div>
-       </div>
-       <!-- 긁는복권 게임 화면 (숨김) -->
-       <div id="h-game-scratch" style="display:none">
-        <div style="background:#3182f6;padding:7px 8px;text-align:center">
-         <div style="font-size:7px;color:rgba(255,255,255,0.7)">긁어서 확인하세요</div>
-         <div style="font-size:10px;font-weight:900;color:#fff;margin-top:1px">긁는 복권 🎟️</div>
-        </div>
-        <div style="padding:8px;display:flex;flex-direction:column;align-items:center;gap:7px;min-height:168px">
-         <div id="h-scratch-cover" onclick="hRevealScratch()" style="width:112px;height:75px;border-radius:12px;background:linear-gradient(135deg,#999,#777);display:flex;align-items:center;justify-content:center;cursor:pointer">
-          <div style="font-size:10px;font-weight:800;color:#fff;text-align:center">손가락으로<br>긁어보세요!</div>
-         </div>
-         <div id="h-scratch-rev" style="display:none;width:112px;height:75px;border-radius:12px;background:linear-gradient(135deg,#FFF8E1,#FFF0C0);display:flex;align-items:center;justify-content:center;border:2px dashed #FFB830">
-          <div style="text-align:center"><div style="font-size:22px">🎁</div><div style="font-size:9px;font-weight:900;color:#FF6B00">희망 사이드 무료!</div></div>
-         </div>
-         <button id="h-scratch-btn" onclick="hRevealScratch()" style="background:#03C75A;border:none;border-radius:9px;padding:8px 0;font-size:10px;font-weight:800;color:#fff;width:100%;cursor:pointer;font-family:inherit">긁기!</button>
-        </div>
-       </div>
-      </div>
-      <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-     </div>
-     <!-- 게임 탭 전환 -->
-     <div style="margin-top:8px;display:flex;gap:3px;justify-content:center">
-      <button onclick="hSwitch('roulette')" id="h-t-r" style="background:rgba(49,130,246,0.2);border:1.5px solid #3182f6;border-radius:8px;padding:3px 6px;font-size:8px;font-weight:700;color:#3182f6;cursor:pointer;font-family:inherit">룰렛</button>
-      <button onclick="hSwitch('card')" id="h-t-c" style="background:transparent;border:1.5px solid rgba(255,255,255,0.2);border-radius:8px;padding:3px 6px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;font-family:inherit">카드</button>
-      <button onclick="hSwitch('scratch')" id="h-t-s" style="background:transparent;border:1.5px solid rgba(255,255,255,0.2);border-radius:8px;padding:3px 6px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;font-family:inherit">복권</button>
-     </div>
-    </div>
+  <!-- ① HERO — 2개 겹친 폰 목업 -->
+  <section style="background:#0D1B2A;padding:40px 0 0;overflow:hidden">
+   <div style="padding:0 24px">
+    <div style="font-size:10px;font-weight:600;color:rgba(255,107,0,0.85);letter-spacing:2px;margin-bottom:14px;text-transform:uppercase">AEO · GEO · AI 검색 시대</div>
+    <div style="font-size:34px;font-weight:900;color:#fff;line-height:1.15;letter-spacing:-1.5px;margin-bottom:10px">AI 시대,<br>더 이상<br><span style="color:#FF6B00">검색만</span><br>하지 않습니다</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:0">리뷰, 아직도 말로만 제안하시나요?<br>게임이 자연스럽게 리뷰로 이어집니다</div>
    </div>
-   <div style="font-size:9.5px;color:rgba(255,255,255,0.18);text-align:center;margin-top:14px">네이버 플레이스 URL만 있으면 · 5분 완성 · 카드 불필요</div>
+
+   <!-- 겹친 폰 2대 -->
+   <div style="position:relative;height:320px;margin-top:24px;overflow:hidden">
+
+    <!-- 뒤 폰: 리뷰 유도 화면 (왼쪽, 살짝 뒤) -->
+    <div style="position:absolute;left:-14px;top:32px;transform:rotate(-9deg);width:162px;z-index:1;
+      background:#1c1c1e;border-radius:36px;padding:7px;
+      box-shadow:0 24px 64px rgba(0,0,0,0.7),inset 0 0 0 1.5px #3a3a3c">
+     <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:42px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+     <div style="background:#fff;border-radius:26px;overflow:hidden">
+      <div style="background:#03C75A;padding:10px 10px 8px">
+       <div style="font-size:7px;color:rgba(255,255,255,0.7);margin-bottom:2px">N 네이버 리뷰 이벤트</div>
+       <div style="font-size:11.5px;font-weight:900;color:#fff;line-height:1.35">리뷰 쓰고<br>상품 받아가세요! 🎁</div>
+      </div>
+      <div style="padding:9px">
+       <div style="background:#FFF8E1;border-radius:10px;padding:9px;margin-bottom:8px;border:1.5px solid #FFE082;text-align:center">
+        <div style="font-size:8.5px;font-weight:600;color:#aaa;margin-bottom:2px">🎉 당첨 상품</div>
+        <div style="font-size:13px;font-weight:900;color:#FF6B00">희망 사이드 무료!</div>
+       </div>
+       <button style="background:#03C75A;border:none;border-radius:9px;padding:9px 0;font-size:10.5px;font-weight:800;color:#fff;width:100%;font-family:inherit">네이버 리뷰 작성하기</button>
+       <div style="display:flex;justify-content:center;gap:1px;margin-top:8px">
+        <span style="font-size:16px;color:#FFB830;text-shadow:0 0 5px #FFB830">★</span><span style="font-size:16px;color:#FFB830;text-shadow:0 0 5px #FFB830">★</span><span style="font-size:16px;color:#FFB830;text-shadow:0 0 5px #FFB830">★</span><span style="font-size:16px;color:#FFB830;text-shadow:0 0 5px #FFB830">★</span><span style="font-size:16px;color:#FFB830;text-shadow:0 0 5px #FFB830">★</span>
+       </div>
+       <div style="font-size:8px;color:#bbb;text-align:center;margin-top:2px">리뷰 작성 시 쿠폰 즉시 발급</div>
+      </div>
+     </div>
+     <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:38px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+    </div>
+
+    <!-- 앞 폰: 룰렛 게임 화면 (오른쪽, 앞) -->
+    <div style="position:absolute;right:-10px;top:4px;transform:rotate(7deg);width:168px;z-index:2;
+      background:#1c1c1e;border-radius:36px;padding:7px;
+      box-shadow:0 32px 80px rgba(0,0,0,0.85),inset 0 0 0 1.5px #3a3a3c">
+     <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:42px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+     <div style="background:#fff;border-radius:26px;overflow:hidden">
+      <div style="background:#3182f6;padding:10px;text-align:center">
+       <div style="font-size:7.5px;color:rgba(255,255,255,0.75);margin-bottom:2px">오늘의 이벤트</div>
+       <div style="font-size:13px;font-weight:900;color:#fff;line-height:1.3">럭키 룰렛 🎰</div>
+       <div style="font-size:7px;color:rgba(255,255,255,0.6);margin-top:1px">하루 한 번, 행운의 쿠폰</div>
+      </div>
+      <div style="padding:8px 9px;display:flex;flex-direction:column;align-items:center;gap:5px">
+       <div style="font-size:18px;color:#E8002D;line-height:1">▼</div>
+       <div style="width:124px;height:124px;border-radius:50%;
+         background:conic-gradient(#d1d5db 0deg 72deg,#3182f6 72deg 144deg,#9ca3af 144deg 216deg,#F59E0B 216deg 288deg,#FF6B00 288deg 360deg);
+         box-shadow:0 6px 24px rgba(0,0,0,0.2);position:relative;transform:rotate(20deg)">
+        <div style="position:absolute;inset:30%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#3182f6;box-shadow:0 2px 8px rgba(0,0,0,0.14)">GO</div>
+       </div>
+       <div style="background:#3182f6;border-radius:10px;padding:9px 0;font-size:11px;font-weight:800;color:#fff;width:100%;text-align:center">돌리기</div>
+       <div style="font-size:9.5px;font-weight:800;color:#FF6B00">🎉 희망 사이드 당첨!</div>
+      </div>
+     </div>
+     <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:38px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+    </div>
+
+   </div>
+
+   <!-- CTA -->
+   <div style="padding:0 22px 36px;background:#0D1B2A;margin-top:0">
+    <button onclick="show('s-owner-signup')" style="width:100%;padding:17px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:15px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(255,107,0,0.45);letter-spacing:-.3px">무료로 내 매장 리뷰이벤트 만들기 →</button>
+    <div style="font-size:10px;color:rgba(255,255,255,0.18);text-align:center;margin-top:11px">네이버 플레이스 URL만 있으면 · 5분 완성 · 카드 불필요</div>
+   </div>
   </section>
-  <script>
-  (function(){
-   var HP=[{l:'꽝',c:'#ccc'},{l:'음료수',c:'#3182f6'},{l:'지정사이드',c:'#9CA3AF'},{l:'희망사이드',c:'#F59E0B'},{l:'희망메뉴',c:'#FF6B00'}];
-   var ha=0,hs=false;
-   function dHW(a){
-    var cv=document.getElementById('h-wheel');if(!cv)return;
-    var ctx=cv.getContext('2d'),cx=55,cy=55,r=51,n=HP.length;
-    ctx.clearRect(0,0,110,110);
-    HP.forEach(function(p,i){
-     var s=a+(i/n)*2*Math.PI,e=a+((i+1)/n)*2*Math.PI;
-     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,s,e);ctx.closePath();
-     ctx.fillStyle=p.c;ctx.fill();
-     ctx.save();ctx.translate(cx,cy);ctx.rotate(s+Math.PI/n);
-     ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font='bold 7.5px sans-serif';
-     ctx.fillText(p.l,r-4,3);ctx.restore();
-    });
-    ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
-    ctx.fillStyle='#3182f6';ctx.font='bold 8px sans-serif';
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('GO',cx,cy);
-   }
-   window.hDoSpin=function(){
-    if(hs)return;hs=true;
-    var re=document.getElementById('h-spin-res');if(re)re.textContent='';
-    var n=HP.length,wi=Math.floor(Math.random()*n);
-    var tgt=ha+(3.5+Math.random()*1.5)*2*Math.PI+(n-wi-.5)/n*2*Math.PI;
-    var dur=2600,st=performance.now(),sa=ha;
-    (function fr(now){
-     var t=Math.min((now-st)/dur,1),e=1-Math.pow(1-t,4);
-     ha=sa+(tgt-sa)*e;dHW(ha);
-     if(t<1){requestAnimationFrame(fr);}
-     else{ha=tgt;hs=false;var p=HP[wi];if(re)re.textContent=p.l==='꽝'?'😢 꽝!':'🎉 '+p.l+'!';}
-    })(performance.now());
-   };
-   function initCards(){
-    var el=document.getElementById('h-cards');if(!el)return;
-    el.innerHTML='';window._hcPicked=false;window._hcWin=Math.floor(Math.random()*5);
-    for(var i=0;i<5;i++){
-     var d=document.createElement('div');
-     d.style.cssText='background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:8px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.2)';
-     d.textContent='🃏';
-     (function(idx){d.onclick=function(){
-      if(window._hcPicked)return;window._hcPicked=true;
-      var cards=el.querySelectorAll('div');
-      cards.forEach(function(c,j){setTimeout(function(){
-       var w=j===window._hcWin;
-       c.style.background=w?'linear-gradient(135deg,#FF6B00,#FF9500)':'linear-gradient(135deg,#e5e7eb,#d1d5db)';
-       c.textContent=w?'🎁':'';c.style.fontSize='14px';
-      },j*80);});
-      var re=document.getElementById('h-card-res');
-      setTimeout(function(){if(re)re.textContent=idx===window._hcWin?'🎉 희망메뉴 당첨!':'😢 다음에 도전';},500);
-     };})(i);
-     el.appendChild(d);
-    }
-   }
-   window.hRevealScratch=function(){
-    var cov=document.getElementById('h-scratch-cover'),rev=document.getElementById('h-scratch-rev'),btn=document.getElementById('h-scratch-btn');
-    if(cov)cov.style.display='none';if(rev){rev.style.display='flex';}
-    if(btn){btn.textContent='쿠폰 받기 →';btn.style.background='#FF6B00';btn.onclick=function(){show('s-owner-signup');};}
-   };
-   window.hSwitch=function(type){
-    ['roulette','card','scratch'].forEach(function(t){
-     var el=document.getElementById('h-game-'+t);if(el)el.style.display=t===type?'block':'none';
-     var ids={'roulette':'h-t-r','card':'h-t-c','scratch':'h-t-s'};
-     var tab=document.getElementById(ids[t]);
-     if(tab){var s=t===type;tab.style.background=s?'rgba(49,130,246,0.2)':'transparent';tab.style.borderColor=s?'#3182f6':'rgba(255,255,255,0.2)';tab.style.color=s?'#3182f6':'rgba(255,255,255,0.4)';}
-    });
-    if(type==='card')setTimeout(initCards,50);
-   };
-   function init(){dHW(0);}
-   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-   else setTimeout(init,50);
-  })();
-  </script>
 
   <!-- ② AEO/GEO — 검색 패러다임 변화 -->
   <section style="background:#fff;padding:40px 22px 36px">
@@ -410,166 +332,190 @@ body.dark .success-msg{color:#3ddc97}
    </div>
   </section>
 
-  <!-- ④ 리뷰 게임 — 실제 인터랙티브 게임 데모 -->
-  <section style="background:#F7F6F3;padding:40px 0 40px 22px">
-   <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:12px">리뷰이벤트 게임 3종</div>
-   <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:6px">직접 체험해보세요</div>
-   <div style="font-size:13px;color:#888;margin-bottom:22px;line-height:1.6;padding-right:22px">실제 고객이 경험하는 게임 화면입니다<br>당첨 경험이 자연스럽게 리뷰로 이어집니다</div>
-
-   <!-- 가로 스크롤 인터랙티브 폰 3대 -->
-   <div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none">
-
-    <!-- 룰렛 폰 -->
-    <div style="flex-shrink:0;width:155px">
-     <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,0.22),0 0 0 1px #2a2a2a">
-      <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-      <div style="background:#fff;border-radius:20px;overflow:hidden">
-       <div style="background:#3182f6;padding:9px 10px;text-align:center">
-        <div style="font-size:8px;color:rgba(255,255,255,0.7)">오늘의 이벤트</div>
-        <div style="font-size:12px;font-weight:900;color:#fff;margin-top:1px;line-height:1.3">럭키 룰렛 🎰</div>
-        <div style="font-size:7.5px;color:rgba(255,255,255,0.6);margin-top:2px">하루 한 번 행운의 쿠폰</div>
-       </div>
-       <div style="padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px">
-        <div style="font-size:16px;color:#E8002D;line-height:1">▼</div>
-        <canvas id="g-wheel" width="125" height="125" style="border-radius:50%;box-shadow:0 4px 16px rgba(0,0,0,0.13)"></canvas>
-        <button onclick="gDoSpin()" style="background:#3182f6;border:none;border-radius:11px;padding:9px 0;font-size:11px;font-weight:800;color:#fff;width:100%;cursor:pointer;font-family:inherit">돌리기</button>
-        <div id="g-spin-res" style="font-size:9px;font-weight:800;color:#FF6B00;min-height:14px;text-align:center"></div>
-       </div>
-      </div>
-      <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-     </div>
-     <div style="margin-top:8px;text-align:center;font-size:11px;font-weight:700;color:#555">🎰 룰렛</div>
-    </div>
-
-    <!-- 카드뽑기 폰 -->
-    <div style="flex-shrink:0;width:155px">
-     <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,0.22),0 0 0 1px #2a2a2a">
-      <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-      <div style="background:#fff;border-radius:20px;overflow:hidden">
-       <div style="background:#3182f6;padding:9px 10px;text-align:center">
-        <div style="font-size:8px;color:rgba(255,255,255,0.7)">카드를 선택하세요</div>
-        <div style="font-size:12px;font-weight:900;color:#fff;margin-top:1px;line-height:1.3">행운의 카드 🃏</div>
-        <div style="font-size:7.5px;color:rgba(255,255,255,0.6);margin-top:2px">5장 중 1장 선택</div>
-       </div>
-       <div style="padding:10px 8px;min-height:190px">
-        <div id="g-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px"></div>
-        <div id="g-card-res" style="font-size:9px;font-weight:800;color:#FF6B00;text-align:center;min-height:13px"></div>
-        <button id="g-card-retry" onclick="gInitCards()" style="display:none;background:#3182f6;border:none;border-radius:11px;padding:9px 0;font-size:11px;font-weight:800;color:#fff;width:100%;cursor:pointer;font-family:inherit;margin-top:6px">다시 뽑기</button>
-       </div>
-      </div>
-      <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-     </div>
-     <div style="margin-top:8px;text-align:center;font-size:11px;font-weight:700;color:#555">🃏 카드뽑기</div>
-    </div>
-
-    <!-- 긁는복권 폰 -->
-    <div style="flex-shrink:0;width:155px">
-     <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,0.22),0 0 0 1px #2a2a2a">
-      <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-      <div style="background:#fff;border-radius:20px;overflow:hidden">
-       <div style="background:#3182f6;padding:9px 10px;text-align:center">
-        <div style="font-size:8px;color:rgba(255,255,255,0.7)">긁어서 확인하세요</div>
-        <div style="font-size:12px;font-weight:900;color:#fff;margin-top:1px;line-height:1.3">긁는 복권 🎟️</div>
-        <div style="font-size:7.5px;color:rgba(255,255,255,0.6);margin-top:2px">당첨 상품을 확인하세요</div>
-       </div>
-       <div style="padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:190px">
-        <div style="font-size:10px;color:#888;font-weight:700;align-self:flex-start">🎟️ 행운 복권</div>
-        <div id="g-scr-cov" onclick="gReveal()" style="width:131px;height:82px;border-radius:14px;background:linear-gradient(135deg,#8E8E93,#636366);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,0.2)">
-         <div style="font-size:24px">🖐️</div>
-         <div style="font-size:9px;font-weight:800;color:#fff;margin-top:4px">눌러서 긁기!</div>
-        </div>
-        <div id="g-scr-rev" style="display:none;width:131px;height:82px;border-radius:14px;background:linear-gradient(135deg,#FFF9E6,#FFF3C4);border:2.5px dashed #FFB830;align-items:center;justify-content:center;flex-direction:column">
-         <div style="font-size:28px">🎁</div>
-         <div style="font-size:10px;font-weight:900;color:#FF6B00;margin-top:3px">희망 사이드 무료!</div>
-        </div>
-        <button id="g-scr-btn" onclick="gReveal()" style="background:#03C75A;border:none;border-radius:11px;padding:9px 0;font-size:11px;font-weight:800;color:#fff;width:100%;cursor:pointer;font-family:inherit">긁기!</button>
-        <div id="g-scr-ret" style="display:none;font-size:9px;font-weight:700;color:#3182f6;cursor:pointer;text-decoration:underline" onclick="gResetScratch()">다시 도전</div>
-       </div>
-      </div>
-      <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-     </div>
-     <div style="margin-top:8px;text-align:center;font-size:11px;font-weight:700;color:#555">🎟️ 긁는복권</div>
-    </div>
-
-    <!-- 우측 패딩 -->
-    <div style="flex-shrink:0;width:8px"></div>
+  <!-- ④ 게임 캐러셀 — 4종 정적 화면 슬라이드 -->
+  <section style="background:#F7F6F3;padding:40px 0 36px">
+   <div style="padding:0 24px;margin-bottom:22px">
+    <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:10px">리뷰이벤트 게임 4종</div>
+    <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:6px">게임이 끝나면<br>자연스럽게 리뷰를 씁니다</div>
+    <div style="font-size:13px;color:#888;line-height:1.6">당첨 경험 → 감사함 → 리뷰 작성 → 재방문</div>
    </div>
-   <div style="font-size:10px;color:#aaa;margin-top:4px;padding-right:22px">← 옆으로 밀어서 다른 게임도 체험하세요</div>
+
+   <!-- 캐러셀 -->
+   <div style="position:relative;overflow:hidden">
+    <div id="gc-track" style="display:flex;will-change:transform;transition:transform .45s cubic-bezier(.4,0,.2,1)">
+
+     <!-- ── SLIDE 1: 룰렛 ── -->
+     <div class="gc-sl" style="flex-shrink:0;width:100%;display:flex;justify-content:center;padding:0 52px">
+      <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 28px 72px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;width:100%;max-width:220px">
+       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+       <div style="background:#fff;border-radius:30px;overflow:hidden">
+        <div style="background:#3182f6;padding:13px;text-align:center">
+         <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-bottom:2px">오늘의 이벤트</div>
+         <div style="font-size:16px;font-weight:900;color:#fff">럭키 룰렛 🎰</div>
+         <div style="font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px">하루 한 번, 행운의 쿠폰을 받으세요</div>
+        </div>
+        <div style="padding:13px 14px;display:flex;flex-direction:column;align-items:center;gap:9px">
+         <div style="font-size:22px;color:#E8002D;line-height:1">▼</div>
+         <div style="width:176px;height:176px;border-radius:50%;
+           background:conic-gradient(#d1d5db 0deg 72deg,#3182f6 72deg 144deg,#9ca3af 144deg 216deg,#F59E0B 216deg 288deg,#FF6B00 288deg 360deg);
+           box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;transform:rotate(20deg)">
+          <div style="position:absolute;inset:30%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#3182f6;box-shadow:0 3px 12px rgba(0,0,0,0.14)">GO</div>
+         </div>
+         <div style="background:#3182f6;border-radius:13px;padding:12px 0;font-size:14px;font-weight:800;color:#fff;width:100%;text-align:center">돌리기</div>
+         <div style="font-size:12px;font-weight:800;color:#FF6B00">🎉 희망 사이드 당첨!</div>
+        </div>
+       </div>
+       <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      </div>
+     </div>
+
+     <!-- ── SLIDE 2: 카드뽑기 ── -->
+     <div class="gc-sl" style="flex-shrink:0;width:100%;display:flex;justify-content:center;padding:0 52px">
+      <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 28px 72px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;width:100%;max-width:220px">
+       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+       <div style="background:#fff;border-radius:30px;overflow:hidden">
+        <div style="background:#3182f6;padding:13px;text-align:center">
+         <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-bottom:2px">카드를 선택하세요</div>
+         <div style="font-size:16px;font-weight:900;color:#fff">행운의 카드 🃏</div>
+         <div style="font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px">5장 중 1장을 선택해 보세요</div>
+        </div>
+        <div style="padding:13px 14px">
+         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+          <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:12px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,0.18)">🃏</div>
+          <div style="background:linear-gradient(135deg,#FF6B00,#FF9500);border-radius:12px;aspect-ratio:.7;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,107,0,0.4);transform:translateY(-6px) scale(1.06)">
+           <div style="font-size:24px">🎁</div>
+           <div style="font-size:10px;font-weight:900;color:#fff;margin-top:2px">당첨!</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:12px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,0.18)">🃏</div>
+         </div>
+         <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px">
+          <div style="width:calc(33.3% - 4px);background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:12px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,0.18)">🃏</div>
+          <div style="width:calc(33.3% - 4px);background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:12px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,0.18)">🃏</div>
+         </div>
+         <div style="font-size:13px;font-weight:800;color:#03C75A;text-align:center;margin-bottom:8px">🎉 희망 메뉴 1개 당첨!</div>
+         <div style="background:#3182f6;border-radius:13px;padding:12px 0;font-size:14px;font-weight:800;color:#fff;text-align:center">쿠폰 받기</div>
+        </div>
+       </div>
+       <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      </div>
+     </div>
+
+     <!-- ── SLIDE 3: 긁는복권 ── -->
+     <div class="gc-sl" style="flex-shrink:0;width:100%;display:flex;justify-content:center;padding:0 52px">
+      <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 28px 72px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;width:100%;max-width:220px">
+       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+       <div style="background:#fff;border-radius:30px;overflow:hidden">
+        <div style="background:#3182f6;padding:13px;text-align:center">
+         <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-bottom:2px">긁어서 확인하세요</div>
+         <div style="font-size:16px;font-weight:900;color:#fff">긁는 복권 🎟️</div>
+         <div style="font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px">당첨 상품을 긁어서 확인!</div>
+        </div>
+        <div style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px">
+         <div style="font-size:11px;font-weight:700;color:#888;align-self:flex-start">🎟️ 행운 복권</div>
+         <!-- 긁힌 복권 당첨 상태 -->
+         <div style="width:100%;border-radius:16px;background:linear-gradient(135deg,#FFF9E6,#FFF0C0);border:2.5px dashed #FFB830;padding:22px 0;text-align:center">
+          <div style="font-size:42px">🎁</div>
+          <div style="font-size:14px;font-weight:900;color:#FF6B00;margin-top:6px">희망 사이드 무료!</div>
+          <div style="font-size:9px;color:#aaa;margin-top:3px">당첨 쿠폰</div>
+         </div>
+         <div style="background:#FF6B00;border-radius:13px;padding:12px 0;font-size:14px;font-weight:800;color:#fff;width:100%;text-align:center">쿠폰 받기 →</div>
+        </div>
+       </div>
+       <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      </div>
+     </div>
+
+     <!-- ── SLIDE 4: 사다리타기 ── -->
+     <div class="gc-sl" style="flex-shrink:0;width:100%;display:flex;justify-content:center;padding:0 52px">
+      <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 28px 72px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;width:100%;max-width:220px">
+       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+       <div style="background:#fff;border-radius:30px;overflow:hidden">
+        <div style="background:#3182f6;padding:13px;text-align:center">
+         <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-bottom:2px">사다리를 선택하세요</div>
+         <div style="font-size:16px;font-weight:900;color:#fff">사다리 타기 🪜</div>
+         <div style="font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px">4개 중 1개 선택 — 행운을 잡으세요</div>
+        </div>
+        <div style="padding:13px 16px">
+         <!-- 상단 출발 버튼 4개 -->
+         <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <div style="width:38px;height:28px;border-radius:8px;background:#FF6B00;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;box-shadow:0 2px 8px rgba(255,107,0,0.4)">1번</div>
+          <div style="width:38px;height:28px;border-radius:8px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#888">2번</div>
+          <div style="width:38px;height:28px;border-radius:8px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#888">3번</div>
+          <div style="width:38px;height:28px;border-radius:8px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#888">4번</div>
+         </div>
+         <!-- SVG 사다리 -->
+         <svg viewBox="0 0 160 180" style="width:100%;display:block">
+          <!-- 세로선 4개 -->
+          <line x1="20" y1="0" x2="20" y2="180" stroke="#FF6B00" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="60" y1="0" x2="60" y2="180" stroke="#d1d5db" stroke-width="3" stroke-linecap="round"/>
+          <line x1="100" y1="0" x2="100" y2="180" stroke="#d1d5db" stroke-width="3" stroke-linecap="round"/>
+          <line x1="140" y1="0" x2="140" y2="180" stroke="#d1d5db" stroke-width="3" stroke-linecap="round"/>
+          <!-- 가로 연결선 -->
+          <line x1="20" y1="36" x2="60" y2="36" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="60" y1="72" x2="100" y2="72" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="100" y1="36" x2="140" y2="36" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="20" y1="108" x2="60" y2="108" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="60" y1="144" x2="100" y2="144" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="100" y1="108" x2="140" y2="108" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- 당첨 경로 하이라이트 -->
+          <polyline points="20,0 20,36 60,36 60,72 100,72 100,108 140,108 140,144 60,144 60,180"
+            stroke="#FF6B00" stroke-width="3.5" fill="none" stroke-dasharray="none" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
+         </svg>
+         <!-- 하단 결과 -->
+         <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <div style="width:38px;text-align:center;font-size:9px;color:#aaa">꽝</div>
+          <div style="width:38px;text-align:center;font-size:9px;color:#aaa">꽝</div>
+          <div style="width:38px;text-align:center;font-size:9px;color:#aaa">꽝</div>
+          <div style="width:38px;height:24px;border-radius:8px;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;box-shadow:0 2px 8px rgba(255,107,0,0.35)">🎁</div>
+         </div>
+        </div>
+       </div>
+       <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      </div>
+     </div>
+
+    </div><!-- /gc-track -->
+
+    <!-- 좌우 버튼 -->
+    <button onclick="gcGo(gcCur-1)" style="position:absolute;left:10px;top:45%;transform:translateY(-50%);background:rgba(255,255,255,0.92);border:none;border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 3px 12px rgba(0,0,0,0.14);line-height:1">‹</button>
+    <button onclick="gcGo(gcCur+1)" style="position:absolute;right:10px;top:45%;transform:translateY(-50%);background:rgba(255,255,255,0.92);border:none;border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;z-index:10;box-shadow:0 3px 12px rgba(0,0,0,0.14);line-height:1">›</button>
+   </div>
+
+   <!-- 도트 + 레이블 -->
+   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px">
+    <div style="display:flex;gap:5px">
+     <div class="gc-dot" style="width:22px;height:4px;background:#FF6B00;border-radius:2px;transition:all .3s"></div>
+     <div class="gc-dot" style="width:6px;height:4px;background:#d1d5db;border-radius:2px;transition:all .3s"></div>
+     <div class="gc-dot" style="width:6px;height:4px;background:#d1d5db;border-radius:2px;transition:all .3s"></div>
+     <div class="gc-dot" style="width:6px;height:4px;background:#d1d5db;border-radius:2px;transition:all .3s"></div>
+    </div>
+    <div id="gc-label" style="font-size:14px;font-weight:800;color:#333">🎰 룰렛</div>
+   </div>
   </section>
   <script>
   (function(){
-   var GP=[{l:'꽝',c:'#ccc'},{l:'음료수',c:'#3182f6'},{l:'지정사이드',c:'#9CA3AF'},{l:'희망사이드',c:'#F59E0B'},{l:'희망메뉴',c:'#FF6B00'}];
-   var ga=0,gs=false;
-   function dGW(a){
-    var cv=document.getElementById('g-wheel');if(!cv)return;
-    var ctx=cv.getContext('2d'),cx=62,cy=62,r=58,n=GP.length;
-    ctx.clearRect(0,0,125,125);
-    GP.forEach(function(p,i){
-     var s=a+(i/n)*2*Math.PI,e=a+((i+1)/n)*2*Math.PI;
-     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,s,e);ctx.closePath();
-     ctx.fillStyle=p.c;ctx.fill();
-     ctx.save();ctx.translate(cx,cy);ctx.rotate(s+Math.PI/n);
-     ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font='bold 8.5px sans-serif';
-     ctx.fillText(p.l,r-5,3);ctx.restore();
+   var gcCur=0,gcTotal=4,gcAutoT,gcNames=['🎰 룰렛','🃏 카드뽑기','🎟️ 긁는복권','🪜 사다리타기'];
+   window.gcGo=function(n){
+    gcCur=(n%gcTotal+gcTotal)%gcTotal;
+    var t=document.getElementById('gc-track');
+    if(t)t.style.transform='translateX(-'+gcCur*100+'%)';
+    document.querySelectorAll('.gc-dot').forEach(function(d,i){
+     d.style.width=i===gcCur?'22px':'6px';
+     d.style.background=i===gcCur?'#FF6B00':'#d1d5db';
     });
-    ctx.beginPath();ctx.arc(cx,cy,16,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
-    ctx.fillStyle='#3182f6';ctx.font='bold 9px sans-serif';
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('GO',cx,cy);
+    var lb=document.getElementById('gc-label');if(lb)lb.textContent=gcNames[gcCur];
+   };
+   function startAuto(){gcAutoT=setInterval(function(){window.gcGo(gcCur+1);},3200);}
+   var tr=document.getElementById('gc-track'),gsx=0,gsy=0;
+   if(tr){
+    tr.addEventListener('touchstart',function(e){gsx=e.touches[0].clientX;gsy=e.touches[0].clientY;clearInterval(gcAutoT);},{passive:true});
+    tr.addEventListener('touchend',function(e){
+     var dx=e.changedTouches[0].clientX-gsx,dy=e.changedTouches[0].clientY-gsy;
+     if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30)window.gcGo(dx<0?gcCur+1:gcCur-1);
+     startAuto();
+    });
    }
-   window.gDoSpin=function(){
-    if(gs)return;gs=true;
-    var re=document.getElementById('g-spin-res');if(re)re.textContent='';
-    var n=GP.length,wi=Math.floor(Math.random()*n);
-    var tgt=ga+(4+Math.random()*2)*2*Math.PI+(n-wi-.5)/n*2*Math.PI;
-    var dur=2800,st=performance.now(),sa=ga;
-    (function fr(now){
-     var t=Math.min((now-st)/dur,1),e=1-Math.pow(1-t,4);
-     ga=sa+(tgt-sa)*e;dGW(ga);
-     if(t<1){requestAnimationFrame(fr);}
-     else{ga=tgt;gs=false;var p=GP[wi];if(re)re.textContent=p.l==='꽝'?'😢 꽝!':'🎉 '+p.l+'!';}
-    })(performance.now());
-   };
-   window.gInitCards=function(){
-    var el=document.getElementById('g-cards');if(!el)return;
-    el.innerHTML='';window._gcPicked=false;window._gcWin=Math.floor(Math.random()*5);
-    var res=document.getElementById('g-card-res'),btn=document.getElementById('g-card-retry');
-    if(res)res.textContent='';if(btn)btn.style.display='none';
-    for(var i=0;i<5;i++){
-     var d=document.createElement('div');
-     d.style.cssText='background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:10px;aspect-ratio:.7;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,0.2);transition:transform .15s';
-     d.textContent='🃏';
-     d.onmouseover=function(){this.style.transform='scale(1.08)';};
-     d.onmouseout=function(){this.style.transform='';};
-     (function(idx){d.onclick=function(){
-      if(window._gcPicked)return;window._gcPicked=true;
-      var cards=el.querySelectorAll('div');
-      cards.forEach(function(c,j){setTimeout(function(){
-       var w=j===window._gcWin;
-       c.style.background=w?'linear-gradient(135deg,#FF6B00,#FF9500)':'linear-gradient(135deg,#e5e7eb,#d1d5db)';
-       c.textContent=w?'🎁':'✕';c.style.fontSize=w?'20px':'14px';c.style.color=w?'':'#aaa';
-      },j*90);});
-      setTimeout(function(){
-       var res=document.getElementById('g-card-res'),btn=document.getElementById('g-card-retry');
-       if(res)res.textContent=idx===window._gcWin?'🎉 희망메뉴 당첨!':'😢 다음에 도전!';
-       if(btn)btn.style.display='block';
-      },600);
-     };})(i);
-     el.appendChild(d);
-    }
-   };
-   window.gReveal=function(){
-    var cov=document.getElementById('g-scr-cov'),rev=document.getElementById('g-scr-rev'),btn=document.getElementById('g-scr-btn'),ret=document.getElementById('g-scr-ret');
-    if(cov&&cov.style.display!=='none'){cov.style.display='none';if(rev){rev.style.display='flex';}if(btn){btn.textContent='쿠폰 받기 →';btn.style.background='#FF6B00';btn.onclick=function(){show('s-owner-signup');};}if(ret)ret.style.display='block';}
-   };
-   window.gResetScratch=function(){
-    var cov=document.getElementById('g-scr-cov'),rev=document.getElementById('g-scr-rev'),btn=document.getElementById('g-scr-btn'),ret=document.getElementById('g-scr-ret');
-    if(cov)cov.style.display='flex';if(rev)rev.style.display='none';
-    if(btn){btn.textContent='긁기!';btn.style.background='#03C75A';btn.onclick=window.gReveal;}
-    if(ret)ret.style.display='none';
-   };
-   function init(){dGW(0);gInitCards();}
-   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-   else setTimeout(init,50);
+   startAuto();
   })();
   </script>
 
@@ -620,147 +566,189 @@ body.dark .success-msg{color:#3ddc97}
    <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:8px">오늘 온 고객을<br>내일도 오게 합니다</div>
    <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:24px">만족도 피드백 → 스탬프 적립 → 쿠폰 발급 → <strong style="color:#0D1B2A">무료 문자 재방문 유도</strong><br>이 사이클이 자동으로 돌아갑니다</div>
 
-   <!-- 스탬프 카드 실제 앱 화면 -->
-   <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 16px 48px rgba(0,0,0,0.25),0 0 0 1px #2a2a2a;margin-bottom:14px">
-    <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-    <div style="background:#f8f9fa;border-radius:20px;overflow:hidden">
-     <!-- 앱 헤더 -->
-     <div style="background:#fff;padding:12px 14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:8px;background:#FF6B00;display:flex;align-items:center;justify-content:center;font-size:14px">🏆</div>
-      <div><div style="font-size:12px;font-weight:800;color:#111">내 적립 포인트</div><div style="font-size:9.5px;color:#888">스탬프 카드</div></div>
-     </div>
-     <!-- 포인트 요약 -->
-     <div style="background:linear-gradient(135deg,#FF6B00,#FF9500);padding:14px 16px;text-align:center">
-      <div style="font-size:30px;margin-bottom:2px">🥉</div>
-      <div style="font-size:11px;font-weight:900;color:#fff">7개 모았어요!</div>
-      <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-top:2px">10개 모으면 무료 메뉴 쿠폰 지급</div>
-      <!-- 프로그레스 바 -->
-      <div style="margin-top:8px;background:rgba(255,255,255,0.25);border-radius:10px;height:7px;overflow:hidden">
-       <div style="width:70%;height:100%;background:#fff;border-radius:10px"></div>
-      </div>
-      <div style="font-size:8.5px;color:rgba(255,255,255,0.8);margin-top:3px">7 / 10 (3개 남았어요)</div>
-     </div>
-     <!-- 스탬프 그리드 -->
-     <div style="padding:12px 14px 14px">
-      <div style="font-size:10px;font-weight:700;color:#666;margin-bottom:8px">스탬프 현황</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px">
-       <!-- 채워진 스탬프 7개 -->
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <!-- 5번: 중간 보상 위치 (별 + 왕관) -->
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(255,107,0,0.35);position:relative">
-        ⭐<div style="position:absolute;top:-3px;right:-3px;font-size:9px">👑</div>
-       </div>
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(255,107,0,0.35)">⭐</div>
-       <!-- 빈 슬롯 3개 -->
-       <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #d1d5db;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#d1d5db">○</div>
-       <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #d1d5db;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#d1d5db">○</div>
-       <!-- 10번: 최종 보상 위치 -->
-       <div style="aspect-ratio:1;border-radius:50%;border:2.5px dashed #FF6B00;background:#fff8f5;display:flex;align-items:center;justify-content:center;font-size:13px">🎁</div>
-      </div>
-      <div style="margin-top:8px;display:flex;gap:8px;font-size:9px;color:#aaa">
-       <div>👑 5개 = 사이드 무료</div>
-       <div>🎁 10개 = 메뉴 무료</div>
-      </div>
-     </div>
-    </div>
-    <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
+   <!-- 탭 네비게이션 -->
+   <div style="display:flex;border-bottom:2px solid #e5e7eb;margin-bottom:0">
+    <button id="ft-btn-0" onclick="ftGo(0)" style="flex:1;padding:10px 6px;font-size:12px;font-weight:800;background:none;border:none;border-bottom:3px solid #FF6B00;color:#FF6B00;cursor:pointer;font-family:inherit;margin-bottom:-2px">스탬프</button>
+    <button id="ft-btn-1" onclick="ftGo(1)" style="flex:1;padding:10px 6px;font-size:12px;font-weight:700;background:none;border:none;border-bottom:3px solid transparent;color:#aaa;cursor:pointer;font-family:inherit;margin-bottom:-2px">설문</button>
+    <button id="ft-btn-2" onclick="ftGo(2)" style="flex:1;padding:10px 6px;font-size:12px;font-weight:700;background:none;border:none;border-bottom:3px solid transparent;color:#aaa;cursor:pointer;font-family:inherit;margin-bottom:-2px">CRM 문자</button>
    </div>
 
-   <!-- 설문 만족도 요약 -->
-   <div style="background:#161616;border-radius:28px;padding:6px;box-shadow:0 16px 48px rgba(0,0,0,0.25),0 0 0 1px #2a2a2a;margin-bottom:14px">
-    <div style="text-align:center;margin-bottom:3px"><div style="display:inline-block;width:38px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-    <div style="background:#fff;border-radius:20px;overflow:hidden">
-     <div style="background:#fff;padding:12px 14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:8px;background:#3182f6;display:flex;align-items:center;justify-content:center;font-size:14px">📊</div>
-      <div><div style="font-size:12px;font-weight:800;color:#111">설문 응답 요약</div><div style="font-size:9.5px;color:#888">최근 30일 기준</div></div>
-     </div>
-     <div style="padding:12px 14px">
-      <!-- 항목별 점수 -->
-      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
-       <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-         <div style="font-size:9.5px;font-weight:700;color:#333">가격대비 맛</div>
-         <div style="font-size:9.5px;font-weight:900;color:#FF6B00">9.5<span style="font-size:7.5px;color:#aaa">/10</span></div>
-        </div>
-        <div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:95%;height:100%;background:linear-gradient(90deg,#FF6B00,#FFB830);border-radius:4px"></div></div>
-       </div>
-       <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-         <div style="font-size:9.5px;font-weight:700;color:#333">가격대비 양</div>
-         <div style="font-size:9.5px;font-weight:900;color:#FF6B00">9.2<span style="font-size:7.5px;color:#aaa">/10</span></div>
-        </div>
-        <div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:92%;height:100%;background:linear-gradient(90deg,#FF6B00,#FFB830);border-radius:4px"></div></div>
-       </div>
-       <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-         <div style="font-size:9.5px;font-weight:700;color:#333">서비스 친절도</div>
-         <div style="font-size:9.5px;font-weight:900;color:#FF6B00">9.8<span style="font-size:7.5px;color:#aaa">/10</span></div>
-        </div>
-        <div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:98%;height:100%;background:linear-gradient(90deg,#FF6B00,#FFB830);border-radius:4px"></div></div>
-       </div>
-       <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-         <div style="font-size:9.5px;font-weight:700;color:#333">재방문 의사</div>
-         <div style="font-size:9.5px;font-weight:900;color:#FF6B00">9.6<span style="font-size:7.5px;color:#aaa">/10</span></div>
-        </div>
-        <div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:96%;height:100%;background:linear-gradient(90deg,#FF6B00,#FFB830);border-radius:4px"></div></div>
-       </div>
-      </div>
-      <!-- 방문 경로 -->
-      <div style="border-top:1px solid #f0f0f0;padding-top:10px">
-       <div style="font-size:9.5px;font-weight:700;color:#555;margin-bottom:7px">방문 경로</div>
-       <div style="display:flex;flex-direction:column;gap:5px">
-        <div style="display:flex;align-items:center;gap:7px">
-         <div style="font-size:8.5px;color:#555;width:60px;flex-shrink:0">네이버 검색</div>
-         <div style="flex:1;background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:67%;height:100%;background:#03C75A;border-radius:4px"></div></div>
-         <div style="font-size:8px;font-weight:700;color:#03C75A;width:24px">67%</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:7px">
-         <div style="font-size:8.5px;color:#555;width:60px;flex-shrink:0">인스타 SNS</div>
-         <div style="flex:1;background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden"><div style="width:33%;height:100%;background:#E040FB;border-radius:4px"></div></div>
-         <div style="font-size:8px;font-weight:700;color:#E040FB;width:24px">33%</div>
-        </div>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div style="text-align:center;margin-top:3px"><div style="display:inline-block;width:34px;height:4px;background:#2e2e2e;border-radius:2px"></div></div>
-   </div>
+   <!-- 스크롤 슬라이더 -->
+   <div id="ft-track" style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth" onscroll="ftOnScroll(this)">
 
-   <!-- CRM 문자 — 폰 목업 -->
-   <div style="background:#0D1B2A;border-radius:24px;padding:14px 12px;box-shadow:0 8px 32px rgba(0,0,0,0.18)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-     <div style="font-size:12px;font-weight:800;color:#fff">CRM 무료 문자 발송</div>
-     <div style="background:rgba(3,199,90,0.2);border:1px solid rgba(3,199,90,0.4);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;color:#03C75A">무료</div>
-    </div>
-    <!-- 문자 화면 -->
-    <div style="background:#f5f5f5;border-radius:16px;overflow:hidden">
-     <!-- 상단바 -->
-     <div style="background:#fff;padding:10px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;border-radius:50%;background:#03C75A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff">맛</div>
-      <div><div style="font-size:11px;font-weight:700;color:#111">맛있는집</div><div style="font-size:9px;color:#999">고객 34명에게 발송</div></div>
-      <div style="margin-left:auto;background:#FF6B00;border-radius:8px;padding:4px 10px;font-size:9px;font-weight:800;color:#fff">발송</div>
-     </div>
-     <!-- 채팅 -->
-     <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
-      <div style="background:#03C75A;border-radius:4px 14px 14px 14px;padding:10px 13px;max-width:85%">
-       <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-bottom:4px">맛있는집</div>
-       <div style="font-size:11px;color:#fff;line-height:1.7">안녕하세요 김고객님 🍽️<br>이번 주 쿠폰 유효기간이 곧 만료됩니다.<br><strong>희망 메뉴 1개 무료쿠폰</strong><br>사용하러 오세요!</div>
-      </div>
-      <div style="display:flex;justify-content:flex-end">
-       <div style="background:#fff;border-radius:14px 4px 14px 14px;padding:9px 13px;max-width:70%;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-        <div style="font-size:11px;color:#333;line-height:1.5">알겠습니다!<br>이번 주 꼭 갈게요 😊</div>
+    <!-- 패널 1: 스탬프 카드 -->
+    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      <div style="background:#f8f9fa;border-radius:30px;overflow:hidden">
+       <div style="background:#fff;padding:13px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:10px;background:#FF6B00;display:flex;align-items:center;justify-content:center;font-size:17px">🏆</div>
+        <div><div style="font-size:13px;font-weight:900;color:#111">내 적립 포인트</div><div style="font-size:10px;color:#888">스탬프 카드</div></div>
+       </div>
+       <div style="background:linear-gradient(135deg,#FF6B00,#FF9500);padding:16px;text-align:center">
+        <div style="font-size:36px;margin-bottom:3px">🥉</div>
+        <div style="font-size:13px;font-weight:900;color:#fff">7개 모았어요!</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.78);margin-top:2px">10개 모으면 무료 메뉴 쿠폰 지급</div>
+        <div style="margin-top:10px;background:rgba(255,255,255,0.25);border-radius:10px;height:8px;overflow:hidden">
+         <div style="width:70%;height:100%;background:#fff;border-radius:10px"></div>
+        </div>
+        <div style="font-size:9.5px;color:rgba(255,255,255,0.8);margin-top:4px">7 / 10 · 3개 남았어요</div>
+       </div>
+       <div style="padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:10px">스탬프 현황</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(255,107,0,0.35);position:relative">⭐<div style="position:absolute;top:-2px;right:-2px;font-size:9px">👑</div></div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FFB830);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(255,107,0,0.35)">⭐</div>
+         <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #d1d5db;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:13px;color:#d1d5db">○</div>
+         <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #d1d5db;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:13px;color:#d1d5db">○</div>
+         <div style="aspect-ratio:1;border-radius:50%;border:2.5px dashed #FF6B00;background:#fff8f5;display:flex;align-items:center;justify-content:center;font-size:15px">🎁</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:10px;font-size:10px;color:#aaa">
+         <span>👑 5개 = 사이드 무료</span><span>🎁 10개 = 메뉴 무료</span>
+        </div>
        </div>
       </div>
+      <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
      </div>
     </div>
-    <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.4);text-align:center">참여 고객 연락처로 관리자가 직접 발송</div>
-   </div>
+
+    <!-- 패널 2: 설문 만족도 (별 10개 + 방문경로) -->
+    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      <div style="background:#fff;border-radius:30px;overflow:hidden">
+       <div style="background:#fff;padding:13px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:10px;background:#3182f6;display:flex;align-items:center;justify-content:center;font-size:17px">📊</div>
+        <div><div style="font-size:13px;font-weight:900;color:#111">설문 응답 요약</div><div style="font-size:10px;color:#888">최근 30일 기준</div></div>
+       </div>
+       <div style="padding:14px 16px">
+        <!-- 별점 항목들 -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+         <!-- 가격대비 맛 9.5 -->
+         <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+           <div style="font-size:11px;font-weight:700;color:#333">가격대비 맛</div>
+           <div style="font-size:13px;font-weight:900;color:#FF6B00">9.5<span style="font-size:9px;font-weight:500;color:#bbb">/10</span></div>
+          </div>
+          <div style="display:flex;gap:2px">
+           <span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#e5e7eb;font-size:15px">★</span>
+          </div>
+         </div>
+         <!-- 가격대비 양 9.0 -->
+         <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+           <div style="font-size:11px;font-weight:700;color:#333">가격대비 양</div>
+           <div style="font-size:13px;font-weight:900;color:#FF6B00">9.0<span style="font-size:9px;font-weight:500;color:#bbb">/10</span></div>
+          </div>
+          <div style="display:flex;gap:2px">
+           <span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#e5e7eb;font-size:15px">★</span>
+          </div>
+         </div>
+         <!-- 서비스 친절도 10 -->
+         <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+           <div style="font-size:11px;font-weight:700;color:#333">서비스 친절도</div>
+           <div style="font-size:13px;font-weight:900;color:#FF6B00">10<span style="font-size:9px;font-weight:500;color:#bbb">/10</span></div>
+          </div>
+          <div style="display:flex;gap:2px">
+           <span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span>
+          </div>
+         </div>
+         <!-- 재방문 의사 9.0 -->
+         <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+           <div style="font-size:11px;font-weight:700;color:#333">재방문 의사</div>
+           <div style="font-size:13px;font-weight:900;color:#FF6B00">9.0<span style="font-size:9px;font-weight:500;color:#bbb">/10</span></div>
+          </div>
+          <div style="display:flex;gap:2px">
+           <span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#FFB830;font-size:15px;text-shadow:0 0 5px #FFB830">★</span><span style="color:#e5e7eb;font-size:15px">★</span>
+          </div>
+         </div>
+        </div>
+        <!-- 방문경로 -->
+        <div style="border-top:1px solid #f0f0f0;padding-top:12px">
+         <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">방문 경로</div>
+         <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px">
+           <div style="font-size:10px;color:#555;width:62px;flex-shrink:0">네이버 검색</div>
+           <div style="flex:1;background:#f0f0f0;border-radius:4px;height:7px;overflow:hidden"><div style="width:67%;height:100%;background:#03C75A;border-radius:4px"></div></div>
+           <div style="font-size:9px;font-weight:800;color:#03C75A;width:26px">67%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+           <div style="font-size:10px;color:#555;width:62px;flex-shrink:0">인스타 SNS</div>
+           <div style="flex:1;background:#f0f0f0;border-radius:4px;height:7px;overflow:hidden"><div style="width:33%;height:100%;background:#E040FB;border-radius:4px"></div></div>
+           <div style="font-size:9px;font-weight:800;color:#E040FB;width:26px">33%</div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+     </div>
+    </div>
+
+    <!-- 패널 3: CRM 문자 -->
+    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+      <div style="background:#f5f5f5;border-radius:30px;overflow:hidden">
+       <!-- 앱 상단 -->
+       <div style="background:#fff;padding:13px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:50%;background:#03C75A;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff">맛</div>
+        <div><div style="font-size:13px;font-weight:800;color:#111">맛있는집</div><div style="font-size:10px;color:#999">고객 34명에게 발송</div></div>
+        <div style="margin-left:auto;background:#FF6B00;border-radius:9px;padding:5px 12px;font-size:10px;font-weight:800;color:#fff">발송</div>
+       </div>
+       <!-- 무료 뱃지 -->
+       <div style="background:rgba(3,199,90,0.1);border-bottom:1px solid rgba(3,199,90,0.15);padding:8px 16px;display:flex;align-items:center;gap:6px">
+        <div style="font-size:10px;font-weight:800;color:#03C75A">✓ 무료 문자 발송</div>
+        <div style="font-size:9px;color:#888">· 수신자 연락처 자동 연동</div>
+       </div>
+       <!-- 채팅 화면 -->
+       <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+        <div style="background:#03C75A;border-radius:4px 16px 16px 16px;padding:11px 14px;max-width:88%">
+         <div style="font-size:9.5px;color:rgba(255,255,255,0.8);margin-bottom:4px">맛있는집</div>
+         <div style="font-size:11.5px;color:#fff;line-height:1.75">안녕하세요 김고객님 🍽️<br>쿠폰 유효기간이 곧 만료됩니다.<br><strong>희망 메뉴 1개 무료쿠폰</strong><br>사용하러 오세요!</div>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+         <div style="background:#fff;border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:72%;box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+          <div style="font-size:11.5px;color:#333;line-height:1.6">알겠습니다!<br>이번 주 꼭 갈게요 😊</div>
+         </div>
+        </div>
+       </div>
+       <div style="padding:0 14px 12px;font-size:9px;color:#aaa;text-align:center">참여 고객 연락처로 관리자가 직접 발송</div>
+      </div>
+      <div style="text-align:center;margin-top:4px"><div style="display:inline-block;width:40px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
+     </div>
+    </div>
+
+   </div><!-- /ft-track -->
   </section>
+  <script>
+  (function(){
+   function ftGo(n){
+    var t=document.getElementById('ft-track');
+    if(t)t.scrollTo({left:n*t.offsetWidth,behavior:'smooth'});
+    ftUpdateTabs(n);
+   }
+   window.ftGo=ftGo;
+   function ftUpdateTabs(n){
+    [0,1,2].forEach(function(i){
+     var b=document.getElementById('ft-btn-'+i);if(!b)return;
+     b.style.color=i===n?'#FF6B00':'#aaa';
+     b.style.borderBottomColor=i===n?'#FF6B00':'transparent';
+     b.style.fontWeight=i===n?'800':'700';
+    });
+   }
+   window.ftOnScroll=function(el){
+    var i=Math.round(el.scrollLeft/Math.max(el.offsetWidth,1));
+    ftUpdateTabs(Math.min(i,2));
+   };
+  })();
 
   <!-- ⑦ 전부 무료 -->
   <section style="background:#0D1B2A;padding:40px 22px">
