@@ -2007,7 +2007,13 @@ function show(id){
   if(id==='s-stamp')renderStamps();
   if(id==='s-survey')renderSurveyQuestions();
   if(id==='s-myinfo')renderMyInfo();
-  if(id==='s-admin')renderAdmin('stats');
+  if(id==='s-admin'){
+    // Supabase에서 최신 고객 데이터 pull 후 렌더링
+    _sbLoad(STORE_ID).then(remote=>{
+      if(remote){storesDB[STORE_ID]=remote;STORE=remote;saveStoresDB();}
+      renderAdmin('stats');
+    }).catch(()=>renderAdmin('stats'));
+  }
   if(id==='s-notfound')renderStoreSearchSection();
   if(id==='s-platform')renderPlatform();
   if(id==='s-staff-check')renderStaffLog();
