@@ -162,9 +162,9 @@ body.dark .success-msg{color:#3ddc97}
 .store-switcher select{background:var(--white);border:1px solid var(--border);color:var(--t2);font-size:12px;padding:8px 12px;border-radius:10px;font-family:'Noto Sans KR',sans-serif}
 .qtype-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--blue-light);color:var(--blue)}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes barrelShake{0%,100%{transform:rotate(0) translateX(0)}15%{transform:rotate(-4deg) translateX(-6px)}30%{transform:rotate(4deg) translateX(6px)}45%{transform:rotate(-4deg) translateX(-6px)}60%{transform:rotate(4deg) translateX(6px)}75%{transform:rotate(-2deg) translateX(-3px)}}
-@keyframes piratePop{0%{transform:translateX(-50%) translateY(60px) rotate(-20deg);opacity:0}40%{transform:translateX(-50%) translateY(-50px) rotate(15deg);opacity:1}65%{transform:translateX(-50%) translateY(-30px) rotate(-8deg)}80%{transform:translateX(-50%) translateY(-42px) rotate(5deg)}100%{transform:translateX(-50%) translateY(-38px) rotate(0deg);opacity:1}}
-@keyframes knifeIn{0%{opacity:0;transform:translateX(var(--knife-dx,0))}60%{opacity:1}100%{opacity:1;transform:translateX(0)}}
+@keyframes crocoShake{0%,100%{transform:translate(0,0) rotate(0)}15%{transform:translate(-8px,-2px) rotate(-3deg)}30%{transform:translate(8px,2px) rotate(3deg)}45%{transform:translate(-7px,-1px) rotate(-2deg)}65%{transform:translate(7px,1px) rotate(2deg)}80%{transform:translate(-3px,0) rotate(-1deg)}}
+@keyframes toothSafe{0%{transform:translateY(0)}30%{transform:translateY(6px)}60%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+@keyframes toothBite{0%{transform:translateY(0)}40%{transform:translateY(16px)}100%{transform:translateY(16px)}}
 @keyframes scratchFlip{0%{transform:rotateY(0deg) scale(1)}45%{transform:rotateY(90deg) scale(.95)}55%{transform:rotateY(90deg) scale(.95)}100%{transform:rotateY(0deg) scale(1.04)}}
 .scratch-flip{animation:scratchFlip .7s ease-in-out forwards;transform-style:preserve-3d}
 @keyframes scratchBounce{0%{transform:translateX(-50%) scale(0.3);opacity:0}50%{transform:translateX(-50%) scale(1.18);opacity:1}70%{transform:translateX(-50%) scale(0.92)}85%{transform:translateX(-50%) scale(1.06)}100%{transform:translateX(-50%) scale(1);opacity:1}}
@@ -1369,21 +1369,19 @@ body.dark .success-msg{color:#3ddc97}
   </div>
 </div>
 
-<!-- ══════════ 해적통 게임 ══════════ -->
-<div class="scr" id="s-pirate">
-  <div class="topbar"><button class="tb-back" onclick="show('s-home')">‹</button><div class="tb-title">해적통 게임</div></div>
-  <div class="scroll" style="background:#12080260">
-    <div style="padding:16px 16px 32px">
-      <div id="pirate-status" style="text-align:center;font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;text-shadow:0 2px 8px rgba(0,0,0,.5)">칼을 꽂아보세요!</div>
+<!-- ══════════ 악어 이빨 게임 ══════════ -->
+<div class="scr" id="s-croco">
+  <div class="topbar"><button class="tb-back" onclick="show('s-home')">‹</button><div class="tb-title">악어 이빨 게임</div></div>
+  <div class="scroll" style="background:#071a07">
+    <div style="padding:16px 16px 28px">
+      <div id="croco-status" style="text-align:center;font-size:15px;font-weight:700;color:#7dff7d;margin-bottom:10px;text-shadow:0 0 10px rgba(0,200,0,.4)">이빨을 눌러보세요!</div>
       <div style="position:relative;margin:0 auto;max-width:340px">
-        <canvas id="pirate-canvas" width="340" height="360" style="display:block;width:100%;border-radius:16px"></canvas>
-        <div id="pirate-char" style="position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:68px;line-height:1;user-select:none;display:block;pointer-events:none">🏴‍☠️</div>
+        <canvas id="croco-canvas" width="340" height="240" style="display:block;width:100%;border-radius:16px"></canvas>
       </div>
-      <div id="pirate-slots-row" style="display:flex;justify-content:center;gap:6px;margin-top:14px;flex-wrap:wrap"></div>
-      <div id="pirate-error" style="min-height:20px;text-align:center;margin:8px 0"></div>
-      <div id="pirate-already" style="display:none"></div>
-      <div style="padding:8px 0"><button id="pirate-stab-btn" class="btn btn-blue" onclick="doPirateStab(false)" style="font-size:17px;padding:16px">🗡️ 칼 꽂기!</button></div>
-      <div id="pirate-owner-reset" style="display:none;margin-top:4px">
+      <div id="croco-teeth" style="display:flex;justify-content:center;gap:8px;margin:14px 0 6px"></div>
+      <div id="croco-error" style="min-height:20px;text-align:center;margin:4px 0"></div>
+      <div id="croco-already" style="display:none"></div>
+      <div id="croco-owner-reset" style="display:none;margin-top:4px">
         <button class="btn" style="width:100%;background:var(--yellow-light);color:#78350f;border:1.5px solid var(--yellow);font-weight:600;font-size:13px" onclick="ownerResetSpin()">🔑 사장님이신가요? 초기화해주세요</button>
       </div>
     </div>
@@ -1429,15 +1427,13 @@ body.dark .success-msg{color:#3ddc97}
       </div>
     </div>
 
-    <!-- 게임 뷰: 해적통 -->
-    <div id="extra-view-pirate" style="display:none;padding:0 8px">
-      <div id="extra-pirate-status" style="text-align:center;font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">칼을 꽂아보세요!</div>
-      <div style="position:relative;margin:0 auto;max-width:320px">
-        <canvas id="pirate-extra-canvas" width="320" height="320" style="display:block;width:100%;border-radius:14px"></canvas>
-        <div id="pirate-extra-char" style="position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:56px;line-height:1;user-select:none;display:block;pointer-events:none">🏴‍☠️</div>
+    <!-- 게임 뷰: 악어 이빨 -->
+    <div id="extra-view-croco" style="display:none;padding:0 8px">
+      <div id="croco-ex-status" style="text-align:center;font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">이빨을 눌러보세요!</div>
+      <div style="position:relative;margin:0 auto;max-width:300px">
+        <canvas id="croco-ex-canvas" width="300" height="210" style="display:block;width:100%;border-radius:14px"></canvas>
       </div>
-      <div id="extra-pirate-slots-row" style="display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap"></div>
-      <div style="padding:12px 0 4px"><button id="pirate-extra-stab-btn" class="btn btn-blue" onclick="doPirateStab(true)" style="font-size:16px;padding:14px">🗡️ 칼 꽂기!</button></div>
+      <div id="croco-ex-teeth" style="display:flex;justify-content:center;gap:6px;margin-top:10px"></div>
     </div>
 
     <div style="padding:16px 20px 16px;text-align:center">
@@ -2069,7 +2065,7 @@ function show(id){
   if(id==='s-scratch')initScratchCard();
   if(id==='s-card')initMainCard();
   if(id==='s-ladder')setTimeout(initLadder,60);
-  if(id==='s-pirate')setTimeout(()=>initPirate(false),60);
+  if(id==='s-croco')setTimeout(()=>initCrocoGame(false),60);
   if(id==='s-coupons'){document.querySelectorAll('[id^="ctab"]').forEach(b=>b.className='chip off');document.getElementById('ctab-available').className='chip on';renderCoupons('available')}
   if(id==='s-stamp')renderStamps();
   if(id==='s-survey')renderSurveyQuestions();
@@ -2552,8 +2548,8 @@ function refreshHome(){
   const gm=STORE.gameMode||'roulette';
   const gmIcon=document.getElementById('home-game-icon');
   const gmTitle=document.getElementById('home-game-title');
-  const gmIcons={roulette:'🎡',card:'🃏',scratch:'🎟️',ladder:'🪜',pirate:'🗡️'};
-  const gmTitles={roulette:'룰렛 이벤트',card:'카드 뽑기',scratch:'럭키 복권',ladder:'사다리 게임',pirate:'해적통 게임'};
+  const gmIcons={roulette:'🎡',card:'🃏',scratch:'🎟️',ladder:'🪜',croco:'🐊'};
+  const gmTitles={roulette:'룰렛 이벤트',card:'카드 뽑기',scratch:'럭키 복권',ladder:'사다리 게임',croco:'악어이빨 게임'};
   if(gmIcon)gmIcon.textContent=gmIcons[gm]||'🎡';
   if(gmTitle)gmTitle.textContent=gmTitles[gm]||'룰렛 이벤트';
   // 설문 스탬프 적립 여부 표시
@@ -2681,7 +2677,7 @@ function ownerResetSpin(){
   if(gm==='scratch')initScratchCard();
   else if(gm==='card')initMainCard();
   else if(gm==='ladder')initLadder();
-  else if(gm==='pirate')initPirate(false);
+  else if(gm==='croco')initCrocoGame(false);
   else initWheel();
 }
 function drawWheel(ctx,rot){
@@ -2722,7 +2718,7 @@ function goToMainGame(){
   if(gm==='scratch')show('s-scratch');
   else if(gm==='card')show('s-card');
   else if(gm==='ladder')show('s-ladder');
-  else if(gm==='pirate')show('s-pirate');
+  else if(gm==='croco')show('s-croco');
   else show('s-roulette');
 }
 
@@ -3781,244 +3777,262 @@ function renderMyInfo(){
 }
 
 /* ════════════════════ 네이버/카카오 ════════════════════ */
-/* ════════════════════ 해적통 게임 ════════════════════ */
-let _pirateSlots=8,_pirateTrigger=-1,_pirateKnifeCount=0,_piratePrize=null,_pirateBusy=false,_pirateExtra=false;
-const _PIRATE_COLORS=['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#e91e63'];
+/* ════════════════════ 악어 이빨 게임 ════════════════════ */
+let _crocoBiteAt=-1,_crocoPressed=0,_crocoPrize=null,_crocolBusy=false,_crocoExtra=false;
+let _crocoAudioCtx=null,_croco_beatTimer=null,_croco_beatInterval=600,_croco_beatCount=0;
 
-function initPirate(extraMode){
-  _pirateExtra=!!extraMode;
-  _pirateKnifeCount=0;
-  _pirateBusy=false;
-  _pirateTrigger=Math.floor(Math.random()*8)+1;
-  // 확률에 따라 상품 미리 결정
+function initCrocoGame(extraMode){
+  _crocoExtra=!!extraMode;
+  _crocoPressed=0;
+  _crocolBusy=false;
+  _croco_beatCount=0;
+  stopCrocoBGM();
+
   const prizes=extraMode?(currentExtraEvent?.prizes||[]):(STORE.prizes||[]);
   const total=prizes.reduce((a,p)=>a+(+p.prob||0),0);
   const rand=Math.random()*(total>0?total:1);
-  let cum=0;_piratePrize=prizes[prizes.length-1]||{name:'꽝',benefit:''};
-  for(const p of prizes){cum+=(+p.prob||0);if(rand<cum){_piratePrize=p;break;}}
+  let cum=0;
+  _crocoPrize=prizes[prizes.length-1]||{name:'꽝',benefit:''};
+  for(const p of prizes){cum+=(+p.prob||0);if(rand<cum){_crocoPrize=p;break;}}
 
-  const cId=extraMode?'pirate-extra-canvas':'pirate-canvas';
-  const charId=extraMode?'pirate-extra-char':'pirate-char';
-  const btnId=extraMode?'pirate-extra-stab-btn':'pirate-stab-btn';
-  const statusId=extraMode?'extra-pirate-status':'pirate-status';
-  const slotsId=extraMode?'extra-pirate-slots-row':'pirate-slots-row';
-  const errId=extraMode?'extra-spin-error':'pirate-error';
-  const alreadyId=extraMode?null:'pirate-already';
-  const resetId=extraMode?null:'pirate-owner-reset';
+  // 확률 높을수록 빨리 물림 (낮은 등수), 확률 낮을수록 오래 버팀 (높은 등수)
+  const N=prizes.length;
+  if(N>1){
+    const sorted=[...prizes].sort((a,b)=>(b.prob||0)-(a.prob||0));
+    const idx=sorted.findIndex(p=>p.id===_crocoPrize.id);
+    const ratio=idx/(N-1); // 0=worst(high prob), 1=best(low prob)
+    _crocoBiteAt=Math.round(1+ratio*6); // 1~7 (7=survive all 6 teeth)
+  } else {
+    _crocoBiteAt=Math.floor(Math.random()*6)+1;
+  }
 
-  // 오늘 이미 참여 체크 (메인게임만)
+  const cId=extraMode?'croco-ex-canvas':'croco-canvas';
+  const teethId=extraMode?'croco-ex-teeth':'croco-teeth';
+  const statusId=extraMode?'croco-ex-status':'croco-status';
+
   if(!extraMode){
     const last=localStorage.getItem('lastSpin_'+STORE_ID);
     const todayStr=today();
-    const errEl=document.getElementById(errId);
-    const alreadyEl=document.getElementById(alreadyId);
-    const resetEl=document.getElementById(resetId);
+    const errEl=document.getElementById('croco-error');
+    const alreadyEl=document.getElementById('croco-already');
+    const resetEl=document.getElementById('croco-owner-reset');
     if(last===todayStr){
-      const btn=document.getElementById(btnId);
-      if(btn){btn.style.display='none';}
-      if(alreadyEl)alreadyEl.style.display='block';
-      if(errEl)errEl.innerHTML='<div class="error-msg">오늘은 이미 참여하셨습니다. 내일 다시 도전해주세요!</div>';
+      if(alreadyEl){alreadyEl.innerHTML='<div class="error-msg">오늘은 이미 참여하셨습니다. 내일 다시 도전해주세요!</div>';alreadyEl.style.display='block';}
+      if(errEl)errEl.innerHTML='';
       const isOwner=localStorage.getItem('admin_'+STORE_ID)==='1';
       if(resetEl)resetEl.style.display=isOwner?'block':'none';
+      renderCrocoTeeth(teethId,0,true,extraMode);
     } else {
-      const btn=document.getElementById(btnId);
-      if(btn){btn.style.display='block';btn.disabled=false;btn.textContent='🗡️ 칼 꽂기!';}
-      if(alreadyEl)alreadyEl.style.display='none';
+      if(alreadyEl){alreadyEl.innerHTML='';alreadyEl.style.display='none';}
       if(errEl)errEl.innerHTML='';
       if(resetEl)resetEl.style.display='none';
+      renderCrocoTeeth(teethId,0,false,extraMode);
     }
+  } else {
+    renderCrocoTeeth(teethId,0,false,extraMode);
   }
 
-  // 해적 초기 위치 리셋
-  const charEl=document.getElementById(charId);
-  if(charEl){charEl.style.animation='none';charEl.style.transform='translateX(-50%) translateY(0)';}
-  // 슬롯 표시기 초기화
-  const slotsEl=document.getElementById(slotsId);
-  if(slotsEl){
-    slotsEl.innerHTML=Array.from({length:8},(_,i)=>
-      `<div id="${extraMode?'ep':'mp'}-slot-${i+1}" style="width:28px;height:28px;border-radius:50%;border:2px solid #8B4513;background:#2a1408;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s">🕳️</div>`
-    ).join('');
-  }
-  if(document.getElementById(statusId))document.getElementById(statusId).textContent='칼을 꽂아보세요!';
-  drawPirateBarrel(cId,[]);
+  const statusEl=document.getElementById(statusId);
+  if(statusEl)statusEl.textContent='이빨을 눌러보세요!';
+  drawCrocoOpen(cId);
+  startCrocoBGM();
 }
 
-function drawPirateBarrel(canvasId,filled){
+function renderCrocoTeeth(teethId,pressedCount,disabled,extraMode){
+  const el=document.getElementById(teethId);
+  if(!el)return;
+  el.innerHTML='';
+  for(let i=1;i<=6;i++){
+    const btn=document.createElement('button');
+    const sz=extraMode?'46px':'54px';
+    const fs=extraMode?'22px':'26px';
+    const pressed=i<=pressedCount;
+    btn.style.cssText=`width:${sz};height:${sz};border-radius:8px 8px 14px 14px;border:2px solid #fff;background:${pressed?'#555':'#f0f0f0'};cursor:${disabled||pressed?'not-allowed':'pointer'};font-size:${fs};box-shadow:0 3px 6px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s`;
+    btn.id=(extraMode?'croco-ex-tooth-':'croco-tooth-')+i;
+    btn.textContent='🦷';
+    if(!disabled&&!pressed)btn.onclick=()=>pressToothCroco(i,extraMode);
+    el.appendChild(btn);
+  }
+}
+
+function pressToothCroco(toothNum,extraMode){
+  if(_crocolBusy)return;
+  if(toothNum!==_crocoPressed+1)return;
+  _crocolBusy=true;
+  _crocoPressed=toothNum;
+
+  const cId=extraMode?'croco-ex-canvas':'croco-canvas';
+  const teethId=extraMode?'croco-ex-teeth':'croco-teeth';
+  const statusId=extraMode?'croco-ex-status':'croco-status';
+  const statusEl=document.getElementById(statusId);
+
+  const toothEl=document.getElementById((extraMode?'croco-ex-tooth-':'croco-tooth-')+toothNum);
+  if(toothEl){
+    toothEl.style.background='#888';
+    toothEl.style.animation='toothSafe .35s ease';
+    toothEl.onclick=null;
+  }
+
+  playCrocoSnap();
+  _croco_beatInterval=Math.max(180,_croco_beatInterval-60);
+
+  const isBite=(_crocoBiteAt===toothNum);
+  const isSurviveAll=(_crocoBiteAt===7&&toothNum===6);
+
+  if(isBite){
+    if(statusEl)statusEl.textContent='😱 앗! 악어가 물었어요!';
+    drawCrocoClosed(cId);
+    const canvas=document.getElementById(cId);
+    if(canvas){canvas.style.animation='crocoShake 0.5s ease-in-out';setTimeout(()=>{canvas.style.animation='';},550);}
+    stopCrocoBGM();
+    renderCrocoTeeth(teethId,6,true,extraMode);
+    setTimeout(()=>_crocoDone(extraMode),1200);
+  } else if(isSurviveAll){
+    const sorted=[...(extraMode?(currentExtraEvent?.prizes||[]):(STORE.prizes||[]))].sort((a,b)=>(b.prob||0)-(a.prob||0));
+    _crocoPrize=sorted[sorted.length-1]||_crocoPrize;
+    if(statusEl)statusEl.textContent='🎉 살아남았다! 최고 상품!';
+    stopCrocoBGM();
+    renderCrocoTeeth(teethId,6,true,extraMode);
+    setTimeout(()=>_crocoDone(extraMode),900);
+  } else {
+    if(statusEl)statusEl.textContent='💪 안전! '+(toothNum+1)+' 번째 이빨 도전!';
+    setTimeout(()=>{_crocolBusy=false;},400);
+  }
+}
+
+function _crocoDone(extraMode){
+  stopCrocoBGM();
+  if(!extraMode){
+    STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
+    if(!STORE.spinLog)STORE.spinLog=[];
+    STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
+    checkVipUpgrade(currentUser);
+    localStorage.setItem('lastSpin_'+STORE_ID,today());
+    saveState();
+    showResult(_crocoPrize);
+  } else {
+    const key=currentUser?.id+'_'+currentExtraEvent?.platform+'_'+(new Date().toISOString().split('T')[0].replace(/-/g,''));
+    if(!STORE.extraSpinLog)STORE.extraSpinLog={};
+    STORE.extraSpinLog[key]=true;
+    saveState();
+    showExtraResult(_crocoPrize);
+  }
+}
+
+function drawCrocoOpen(canvasId){
   const canvas=document.getElementById(canvasId);
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   ctx.clearRect(0,0,W,H);
-  const cx=W/2,bTop=H*0.22,bBot=H*0.9,bW=W*0.28,eH=bW*0.22;
-  const bH=(bBot-bTop)/2,bCy=(bTop+bBot)/2;
-
-  // 배경
-  const bg=ctx.createRadialGradient(cx,bCy,20,cx,bCy,W*0.6);
-  bg.addColorStop(0,'#1e1006');bg.addColorStop(1,'#080402');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-
-  // 나무통 바디
-  const barGrad=ctx.createLinearGradient(cx-bW,0,cx+bW,0);
-  barGrad.addColorStop(0,'#3a1a06');barGrad.addColorStop(0.18,'#7a3a10');
-  barGrad.addColorStop(0.5,'#a05020');barGrad.addColorStop(0.82,'#7a3a10');
-  barGrad.addColorStop(1,'#3a1a06');
-  ctx.fillStyle=barGrad;
-  ctx.beginPath();ctx.rect(cx-bW,bTop,bW*2,bH*2);ctx.fill();
-
-  // 나무결 (세로선)
-  ctx.save();ctx.beginPath();ctx.rect(cx-bW,bTop,bW*2,bH*2);ctx.clip();
-  for(let i=-3;i<=3;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*bW*0.28,bTop);ctx.lineTo(cx+i*bW*0.28,bBot);
-    ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle='#071a07';ctx.fillRect(0,0,W,H);
+  const bx=W*0.1,bw=W*0.8,by=H*0.55,bh=H*0.38;
+  // 몸통
+  const bodyG=ctx.createLinearGradient(bx,by,bx,by+bh);
+  bodyG.addColorStop(0,'#2d7a2d');bodyG.addColorStop(1,'#1a4a1a');
+  ctx.fillStyle=bodyG;
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx,by,bw,bh,20);else ctx.rect(bx,by,bw,bh);ctx.fill();
+  // 비늘
+  ctx.save();
+  for(let r=0;r<3;r++)for(let c=0;c<6;c++){
+    ctx.beginPath();ctx.ellipse(bx+bw*0.08+c*bw*0.15+(r%2)*bw*0.07,by+bh*0.15+r*bh*0.28,bw*0.055,bh*0.1,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.18)';ctx.fill();
   }
   ctx.restore();
-
-  // 통 테두리 (금속 링) - 3개
-  [bTop+bH*0.18,bCy,bBot-bH*0.18].forEach(hy=>{
-    ctx.beginPath();ctx.ellipse(cx,hy,bW+3,eH*0.45,0,0,Math.PI*2);
-    const hg=ctx.createLinearGradient(cx-bW,hy,cx+bW,hy);
-    hg.addColorStop(0,'#222');hg.addColorStop(0.3,'#666');hg.addColorStop(0.5,'#999');hg.addColorStop(0.7,'#666');hg.addColorStop(1,'#222');
-    ctx.strokeStyle=hg;ctx.lineWidth=7;ctx.stroke();
+  // 아래 턱
+  const jy=H*0.52,jh=H*0.12;
+  ctx.fillStyle='#3a9a3a';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx+bw*0.05,jy,bw*0.9,jh,10);else ctx.rect(bx+bw*0.05,jy,bw*0.9,jh);ctx.fill();
+  // 아래 이빨
+  for(let i=0;i<5;i++){const tx=bx+bw*0.15+i*bw*0.14;ctx.fillStyle='#fff8e7';ctx.beginPath();ctx.moveTo(tx,jy+2);ctx.lineTo(tx-10,jy+jh-4);ctx.lineTo(tx+10,jy+jh-4);ctx.closePath();ctx.fill();}
+  // 위 턱 (벌어짐)
+  const uy=H*0.08,uh=H*0.42;
+  const upperG=ctx.createLinearGradient(bx,uy,bx,uy+uh);
+  upperG.addColorStop(0,'#1a4a1a');upperG.addColorStop(1,'#2d7a2d');
+  ctx.fillStyle=upperG;
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx+bw*0.05,uy,bw*0.9,uh,16);else ctx.rect(bx+bw*0.05,uy,bw*0.9,uh);ctx.fill();
+  // 눈
+  [[W*0.28,H*0.14],[W*0.72,H*0.14]].forEach(([ex,ey])=>{
+    ctx.beginPath();ctx.arc(ex,ey,H*0.055,0,Math.PI*2);ctx.fillStyle='#ffe066';ctx.fill();
+    ctx.beginPath();ctx.arc(ex,ey,H*0.028,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();
+    ctx.beginPath();ctx.arc(ex-3,ey-3,H*0.008,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   });
+  // 위 이빨
+  for(let i=0;i<5;i++){const tx=bx+bw*0.15+i*bw*0.14;ctx.fillStyle='#fff8e7';ctx.beginPath();ctx.moveTo(tx,uy+uh-2);ctx.lineTo(tx-10,uy+uh+jh-4);ctx.lineTo(tx+10,uy+uh+jh-4);ctx.closePath();ctx.fill();}
+  // 입 안
+  ctx.fillStyle='rgba(200,40,40,0.7)';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx+bw*0.1,jy-H*0.01,bw*0.8,H*0.06,6);else ctx.rect(bx+bw*0.1,jy-H*0.01,bw*0.8,H*0.06);ctx.fill();
+}
 
-  // 통 위 뚜껑
-  ctx.beginPath();ctx.ellipse(cx,bTop,bW,eH,0,0,Math.PI*2);
-  const topG=ctx.createRadialGradient(cx,bTop,5,cx,bTop,bW);
-  topG.addColorStop(0,'#7a4018');topG.addColorStop(1,'#3a1a06');
-  ctx.fillStyle=topG;ctx.fill();
-  ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=2;ctx.stroke();
-
-  // 통 아래 바닥
-  ctx.beginPath();ctx.ellipse(cx,bBot,bW,eH,0,0,Math.PI*2);
-  ctx.fillStyle='#2a1006';ctx.fill();
-
-  // 칼 슬롯 (좌4 우4)
-  const slots=[
-    {x:cx-bW,y:bCy-bH*0.55,s:'L'},{x:cx-bW,y:bCy-bH*0.18,s:'L'},
-    {x:cx-bW,y:bCy+bH*0.18,s:'L'},{x:cx-bW,y:bCy+bH*0.55,s:'L'},
-    {x:cx+bW,y:bCy-bH*0.55,s:'R'},{x:cx+bW,y:bCy-bH*0.18,s:'R'},
-    {x:cx+bW,y:bCy+bH*0.18,s:'R'},{x:cx+bW,y:bCy+bH*0.55,s:'R'},
-  ];
-
-  slots.forEach((sl,i)=>{
-    const isIn=filled.includes(i+1);
-    const color=_PIRATE_COLORS[i];
-    // 구멍
-    ctx.beginPath();
-    const hx=sl.s==='L'?sl.x+6:sl.x-6;
-    ctx.ellipse(hx,sl.y,7,4,0,0,Math.PI*2);
-    ctx.fillStyle=isIn?color+'88':'#0a0402';
-    ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.7)';ctx.lineWidth=1;ctx.stroke();
-
-    if(isIn){
-      // 칼 손잡이 (밖으로 튀어나옴)
-      const dir=sl.s==='L'?-1:1;
-      const hx2=sl.x+dir*18;
-      // 가드 (십자)
-      ctx.fillStyle='#aaa';
-      ctx.fillRect(sl.x+dir*4-2,sl.y-8,4,16);
-      // 손잡이
-      ctx.beginPath();
-      const rx=sl.s==='L'?hx2-20:hx2;
-      ctx.roundRect?ctx.roundRect(rx,sl.y-5,20,10,4):ctx.rect(rx,sl.y-5,20,10);
-      ctx.fillStyle=color;ctx.fill();
-      // 손잡이 끝 장식
-      ctx.beginPath();
-      ctx.arc(sl.s==='L'?hx2-20:hx2+20,sl.y,6,0,Math.PI*2);
-      ctx.fillStyle=color;ctx.fill();
-      ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1;ctx.stroke();
-    }
+function drawCrocoClosed(canvasId){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#071a07';ctx.fillRect(0,0,W,H);
+  const bx=W*0.1,bw=W*0.8,by=H*0.42,bh=H*0.5;
+  const bodyG=ctx.createLinearGradient(bx,by,bx,by+bh);
+  bodyG.addColorStop(0,'#2d7a2d');bodyG.addColorStop(1,'#1a4a1a');
+  ctx.fillStyle=bodyG;
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx,by,bw,bh,20);else ctx.rect(bx,by,bw,bh);ctx.fill();
+  ctx.save();
+  for(let r=0;r<3;r++)for(let c=0;c<6;c++){
+    ctx.beginPath();ctx.ellipse(bx+bw*0.08+c*bw*0.15+(r%2)*bw*0.07,by+bh*0.12+r*bh*0.28,bw*0.055,bh*0.1,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.18)';ctx.fill();
+  }
+  ctx.restore();
+  // 닫힌 입
+  const cy=H*0.4;
+  ctx.fillStyle='#2d7a2d';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx+bw*0.05,cy,bw*0.9,H*0.08,10);else ctx.rect(bx+bw*0.05,cy,bw*0.9,H*0.08);ctx.fill();
+  // 눈
+  [[W*0.28,H*0.25],[W*0.72,H*0.25]].forEach(([ex,ey])=>{
+    ctx.beginPath();ctx.arc(ex,ey,H*0.055,0,Math.PI*2);ctx.fillStyle='#ffe066';ctx.fill();
+    ctx.beginPath();ctx.arc(ex,ey,H*0.028,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();
+    ctx.beginPath();ctx.arc(ex-3,ey-3,H*0.008,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
   });
 }
 
-function doPirateStab(extraMode){
-  if(_pirateBusy)return;
-  if(_pirateKnifeCount>=8)return;
-  _pirateBusy=true;
-  _pirateKnifeCount++;
+function startCrocoBGM(){
+  stopCrocoBGM();
+  try{
+    if(!_crocoAudioCtx||_crocoAudioCtx.state==='closed')_crocoAudioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    _croco_beatInterval=600;_croco_beatCount=0;
+    scheduleCrocoBeat();
+  }catch(e){}
+}
 
-  const cId=extraMode?'pirate-extra-canvas':'pirate-canvas';
-  const charId=extraMode?'pirate-extra-char':'pirate-char';
-  const btnId=extraMode?'pirate-extra-stab-btn':'pirate-stab-btn';
-  const statusId=extraMode?'extra-pirate-status':'pirate-status';
-  const slotPfx=extraMode?'ep':'mp';
+function stopCrocoBGM(){
+  if(_croco_beatTimer){clearTimeout(_croco_beatTimer);_croco_beatTimer=null;}
+}
 
-  // 슬롯 표시기 업데이트
-  const slotEl=document.getElementById(slotPfx+'-slot-'+_pirateKnifeCount);
-  if(slotEl){slotEl.textContent='🗡️';slotEl.style.background=_PIRATE_COLORS[_pirateKnifeCount-1]+'44';slotEl.style.borderColor=_PIRATE_COLORS[_pirateKnifeCount-1];}
+function scheduleCrocoBeat(){
+  try{
+    const ctx=_crocoAudioCtx;
+    if(!ctx||ctx.state==='closed')return;
+    const freq=[82.4,77.8][_croco_beatCount%2]; // E2 / D#2 — Jaws motif
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='triangle';osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    gain.gain.setValueAtTime(0.18,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.35);
+    _croco_beatCount++;
+  }catch(e){}
+  _croco_beatTimer=setTimeout(scheduleCrocoBeat,_croco_beatInterval);
+}
 
-  const statusEl=document.getElementById(statusId);
-  if(statusEl)statusEl.textContent='칼 '+_pirateKnifeCount+'/8 꽂기! 두근두근...';
-
-  // 칼 꽂히는 소리 효과 (짧은 진동)
-  const canvas=document.getElementById(cId);
-  if(canvas){canvas.style.transition='transform .05s';canvas.style.transform='translateX(-2px)';setTimeout(()=>{canvas.style.transform='';},80);}
-
-  setTimeout(()=>{
-    const filled=[];for(let i=1;i<=_pirateKnifeCount;i++)filled.push(i);
-    drawPirateBarrel(cId,filled);
-
-    if(_pirateKnifeCount===_pirateTrigger){
-      // 해적 튀어나옴!
-      const btn=document.getElementById(btnId);
-      if(btn){btn.disabled=true;btn.textContent='🏴‍☠️ 앗!';}
-      if(statusEl)statusEl.textContent='🎉 해적이 튀어나왔어요!';
-
-      // 통 흔들기
-      if(canvas)canvas.style.animation='barrelShake 0.55s ease-in-out';
-      setTimeout(()=>{if(canvas)canvas.style.animation='';},600);
-
-      // 해적 팝업
-      setTimeout(()=>{
-        const charEl=document.getElementById(charId);
-        if(charEl){charEl.style.animation='piratePop 0.75s cubic-bezier(.17,.67,.52,1.42) forwards';}
-
-        setTimeout(()=>{
-          if(!extraMode){
-            STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
-            if(!STORE.spinLog)STORE.spinLog=[];
-            STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
-            checkVipUpgrade(currentUser);
-            localStorage.setItem('lastSpin_'+STORE_ID,today());
-            saveState();
-            showResult(_piratePrize);
-          } else {
-            const key=currentUser?.id+'_'+currentExtraEvent?.platform+'_'+(new Date().toISOString().split('T')[0].replace(/-/g,''));
-            if(!STORE.extraSpinLog)STORE.extraSpinLog={};
-            STORE.extraSpinLog[key]=true;
-            saveState();
-            showExtraResult(_piratePrize);
-          }
-        },1400);
-      },400);
-    } else {
-      if(_pirateKnifeCount>=8){
-        const charEl=document.getElementById(charId);
-        if(charEl)charEl.style.animation='piratePop 0.75s cubic-bezier(.17,.67,.52,1.42) forwards';
-        const btn=document.getElementById(btnId);
-        if(btn){btn.disabled=true;}
-        setTimeout(()=>{
-          if(!extraMode){
-            STORE.visits++;if(currentUser)currentUser.visits=(currentUser.visits||0)+1;
-            if(!STORE.spinLog)STORE.spinLog=[];
-            STORE.spinLog.push({date:today(),uid:currentUser?.id||'guest'});
-            checkVipUpgrade(currentUser);
-            localStorage.setItem('lastSpin_'+STORE_ID,today());
-            saveState();
-            showResult(_piratePrize);
-          } else {
-            const key=currentUser?.id+'_'+currentExtraEvent?.platform+'_'+(new Date().toISOString().split('T')[0].replace(/-/g,''));
-            if(!STORE.extraSpinLog)STORE.extraSpinLog={};
-            STORE.extraSpinLog[key]=true;
-            saveState();
-            showExtraResult(_piratePrize);
-          }
-        },1400);
-      } else {
-        _pirateBusy=false;
-      }
-    }
-  },220);
+function playCrocoSnap(){
+  try{
+    if(!_crocoAudioCtx||_crocoAudioCtx.state==='closed')_crocoAudioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const ctx=_crocoAudioCtx;
+    const buf=ctx.createBuffer(1,ctx.sampleRate*0.08,ctx.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(ctx.sampleRate*0.025));
+    const src=ctx.createBufferSource(),g=ctx.createGain();
+    g.gain.value=0.35;src.buffer=buf;src.connect(g);g.connect(ctx.destination);src.start();
+  }catch(e){}
 }
 
 /* ════════════════════ 추가 이벤트 (카카오맵/구글/티맵) ════════════════════ */
@@ -4072,17 +4086,17 @@ function openExtraRoulette(evId){
   link.style.color=ev.textColor||'#191f28';
   document.getElementById('extra-roulette-title').textContent=ev.label+' 이벤트';
   document.getElementById('extra-spin-error').innerHTML='';
-  const descMap={roulette:'리뷰 작성 후 룰렛을 돌려보세요!',card:'리뷰 작성 후 카드 1장을 뽑아보세요!',scratch:'리뷰 작성 후 복권을 긁어보세요!',ladder:'리뷰 작성 후 사다리를 타보세요!',pirate:'리뷰 작성 후 칼을 꽂아보세요!'};
+  const descMap={roulette:'리뷰 작성 후 룰렛을 돌려보세요!',card:'리뷰 작성 후 카드 1장을 뽑아보세요!',scratch:'리뷰 작성 후 복권을 긁어보세요!',ladder:'리뷰 작성 후 사다리를 타보세요!',croco:'이빨을 눌러 악어를 피해보세요!'};
   document.getElementById('extra-event-desc').textContent=descMap[gm]||descMap.roulette;
   // 모든 게임 뷰 숨기기 후 해당 뷰만 표시
-  ['roulette','card','scratch','pirate'].forEach(g=>{
+  ['roulette','card','scratch','croco'].forEach(g=>{
     const v=document.getElementById('extra-view-'+g);
     if(v)v.style.display=(g===gm)?'block':'none';
   });
   extraSpinAngle=0;extraIsSpinning=false;
   const btn=document.getElementById('extra-spin-btn');
-  const btnLabels={roulette:'🎡 룰렛 돌리기',card:'🃏 카드 뽑기 시작',scratch:'🎟️ 복권 시작하기',ladder:'🪜 사다리 시작',pirate:'🗡️ 칼 꽂기!'};
-  if(gm==='pirate'){btn.style.display='none';}
+  const btnLabels={roulette:'🎡 룰렛 돌리기',card:'🃏 카드 뽑기 시작',scratch:'🎟️ 복권 시작하기',ladder:'🪜 사다리 시작',croco:'🐊 이빨 누르기'};
+  if(gm==='croco'){btn.style.display='none';}
   else{btn.style.display='block';btn.disabled=false;btn.textContent=btnLabels[gm]||btnLabels.roulette;}
   show('s-extra-roulette');
   setTimeout(()=>{
@@ -4093,8 +4107,8 @@ function openExtraRoulette(evId){
       initExtraCard();
     }else if(gm==='scratch'){
       initExtraScratch();
-    }else if(gm==='pirate'){
-      initPirate(true);
+    }else if(gm==='croco'){
+      initCrocoGame(true);
     }
   },80);
 }
@@ -5260,9 +5274,9 @@ function renderRouletteAdmin(el){
           <div style="font-size:22px;margin-bottom:3px">🪜</div>
           <div style="font-size:11px;font-weight:700;color:${gm==='ladder'?'var(--blue)':'var(--t2)'}">사다리</div>
         </div>
-        <div onclick="setGameMode('pirate')" style="padding:10px 4px;border-radius:12px;border:2px solid ${gm==='pirate'?'var(--blue)':'var(--border)'};background:${gm==='pirate'?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
-          <div style="font-size:22px;margin-bottom:3px">🗡️</div>
-          <div style="font-size:11px;font-weight:700;color:${gm==='pirate'?'var(--blue)':'var(--t2)'}">해적통</div>
+        <div onclick="setGameMode('croco')" style="padding:10px 4px;border-radius:12px;border:2px solid ${gm==='croco'?'var(--blue)':'var(--border)'};background:${gm==='croco'?'var(--blue-light)':'var(--white)'};text-align:center;cursor:pointer">
+          <div style="font-size:22px;margin-bottom:3px">🐊</div>
+          <div style="font-size:11px;font-weight:700;color:${gm==='croco'?'var(--blue)':'var(--t2)'}">악어이빨</div>
         </div>
       </div>
       <div style="font-size:11px;color:var(--t4);margin-top:8px">상품·확률은 네 게임 모두 아래 설정을 공유합니다</div>
@@ -5351,7 +5365,7 @@ function setGameMode(mode){
   STORE.gameMode=mode;
   saveState();
   renderRouletteAdmin(document.getElementById('admin-body'));
-  const _modeLabel={roulette:'🎡 룰렛',card:'🃏 카드뽑기',scratch:'🎟️ 긁는복권',ladder:'🪜 사다리 게임',pirate:'🗡️ 해적통'};
+  const _modeLabel={roulette:'🎡 룰렛',card:'🃏 카드뽑기',scratch:'🎟️ 긁는복권',ladder:'🪜 사다리 게임',croco:'🐊 악어이빨'};
   toast((_modeLabel[mode]||'게임')+'으로 변경됐습니다');
 }
 function normalizeProbs(){
@@ -5369,7 +5383,7 @@ function renderEventsAdmin(el){
     {id:'roulette',icon:'🎡',label:'룰렛'},
     {id:'scratch',icon:'🎟️',label:'긁는복권'},
     {id:'ladder',icon:'🪜',label:'사다리'},
-    {id:'pirate',icon:'🗡️',label:'해적통'},
+    {id:'croco',icon:'🐊',label:'악어이빨'},
   ];
   el.innerHTML=`
     <div class="card card-pad">
