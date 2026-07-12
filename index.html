@@ -5382,7 +5382,15 @@ function deleteQuestion(idx){
 
 function renderSettingsAdmin(el){
   const bgPreview=STORE.profile.bgImage?`<div style="margin-top:10px;border-radius:12px;overflow:hidden;height:120px;background:#000"><img src="${STORE.profile.bgImage}" style="width:100%;height:100%;object-fit:cover"></div>`:'<div style="margin-top:10px;font-size:12px;color:var(--t4)">아직 등록된 배경 이미지가 없어요 (없으면 어두운 기본 배경이 표시됩니다)</div>';
+  const _gameUrl=buildStoreUrl(STORE_ID);
   el.innerHTML=`
+    <div class="card card-pad" style="border-color:var(--blue)">
+      <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px">🎮 고객 게임 링크 · QR</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:10px;line-height:1.6">고객이 게임을 시작하기 전에 접속하는 매장 전용 주소입니다.</div>
+      <div style="background:var(--bg);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--t2);word-break:break-all;margin-bottom:10px;cursor:pointer" onclick="navigator.clipboard&&navigator.clipboard.writeText('${_gameUrl}').then(()=>toast('링크가 복사됐습니다!'))">${_gameUrl} <span style="color:var(--blue);font-weight:700">복사</span></div>
+      <button class="btn btn-blue btn-sm" style="width:auto" onclick="selATab('qr',document.getElementById('atab-qr'))">QR코드 보기</button>
+    </div>
+
     <div class="card card-pad">
       <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:12px">매장 정보</div>
       <div class="field"><label>매장명</label><input id="st-name" value="${(STORE.profile.name||'').replace(/"/g,'&quot;')}"></div>
@@ -5675,8 +5683,28 @@ document.getElementById('s-code').value='';
 document.getElementById('s-pin').value='';
 (function(){
   const _p=new URLSearchParams(location.search).get('admin');
+  const _storeParam=new URLSearchParams(location.search).get('store');
   if(_p==='platform'){show('s-platform-login');}
   else if(STORE){show('s-landing');}
+  else if(_storeParam&&_storeParam!=='demo'){
+    // ?store=X 있지만 이 기기에 데이터 없음 — 안내 화면
+    show('s-notfound');
+    setTimeout(()=>{
+      const sec=document.getElementById('store-search-section');
+      if(sec){
+        sec.style.display='block';
+        sec.innerHTML=`<div style="background:#1a2535;padding:28px 22px">
+          <div style="font-size:13px;font-weight:700;color:rgba(255,107,0,0.85);margin-bottom:8px">매장 안내</div>
+          <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:8px">이 기기에 매장 정보가 없습니다</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:16px">
+            QR코드는 매장에서 직접 기기를 통해 접속하거나,<br>매장 직원에게 링크를 요청해주세요.<br><br>
+            <span style="font-size:11px;color:rgba(255,255,255,0.3)">※ 서버 연동(Supabase) 전까지 매장 데이터는<br>생성한 기기에서만 접근 가능합니다.</span>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.25);word-break:break-all">매장 ID: ${_storeParam}</div>
+        </div>`;
+      }
+    },100);
+  }
   else{show('s-notfound');}
 })();
 </script>
