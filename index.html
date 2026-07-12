@@ -1629,8 +1629,10 @@ body.dark .success-msg{color:#3ddc97}
 const PROD_DOMAIN='matchissunzip.com'; // 실제 배포 시 보유 도메인으로 교체
 
 function buildStoreUrl(uid){
-  // ?store=uid 방식 — 정적 호스팅(Vercel)에서 바로 작동
-  return location.origin+location.pathname+'?store='+uid;
+  // localhost에서 접속 중이면 실제 배포 도메인 사용 (QR·링크 공유 가능하도록)
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const base=isLocal?'https://review-event-platform.vercel.app':(location.origin+location.pathname.replace(/\/+$/,''));
+  return base+'?store='+uid;
 }
 function detectStoreId(){
   // 1) 경로 기반: /s/{uid} 또는 /store/{uid} (정식 운영 방식)
