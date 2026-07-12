@@ -195,13 +195,141 @@ body.dark .success-msg{color:#3ddc97}
   <div id="qr-scan-error" style="color:#ff8a8a;font-size:13px;margin-top:14px;text-align:center;max-width:280px"></div>
 </div>
 
-<!-- ══════════ 매장 없음 ══════════ -->
+<!-- ══════════ 매장 없음 → 마케팅 퍼널 ══════════ -->
 <div class="scr" id="s-notfound">
-  <div class="scroll" style="background:var(--bg);align-items:center;justify-content:center;display:flex;flex-direction:column;padding:40px 24px;text-align:center;min-height:100vh">
-    <div style="font-size:64px;margin-bottom:20px">🏚️</div>
-    <div style="font-size:20px;font-weight:900;color:var(--t1);margin-bottom:8px">매장을 찾을 수 없어요</div>
-    <div style="font-size:14px;color:var(--t3);margin-bottom:32px;line-height:1.6">이 주소에 등록된 매장이 없습니다.<br>매장 사장님이신가요?</div>
-    <button class="btn btn-blue" style="max-width:240px" onclick="show('s-owner-signup')">매장 등록하기</button>
+  <div class="scroll" style="background:#f5f5f0;padding:0;display:block">
+
+    <!-- HERO -->
+    <section style="background:#0D1B2A;padding:56px 24px 48px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:rgba(255,107,0,0.07);pointer-events:none"></div>
+      <div style="position:absolute;left:-40px;bottom:-80px;width:200px;height:200px;border-radius:50%;background:rgba(255,107,0,0.04);pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,107,0,0.13);border:1px solid rgba(255,107,0,0.35);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:700;color:#FF8C40;letter-spacing:.8px;margin-bottom:22px">⚡ AI 검색 시대 생존 전략</div>
+        <div style="font-size:32px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:14px;text-wrap:balance">
+          리뷰를 쌓는 구조를<br>만든 가게만<br><span style="color:#FF6B00">살아남습니다</span>
+        </div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.65);line-height:1.8;margin-bottom:30px">
+          네이버AI · 카카오맵 · 구글 — 플랫폼이 바뀌어도<br>
+          <span style="color:rgba(255,255,255,0.9);font-weight:600">리뷰가 많은 가게를 먼저 추천합니다.</span><br>
+          게임처럼 즐거운 이벤트로 리뷰를 자동으로 모으세요.
+        </div>
+        <button onclick="show('s-owner-signup')" style="width:100%;padding:17px;background:linear-gradient(135deg,#FF6B00,#FF9500);border:none;border-radius:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(255,107,0,0.45);letter-spacing:-.2px">무료로 내 매장 리뷰이벤트 만들기 →</button>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:center;margin-top:10px">카드 불필요 · 설치 없음 · 5분 완성</div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section style="background:#FF6B00;padding:18px 20px">
+      <div style="display:flex;justify-content:space-around;text-align:center">
+        <div>
+          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">87%</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">소비자가 리뷰 확인<br>후 방문</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.25)"></div>
+        <div>
+          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">3배</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">리뷰 매장 AI<br>추천 가능성</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.25)"></div>
+        <div>
+          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">무료</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">지금 바로<br>시작 가능</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI FEAR -->
+    <section style="padding:40px 24px;background:#fff">
+      <div style="font-size:11px;font-weight:700;color:#FF6B00;letter-spacing:.8px;margin-bottom:10px">현실을 직시하세요</div>
+      <div style="font-size:21px;font-weight:900;color:#0D1B2A;margin-bottom:22px;line-height:1.35;text-wrap:balance">네이버·구글·AI가<br>리뷰로 매장을 결정합니다</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FFF5F5;border-left:3px solid #FF4444;border-radius:0 12px 12px 0;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#FF4444;margin-bottom:5px">리뷰 없는 매장</div>
+          <div style="font-size:13px;color:#555;line-height:1.65">"근처 맛집 추천해줘" → AI가 경쟁 매장만 추천<br>검색 결과 하단, 신규 유입 거의 없음</div>
+        </div>
+        <div style="background:#F0FFF6;border-left:3px solid #03C75A;border-radius:0 12px 12px 0;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#03C75A;margin-bottom:5px">리뷰 쌓인 매장</div>
+          <div style="font-size:13px;color:#555;line-height:1.65">네이버AI·카카오맵·구글이 먼저 노출<br>신규 고객이 자동으로 유입되는 선순환</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section style="padding:40px 24px;background:#f5f5f0">
+      <div style="font-size:11px;font-weight:700;color:#FF6B00;letter-spacing:.8px;margin-bottom:10px">이렇게 작동합니다</div>
+      <div style="font-size:21px;font-weight:900;color:#0D1B2A;margin-bottom:24px;line-height:1.35;text-wrap:balance">고객이 자발적으로<br>리뷰를 남기게 됩니다</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
+          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎰</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">룰렛 뽑기</div>
+            <div style="font-size:12px;color:#888;line-height:1.5">QR 스캔 → 룰렛 돌려서 경품 당첨<br>당첨 욕구가 리뷰 작성으로 이어집니다</div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
+          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#5A6FFF,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🃏</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">카드 뽑기</div>
+            <div style="font-size:12px;color:#888;line-height:1.5">5장 중 1장 선택 — 어떤 카드일지 두근두근<br>재미있어서 친구한테 공유하고 싶어집니다</div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
+          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#03C75A,#006633);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎟️</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">긁는 복권</div>
+            <div style="font-size:12px;color:#888;line-height:1.5">손가락으로 긁어서 당첨 확인<br>복권 느낌에 다음 방문 기대감까지</div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
+          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⭐</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">스탬프 + 설문</div>
+            <div style="font-size:12px;color:#888;line-height:1.5">방문할수록 스탬프 적립, 설문 자동 수집<br>단골 고객이 VIP로 육성됩니다</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NAVER EMPHASIS -->
+    <section style="padding:40px 24px;background:#03C75A">
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:.8px;margin-bottom:10px">핵심 연동</div>
+      <div style="font-size:21px;font-weight:900;color:#fff;margin-bottom:14px;line-height:1.35;text-wrap:balance">네이버 플레이스<br>주소 하나로 완성됩니다</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px">
+        네이버 플레이스 URL을 붙여넣으면<br>
+        매장 전용 리뷰이벤트 사이트가 자동 생성됩니다.
+      </div>
+      <div style="background:rgba(0,0,0,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:14px;padding:16px 18px">
+        <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:10px">✅ 가입 시 필요한 것</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#03C75A;flex-shrink:0;margin-top:1px">1</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#fff">네이버 플레이스 URL</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">map.naver.com/p/entry/place/<strong style="color:#fff">숫자</strong></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#03C75A;flex-shrink:0;margin-top:1px">2</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#fff">관리자 이메일 + 비밀번호</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">로그인 및 관리자 페이지 접근에 사용</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section style="padding:44px 24px;background:#0D1B2A;text-align:center">
+      <div style="font-size:23px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.3;text-wrap:balance">지금 무료로 시작하세요</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:28px;line-height:1.7">설치 없음 · 카드 불필요 · 5분 안에 완성<br>네이버 플레이스 URL만 있으면 됩니다</div>
+      <button onclick="show('s-owner-signup')" style="width:100%;padding:18px;background:linear-gradient(135deg,#FF6B00,#FF9500);border:none;border-radius:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 32px rgba(255,107,0,0.5);letter-spacing:-.2px">무료로 내 매장 리뷰이벤트 사이트 만들기</button>
+      <div style="margin-top:16px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
+        <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;padding:4px 8px;font-family:inherit;text-decoration:underline">기존 사장님 로그인</button>
+        <span style="font-size:11px;color:rgba(255,255,255,0.15)">|</span>
+        <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.15);cursor:pointer;padding:4px 8px;font-family:inherit">총괄관리자</button>
+      </div>
+      <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.2)">© 2025 리뷰이벤트 플랫폼 by 장사닥터</div>
+    </section>
+    <div class="store-switcher" id="store-switcher-wrap" style="padding:0 20px 20px;background:#0D1B2A"></div>
   </div>
 </div>
 
@@ -229,28 +357,43 @@ body.dark .success-msg{color:#3ddc97}
 
 <!-- ══════════ 사장님 회원가입 ══════════ -->
 <div class="scr" id="s-owner-signup">
-  <div class="topbar"><button class="tb-back" onclick="show('s-landing')">‹</button><div class="tb-title">사장님 회원가입</div></div>
-  <div class="scroll" style="background:var(--white);padding:24px 20px">
-    <div style="font-size:20px;font-weight:900;color:var(--t1);margin-bottom:6px;line-height:1.35">네이버 플레이스로<br>매장 페이지를 만들어요</div>
-    <div style="font-size:13px;color:var(--t3);margin-bottom:24px;line-height:1.6">상호명과 연락처로 무료 가입하고, 네이버 플레이스 링크 속 고유 번호로 매장 전용 주소가 자동 생성됩니다</div>
+  <div class="topbar"><button class="tb-back" onclick="show('s-notfound')">‹</button><div class="tb-title">사장님 회원가입</div></div>
+  <div class="scroll" style="background:var(--white);padding:0">
+    <!-- 네이버 강조 배너 -->
+    <div style="background:#03C75A;padding:18px 20px 16px">
+      <div style="font-size:17px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1.3">네이버 플레이스로<br>매장 리뷰이벤트를 만들어요</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.82);line-height:1.6">네이버 플레이스 URL을 붙여넣으면<br>매장 전용 이벤트 주소가 자동 생성됩니다</div>
+    </div>
 
-    <div class="field"><label>사장님 성함</label><input id="os-owner" placeholder="홍길동" maxlength="20"></div>
-    <div class="field"><label>연락처</label><input id="os-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
-    <div class="field"><label>네이버 플레이스 상호명</label><input id="os-name" placeholder="예) 맛있는집" maxlength="30"></div>
-    <div class="field">
-      <label>네이버 플레이스 URL</label>
-      <input id="os-naver" placeholder="https://map.naver.com/p/entry/place/1234567890" oninput="previewUID()">
+    <div style="padding:24px 20px">
+      <div class="field"><label>사장님 성함</label><input id="os-owner" placeholder="홍길동" maxlength="20"></div>
+      <div class="field"><label>연락처</label><input id="os-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
+      <div class="field"><label>네이버 플레이스 상호명</label><input id="os-name" placeholder="예) 맛있는집" maxlength="30"></div>
+
+      <!-- 네이버 URL 필드 강조 -->
+      <div class="field" style="margin-bottom:0">
+        <label style="display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;background:#03C75A;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.3px">필수</span>
+          네이버 플레이스 URL
+        </label>
+        <input id="os-naver" placeholder="https://map.naver.com/p/entry/place/1234567890" oninput="previewUID()" style="border-color:#03C75A;border-width:2px">
+      </div>
+      <div style="background:#F0FFF6;border:1px solid #b2f0cf;border-radius:10px;padding:10px 13px;margin-bottom:16px;font-size:11px;color:#1a6640;line-height:1.7">
+        📍 네이버 지도 앱 → 내 매장 검색 → 상단 URL 복사<br>
+        <span style="color:#888">naver.me 단축 링크 ❌ &nbsp;·&nbsp; 전체 주소 ✅</span>
+      </div>
+      <div id="os-uid-preview" style="margin-top:-6px;margin-bottom:10px"></div>
+      <div class="field" id="os-manual-id-field" style="display:none">
+        <label>매장 고유번호 직접 입력 (URL 자동 인식 안 될 때)</label>
+        <input id="os-manual-id" placeholder="숫자만 입력 (예: 1234567890)" oninput="previewUID()">
+      </div>
+
+      <div class="field"><label>관리자 이메일 <span style="font-size:11px;color:var(--t4);font-weight:400">(로그인용)</span></label><input id="os-email" placeholder="owner@example.com"></div>
+      <div class="field" style="margin-bottom:24px"><label>관리자 비밀번호</label><input id="os-pw" type="password" placeholder="6자 이상" maxlength="30"></div>
+      <div id="os-error"></div>
+      <button class="btn btn-blue" onclick="createStore()" style="font-size:16px;padding:17px;font-weight:800">무료로 매장 만들기</button>
+      <div style="font-size:11px;color:var(--t4);margin-top:14px;line-height:1.7;text-align:center">무료 가입 후 관리자 페이지 "매장 연동하기"에서<br>리뷰 링크를 연결하면 이벤트가 활성화됩니다.</div>
     </div>
-    <div id="os-uid-preview" style="margin-top:10px"></div>
-    <div class="field" id="os-manual-id-field" style="display:none">
-      <label>매장 고유번호 직접 입력 (URL에서 자동 인식이 안 될 때)</label>
-      <input id="os-manual-id" placeholder="숫자만 입력 (예: 1234567890)" oninput="previewUID()">
-    </div>
-    <div class="field"><label>관리자 이메일 (로그인용)</label><input id="os-email" placeholder="owner@example.com"></div>
-    <div class="field" style="margin-bottom:24px"><label>관리자 비밀번호</label><input id="os-pw" type="password" placeholder="6자 이상" maxlength="30"></div>
-    <div id="os-error"></div>
-    <button class="btn btn-blue" onclick="createStore()">무료로 매장 만들기</button>
-    <div style="font-size:11px;color:var(--t4);margin-top:14px;line-height:1.6;text-align:center">무료 가입 후 매장 관리자 페이지의 "매장 연동하기"에서<br>플레이스·리뷰 링크를 연결하면 기능이 활성화됩니다.<br>naver.me 단축 링크 대신 전체 주소를 붙여넣어 주세요.</div>
   </div>
 </div>
 
