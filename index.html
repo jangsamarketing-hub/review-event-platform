@@ -872,8 +872,8 @@ function seedDemoStore(){
       {id:'r5',name:'음료수 1개',prob:25,color:'#e5e7eb',benefit:'음료수 1개 무료'}
     ],
     surveyQuestions:[
-      {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
       {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (10점 만점)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
+      {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ],
     adminEmail:'jayden',adminPassword:'194360',
@@ -974,10 +974,15 @@ function migrateStore(s){
   // 구버전 이모지-rating 문항이 있으면 최신 형태로 교체
   if(!s.surveyQuestions||!s.surveyQuestions.length||s.surveyQuestions.some(q=>q.type==='rating')){
     s.surveyQuestions=[
-      {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
       {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (10점 만점)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
+      {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ];
+  }
+  // 기존 저장된 데이터 순서 교정: matrix가 첫 번째로 오도록
+  if(s.surveyQuestions&&s.surveyQuestions.length>=2&&s.surveyQuestions[0].type!=='matrix'){
+    const matrixQ=s.surveyQuestions.find(q=>q.type==='matrix');
+    if(matrixQ){s.surveyQuestions=[matrixQ,...s.surveyQuestions.filter(q=>q.type!=='matrix')];}
   }
   // 구버전 상품 확률 (4개 이하) 이면 5개 기본값으로 교체
   const _defPrizes=(pfx)=>[
@@ -1992,11 +1997,9 @@ function initMainCard(){
   const alreadyEl=document.getElementById('card-already');
   const errEl=document.getElementById('card-error');
   const track=document.getElementById('card-track');
-  const prizes=STORE.prizes;
   const N=5;
-  const basePrizes=Array.from({length:N},(_,i)=>prizes[i%prizes.length]);
-  for(let j=basePrizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[basePrizes[j],basePrizes[k]]=[basePrizes[k],basePrizes[j]];}
-  window.__mainCardPrizes=basePrizes;
+  // 각 카드에 확률 기반으로 상품 미리 배정 (선뽑기 방식)
+  window.__mainCardPrizes=Array.from({length:N},()=>pickWinner());
   document.getElementById('card-status').textContent='버튼을 눌러 카드를 섞어보세요!';
   document.getElementById('card-result-msg').textContent='';
   // 처음부터 뒷면(파란 카드)으로 표시 — 상품 미공개
@@ -2041,9 +2044,6 @@ function doMainCardStart(){
     if(shuffleCount>=10){
       clearInterval(shuffleIv);
       setTimeout(()=>{
-        // 상품 배열 재셔플
-        const prizes=window.__mainCardPrizes;
-        for(let j=prizes.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[prizes[j],prizes[k]]=[prizes[k],prizes[j]];}
         cards.forEach(c=>{
           c.style.transition='transform 0.4s cubic-bezier(.34,1.56,.64,1)';
           c.style.transform='translateX(0) translateY(0) rotate(0)';
@@ -2064,8 +2064,9 @@ function pickMainCard(idx){
   mainCardBusy=true;
   const cards=[...document.querySelectorAll('#card-track .main-card')];
   cards.forEach(c=>c.onclick=null);
-  const winner=pickWinner();
-  const isWin=!!(winner.benefit&&winner.benefit.trim());
+  // 미리 배정된 확률 기반 상품 사용 (선뽑기)
+  const winner=window.__mainCardPrizes[idx];
+  const isWin=!!(winner&&winner.benefit&&winner.benefit.trim());
   initAudio();tick(0.5);
   const prizes=STORE.prizes||[];
   const picked=cards[idx];
@@ -2614,10 +2615,12 @@ function renderSurveyQuestions(){
         ${(q.items||[]).map((it,idx)=>`
           <div style="padding:10px 14px;${idx>0?'border-top:1px solid var(--border2)':''}">
             <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">${it}</div>
-            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:1px;justify-content:flex-end;flex-wrap:wrap">
-              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
-              <span data-star="${n}" onclick="handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))"
-                style="font-size:27px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block">★</span>`).join('')}
+            <div style="display:flex;align-items:center;gap:8px">
+            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px;justify-content:flex-start;align-items:center;flex:1">
+              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`${n===6?'<span style="display:inline-block;width:5px;flex-shrink:0"></span>':''}<span data-star="${n}" onclick="handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))"
+                style="font-size:26px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block;flex-shrink:0">★</span>`).join('')}
+            </div>
+            <span class="star-score" style="font-size:13px;font-weight:800;color:var(--blue);min-width:30px;text-align:right">-</span>
             </div>
           </div>
         `).join('')}
@@ -2673,6 +2676,8 @@ function setMatrixRating(qid,item,val,rowEl){
       starEl.style.color='#d1d5db';
     }
   });
+  const scoreEl=rowEl.parentElement?.querySelector('.star-score');
+  if(scoreEl)scoreEl.textContent=val>0?val:'';
 }
 function toggleMultiCheck(e,qid,opt,labelEl){
   const box=labelEl.querySelector('.mc-box');
@@ -3816,14 +3821,35 @@ function renderSurveyRatio(){
 }
 /* ════════════════════ VIP/프리미엄 ════════════════════ */
 function isPremium(){return !!(STORE&&STORE.premium);}
+const _vipPlans=[
+  {label:'1개월',price:12900,monthly:12900,discount:0},
+  {label:'3개월',price:29900,monthly:9967,discount:23},
+  {label:'6개월',price:49900,monthly:8317,discount:36,best:true},
+  {label:'12개월',price:89900,monthly:7492,discount:42},
+];
+function _selectVipPlan(idx){
+  window.__vipPlanIdx=idx;
+  const p=_vipPlans[idx];
+  const m=document.getElementById('vip-modal-overlay');
+  if(!m)return;
+  m.querySelectorAll('.vip-plan-card').forEach((el,i)=>{
+    const sel=i===idx;
+    el.style.border=sel?'2.5px solid var(--blue)':'2px solid var(--border)';
+    el.style.background=sel?'rgba(49,130,246,0.08)':'var(--white)';
+    el.querySelector('.vip-plan-check').style.display=sel?'flex':'none';
+  });
+  const cta=document.getElementById('vip-cta-btn');
+  if(cta){
+    cta.textContent=`💬 ${p.label} 플랜 결제 문의하기`;
+    const msg=`[VIP 프리미엄 결제 문의]\n선택: ${p.label}\n금액: ${p.price.toLocaleString()}원${p.discount?' ('+p.discount+'% 할인)':''}`;
+    cta.setAttribute('data-href','https://litt.ly/jangsa.doctor');
+    cta.setAttribute('data-msg',msg);
+  }
+}
 function showVipModal(){
-  const plans=[
-    {label:'1개월',price:12900,monthly:12900,discount:0},
-    {label:'3개월',price:29900,monthly:9967,discount:23},
-    {label:'6개월',price:49900,monthly:8317,discount:36,best:true},
-    {label:'12개월',price:89900,monthly:7492,discount:42},
-  ];
+  if(document.getElementById('vip-modal-overlay'))return;
   const m=document.createElement('div');
+  m.id='vip-modal-overlay';
   m.style.cssText='position:fixed;inset:0;z-index:9100;display:flex;align-items:flex-end;background:rgba(0,0,0,.5)';
   m.innerHTML=`<div style="width:100%;background:var(--white);border-radius:24px 24px 0 0;padding:20px 18px 36px;max-height:90vh;overflow-y:auto">
     <div style="text-align:center;margin-bottom:16px">
@@ -3841,28 +3867,33 @@ function showVipModal(){
         📈 설문 응답 비율 분석
       </div>
     </div>
-    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">요금제 선택</div>
-    ${plans.map(p=>`
-      <div style="border:2px solid ${p.best?'var(--blue)':'var(--border)'};border-radius:14px;padding:12px 14px;margin-bottom:8px;position:relative;background:${p.best?'rgba(49,130,246,0.06)':'var(--white)'}">
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px">요금제 선택 <span style="font-size:11px;font-weight:400;color:var(--t4)">(탭하여 선택)</span></div>
+    ${_vipPlans.map((p,i)=>`
+      <div class="vip-plan-card" onclick="_selectVipPlan(${i})" style="border:2px solid ${p.best?'var(--blue)':'var(--border)'};border-radius:14px;padding:12px 14px;margin-bottom:8px;position:relative;background:${p.best?'rgba(49,130,246,0.06)':'var(--white)'};cursor:pointer;transition:all .15s">
         ${p.best?'<div style="position:absolute;top:-9px;right:12px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.3px">인기</div>':''}
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
             <div style="font-size:15px;font-weight:800;color:var(--t1)">${p.label}</div>
             ${p.discount?`<div style="font-size:11px;color:var(--t3);margin-top:2px">월 ${p.monthly.toLocaleString()}원</div>`:'<div style="font-size:11px;color:var(--t3);margin-top:2px">기준 요금</div>'}
           </div>
-          <div style="text-align:right">
-            ${p.discount?`<div style="font-size:11px;color:#e03131;font-weight:700">${p.discount}% 할인</div>`:''}
-            <div style="font-size:18px;font-weight:900;color:${p.best?'var(--blue)':'var(--t1)'}">${p.price.toLocaleString()}원</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="text-align:right">
+              ${p.discount?`<div style="font-size:11px;color:#e03131;font-weight:700">${p.discount}% 할인</div>`:''}
+              <div style="font-size:18px;font-weight:900;color:${p.best?'var(--blue)':'var(--t1)'}">${p.price.toLocaleString()}원</div>
+            </div>
+            <div class="vip-plan-check" style="display:${p.best?'flex':'none'};width:22px;height:22px;border-radius:50%;background:var(--blue);align-items:center;justify-content:center;flex-shrink:0"><span style="color:#fff;font-size:13px;font-weight:900">✓</span></div>
           </div>
         </div>
       </div>
     `).join('')}
-    <a href="https://litt.ly/jangsa.doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:15px;background:#FEE500;border-radius:14px;font-size:15px;font-weight:800;color:#191f28;text-decoration:none;box-shadow:0 4px 14px rgba(254,229,0,.35)">💬 카카오톡으로 결제 문의하기</a>
+    <button id="vip-cta-btn" onclick="(()=>{const h=this.getAttribute('data-href');if(h)window.open(h,'_blank');})()" data-href="https://litt.ly/jangsa.doctor" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:15px;background:#FEE500;border-radius:14px;font-size:15px;font-weight:800;color:#191f28;text-decoration:none;width:100%;border:none;cursor:pointer;font-family:Noto Sans KR,sans-serif;box-shadow:0 4px 14px rgba(254,229,0,.35)">💬 요금제를 선택 후 문의하기</button>
     <a href="https://open.kakao.com/me/jangsa_doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;padding:13px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;font-size:13px;font-weight:700;color:var(--t1);text-decoration:none">🔗 오픈카카오로 문의하기</a>
-    <button onclick="this.closest('[style*=fixed]').remove()" style="display:block;width:100%;margin-top:14px;padding:12px;background:none;border:none;font-size:14px;color:var(--t3);cursor:pointer;font-family:Noto Sans KR,sans-serif">닫기</button>
+    <button onclick="document.getElementById('vip-modal-overlay').remove()" style="display:block;width:100%;margin-top:14px;padding:12px;background:none;border:none;font-size:14px;color:var(--t3);cursor:pointer;font-family:Noto Sans KR,sans-serif">닫기</button>
   </div>`;
   document.body.appendChild(m);
   m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+  // 6개월(인기) 기본 선택
+  _selectVipPlan(2);
 }
 
 function renderAdmin(tab){
