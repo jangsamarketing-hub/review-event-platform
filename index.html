@@ -3273,12 +3273,10 @@ function renderAdminCoupons(tab,q){
         <div style="font-size:12px;color:var(--t4);margin-bottom:8px">발급일: ${c.issued||'-'} · 만료: ${c.expires||'-'}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn-ghost" style="width:auto;flex:1;padding:8px;font-size:12px;min-width:80px" onclick="copyCouponMessage('${c.id}')">📋 문구 복사</button>
-          <div style="position:relative;flex:1;min-width:80px;display:inline-flex">
-            <a href="${isPremium()?'sms:'+u.phone.replace(/-/g,'')+'?body='+encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)'):'#'}" onclick="${isPremium()?'':'event.preventDefault();showVipModal()'}" style="flex:1;text-decoration:none">
-              <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:${isPremium()?'var(--blue)':'var(--t3)'};border-color:${isPremium()?'var(--blue)':'var(--border)'};filter:${isPremium()?'none':'blur(1px)'}">💬 문자 보내기</button>
-            </a>
-            ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;display:flex;align-items:center;justify-content:center"><span style="font-size:10px;font-weight:800;color:#f97316;background:rgba(249,115,22,0.1);border:1px solid #f97316;border-radius:5px;padding:1px 6px">👑</span></div>'}
-          </div>
+          <a href="${isPremium()?'sms:'+u.phone.replace(/-/g,'')+'?body='+encodeURIComponent('['+STORE.profile.name+'] '+c.name+' 쿠폰이 도착했어요! 매장 방문 시 사용해주세요 :)'):'#'}" onclick="${isPremium()?'':'event.preventDefault();showVipModal()'}" style="flex:1;text-decoration:none;min-width:80px">
+            <button class="btn-ghost" style="width:100%;padding:8px;font-size:12px;color:var(--blue);border-color:var(--blue)">💬 문자 보내기</button>
+          </a>
+          ${isPremium()?'':'<div onclick="showVipModal()" style="flex-shrink:0;cursor:pointer;display:flex;align-items:center;padding:4px 8px;border:1.5px solid #f97316;border-radius:7px;background:rgba(249,115,22,0.08)"><span style="font-size:10px;font-weight:800;color:#f97316">👑VIP</span></div>'}
           ${c.sentAt?
             `<span style="font-size:11px;color:var(--green);font-weight:600;padding:8px 0">✅ 발송완료</span>`:
             `<button onclick="markCouponSent('${c.id}')" style="flex-shrink:0;padding:8px 10px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--t3);cursor:pointer">발송완료 체크</button>`
@@ -3430,13 +3428,14 @@ function renderCustomersTab(el){
       </div>
 
       <!-- 기간 슬라이더 바 (VIP) -->
-      <div style="background:var(--bg);border-radius:14px;padding:16px 14px 12px;position:relative;${isPremium()?'':'overflow:hidden'}">${isPremium()?'':''}
+      <div style="background:var(--bg);border-radius:14px;padding:16px 14px 12px;position:relative">
+        ${!isPremium()?'<div onclick="showVipModal()" style="position:absolute;top:10px;right:10px;z-index:2;background:linear-gradient(135deg,#ff9900,#f97316);border-radius:20px;padding:3px 10px;cursor:pointer"><span style="font-size:10px;font-weight:800;color:#fff">👑 VIP</span></div>':''}
         <div style="position:relative;margin-bottom:8px">
           <div style="height:4px;background:var(--border);border-radius:4px;margin:0 4px"></div>
           <div style="position:absolute;top:0;left:4px;height:4px;background:${_custVisitMode==='visited'?'var(--blue)':'var(--red)'};border-radius:4px;width:${selIdx===0?0:Math.round((selIdx/(periods.length-1))*100)}%;transition:width .2s"></div>
           <div style="display:flex;justify-content:space-between;margin-top:-6px">
             ${periods.map((p,i)=>`
-              <button onclick="setCustDays(${p.days})" title="${p.label}" style="width:16px;height:16px;border-radius:50%;border:2px solid ${i<=selIdx&&selIdx>0?(_custVisitMode==='visited'?'var(--blue)':'var(--red)'):'var(--border)'};background:${i===selIdx?(_custVisitMode==='visited'?'var(--blue)':'var(--red)'):'var(--white)'};cursor:pointer;padding:0;flex-shrink:0;transition:all .15s"></button>
+              <button onclick="${isPremium()?'setCustDays('+p.days+')':'showVipModal()'}" title="${p.label}" style="width:16px;height:16px;border-radius:50%;border:2px solid ${i<=selIdx&&selIdx>0?(_custVisitMode==='visited'?'var(--blue)':'var(--red)'):'var(--border)'};background:${i===selIdx?(_custVisitMode==='visited'?'var(--blue)':'var(--red)'):'var(--white)'};cursor:pointer;padding:0;flex-shrink:0;transition:all .15s"></button>
             `).join('')}
           </div>
         </div>
@@ -3446,11 +3445,6 @@ function renderCustomersTab(el){
         <div style="margin-top:10px;text-align:center;font-size:13px;font-weight:700;color:var(--t1)">
           ${_custDays===0?'모든 고객':(_custVisitMode==='visited'?`최근 ${periods[selIdx].label} 이내 방문`:`${periods[selIdx].label} 이상 미방문`)} · <span style="color:${_custVisitMode==='visited'?'var(--blue)':'var(--red)'}">${filtered.length}명</span>
         </div>
-        ${isPremium()?'':
-          `<div onclick="showVipModal()" style="position:absolute;inset:0;z-index:5;cursor:pointer;background:rgba(255,255,255,0.85);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px">
-            <span style="font-size:16px">👑</span>
-            <span style="font-size:13px;font-weight:800;color:#f97316">기간 필터 — VIP 전용</span>
-          </div>`}
       </div>
     </div>
 
@@ -3458,10 +3452,8 @@ function renderCustomersTab(el){
       <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px" id="bulk-count-label">0명 선택됨</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button onclick="bulkCopyMessages()" class="btn btn-blue btn-sm">📋 선택 고객 문구 전체 복사</button>
-        <div style="position:relative;display:inline-flex">
-          <button class="btn btn-light btn-sm" style="pointer-events:${isPremium()?'auto':'none'};filter:${isPremium()?'none':'blur(1.5px)'}" onclick="bulkSendSMS()">📱 고객에게 메시지 보내기</button>
-          ${isPremium()?'':'<div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="background:rgba(249,115,22,0.12);border:1px solid #f97316;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;color:#f97316;white-space:nowrap">👑 VIP</span></div>'}
-        </div>
+        <button onclick="${isPremium()?'bulkSendSMS()':'showVipModal()'}" class="btn btn-light btn-sm">📱 고객에게 메시지 보내기</button>
+        ${isPremium()?'':'<div onclick="showVipModal()" style="cursor:pointer;display:flex;align-items:center;gap:3px;padding:5px 10px;background:rgba(249,115,22,0.08);border:1.5px solid #f97316;border-radius:8px"><span style="font-size:12px">👑</span><span style="font-size:11px;font-weight:800;color:#f97316">VIP</span></div>'}
       </div>
     </div>
 
@@ -3672,12 +3664,31 @@ function selATab(tab,el){document.querySelectorAll('[id^="atab"]').forEach(b=>b.
 let statsGranularity='day';
 let statsRangeMode='all'; // 'all' | 'range'
 let statsRangeFrom='',statsRangeTo='';
-function setStatsGranularity(g){statsGranularity=g;document.getElementById('participation-chart').innerHTML=renderParticipationChart();}
+function _applyStatsVipBlur(){
+  const vip=!isPremium()&&(statsGranularity!=='day'||statsRangeMode==='range');
+  const el=document.getElementById('participation-chart');
+  if(!el)return;
+  el.style.filter=vip?'blur(4px)':'';
+  el.style.pointerEvents=vip?'none':'';
+  el.style.userSelect=vip?'none':'';
+  let ov=document.getElementById('stats-vip-overlay');
+  if(vip&&!ov){
+    ov=document.createElement('div');
+    ov.id='stats-vip-overlay';
+    ov.onclick=showVipModal;
+    ov.style.cssText='position:absolute;inset:0;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2';
+    ov.innerHTML='<div style="background:rgba(255,255,255,.93);border:2px solid #f97316;border-radius:12px;padding:10px 18px;text-align:center"><div style="font-size:16px;margin-bottom:4px">👑</div><div style="font-size:12px;font-weight:700;color:#f97316">VIP 기능 — 탭하여 결제 문의</div></div>';
+    el.parentElement.style.position='relative';
+    el.parentElement.appendChild(ov);
+  } else if(!vip&&ov){ov.remove();}
+}
+function setStatsGranularity(g){statsGranularity=g;document.getElementById('participation-chart').innerHTML=renderParticipationChart();_applyStatsVipBlur();}
 function setStatsRangeMode(m){
   statsRangeMode=m;
   const rp=document.getElementById('stats-range-picker');
   if(rp)rp.style.display=(m==='range')?'flex':'none';
   document.getElementById('participation-chart').innerHTML=renderParticipationChart();
+  _applyStatsVipBlur();
 }
 function thisMonthFrom(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01';}
 function setStatsThisMonth(){
@@ -3868,7 +3879,7 @@ function renderAdmin(tab){
         <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:10px">날짜별 리뷰 이벤트 참여인원</div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <button class="chip ${statsRangeMode==='all'?'on':'off'}" onclick="setStatsRangeMode('all')">총계</button>
-          <button class="chip ${statsRangeMode==='range'?'on':'off'}" onclick="${isPremium()?'setStatsRangeMode(\'range\')':'showVipModal()'}">${isPremium()?'기간별 보기':'기간별 보기 👑'}</button>
+          <button class="chip ${statsRangeMode==='range'?'on':'off'}" onclick="setStatsRangeMode('range')">기간별 보기${isPremium()?'':' 👑'}</button>
         </div>
         <div id="stats-range-picker" style="display:${statsRangeMode==='range'?'flex':'none'};gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
           <input type="date" id="stats-from" value="${statsRangeFrom}" style="flex:1;min-width:110px;padding:7px 9px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:var(--white);color:var(--t1)">
@@ -3879,10 +3890,10 @@ function renderAdmin(tab){
         </div>
         <div class="chips" style="margin-bottom:12px">
           <button class="chip ${statsGranularity==='day'?'on':'off'}" onclick="setStatsGranularity('day')">일별</button>
-          <button class="chip ${statsGranularity==='week'?'on':'off'}" onclick="${isPremium()?'setStatsGranularity(\'week\')':'showVipModal()'}">주별${isPremium()?'':' 👑'}</button>
-          <button class="chip ${statsGranularity==='month'?'on':'off'}" onclick="${isPremium()?'setStatsGranularity(\'month\')':'showVipModal()'}">월별${isPremium()?'':' 👑'}</button>
+          <button class="chip ${statsGranularity==='week'?'on':'off'}" onclick="setStatsGranularity('week')">주별${isPremium()?'':' 👑'}</button>
+          <button class="chip ${statsGranularity==='month'?'on':'off'}" onclick="setStatsGranularity('month')">월별${isPremium()?'':' 👑'}</button>
         </div>
-        <div id="participation-chart">${renderParticipationChart()}</div>
+        <div style="position:relative"><div id="participation-chart">${renderParticipationChart()}</div></div>
         <div style="font-size:11px;color:var(--t4);margin-top:8px;line-height:1.6">💡 이 수치를 네이버 플레이스에 실제로 등록된 리뷰 수와 비교해보세요</div>
       </div>
 
@@ -3930,6 +3941,7 @@ function renderAdmin(tab){
         ${renderEventStats()}
       </div>
     `;
+    _applyStatsVipBlur();
   }else if(tab==='customers'){
     renderCustomersTab(el);
   }else if(tab==='qr'){
@@ -4228,11 +4240,12 @@ function renderSurveyAdmin(el){
   el.innerHTML=`
     <!-- 문항 관리 (접기/펼치기) -->
     <div class="card card-pad">
-      <div onclick="${isPremium()?'toggleSurveyQMgmt()':'showVipModal()'}" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+      <div onclick="toggleSurveyQMgmt()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
         <div style="font-size:14px;font-weight:700;color:var(--t1)">📋 설문 문항 관리 ${isPremium()?'':'<span style="background:linear-gradient(135deg,#ff9900,#f97316);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;vertical-align:middle">👑 VIP</span>'}</div>
-        <span id="sq-mgmt-arrow" style="font-size:18px;color:var(--t3)">${isPremium()?'›':'🔒'}</span>
+        <span id="sq-mgmt-arrow" style="font-size:18px;color:var(--t3)">›</span>
       </div>
-      ${isPremium()?`<div id="sq-mgmt-body" style="display:none;margin-top:14px">
+      <div id="sq-mgmt-body" style="display:none;margin-top:14px">
+        ${isPremium()?`
         <div style="font-size:12px;color:var(--t3);margin-bottom:12px">문항 내용을 직접 수정하고, ↑↓ 버튼으로 순서를 바꿀 수 있어요</div>
         <div id="sq-list">${renderSurveyQuestionRows(qTypeName)}</div>
         <hr style="border:none;border-top:1px solid var(--border2);margin:14px 0">
@@ -4248,24 +4261,22 @@ function renderSurveyAdmin(el){
         <div class="field" id="nq-options-field" style="display:none"><label>선택지 (쉼표로 구분)</label><input id="nq-options" placeholder="예) 매우 좋음,좋음,보통,아쉬움"></div>
         <div class="field" id="nq-items-field" style="display:none"><label>평가 항목들 (쉼표로 구분)</label><input id="nq-items" placeholder="예) 가격 대비 맛,가격 대비 양,매장 청결"></div>
         <button class="btn btn-light" style="margin-top:10px" onclick="addQuestion()">+ 문항 추가</button>
-      </div>`:`
-      <div style="margin-top:12px;position:relative;border-radius:10px;overflow:hidden">
-        <div style="filter:blur(2.5px);pointer-events:none;user-select:none;opacity:0.8">
-          <div style="font-size:12px;color:var(--t3);margin-bottom:10px">문항 내용을 직접 수정하고, ↑↓ 버튼으로 순서를 바꿀 수 있어요</div>
-          ${(STORE.surveyQuestions||[]).slice(0,2).map((q,i)=>`
-            <div style="padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--bg)">
-              <div style="font-size:12px;font-weight:700;color:var(--t1)">${i+1}. ${q.label||'설문 문항'}</div>
-              <div style="font-size:11px;color:var(--t3);margin-top:3px">${qTypeName[q.type]||q.type}</div>
-            </div>
-          `).join('')}
-          <div style="padding:10px 12px;border:1.5px dashed var(--border);border-radius:10px;text-align:center;font-size:12px;color:var(--t4)">+ 새 문항 추가</div>
-        </div>
-        <div onclick="showVipModal()" style="position:absolute;inset:0;cursor:pointer;display:flex;align-items:center;justify-content:center">
-          <div style="background:rgba(255,255,255,.92);border:1.5px solid #f97316;border-radius:12px;padding:8px 16px;text-align:center">
-            <div style="font-size:12px;font-weight:800;color:#f97316">👑 VIP — 문항 자유 편집</div>
+        `:`
+        <div style="font-size:12px;color:var(--t3);margin-bottom:10px">현재 설문 문항 목록</div>
+        ${(STORE.surveyQuestions||[]).map((q,i)=>`
+          <div style="padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:var(--bg);display:flex;align-items:center;gap:8px">
+            <span class="qtype-tag">${qTypeName[q.type]||q.type}</span>
+            <span style="font-size:13px;color:var(--t1);flex:1">${q.label||'문항'}</span>
+          </div>
+        `).join('')}
+        <div style="margin-top:10px;display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-radius:10px;border:1.5px dashed var(--border)">
+          <span style="font-size:13px;color:var(--t3);flex:1">문항 추가 / 수정하기</span>
+          <div onclick="showVipModal()" style="cursor:pointer;padding:5px 12px;background:linear-gradient(135deg,#ff9900,#f97316);border-radius:20px;white-space:nowrap">
+            <span style="font-size:11px;font-weight:800;color:#fff">👑 VIP 전용</span>
           </div>
         </div>
-      </div>`}
+        `}
+      </div>
     </div>
 
     <!-- 응답 통계 차트 -->
