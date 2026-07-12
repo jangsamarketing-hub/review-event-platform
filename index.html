@@ -1003,7 +1003,10 @@ body.dark .success-msg{color:#3ddc97}
 
     <div style="padding:24px 20px">
       <div class="field"><label>사장님 성함</label><input id="os-owner" placeholder="홍길동" maxlength="20"></div>
-      <div class="field"><label>연락처</label><input id="os-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
+      <div class="field" style="margin-bottom:4px"><label>연락처</label><input id="os-phone" placeholder="010-0000-0000" maxlength="13" inputmode="numeric"></div>
+      <div style="background:#fff8e6;border:1px solid #f5d76e;border-radius:10px;padding:9px 13px;margin-bottom:16px;font-size:11.5px;color:#7a5c00;line-height:1.6">
+        🔑 성함과 연락처는 <strong>비밀번호 찾기에 사용</strong>되니 정확히 입력해주세요
+      </div>
       <div class="field"><label>네이버 플레이스 상호명</label><input id="os-name" placeholder="예) 맛있는집" maxlength="30"></div>
 
       <!-- 네이버 URL 필드 강조 -->
@@ -1025,9 +1028,22 @@ body.dark .success-msg{color:#3ddc97}
 
       <div class="field"><label>관리자 이메일 <span style="font-size:11px;color:var(--t4);font-weight:400">(로그인용)</span></label><input id="os-email" placeholder="owner@naver.com"></div>
       <div class="field" style="margin-bottom:24px"><label>관리자 비밀번호</label><input id="os-pw" type="password" placeholder="6자 이상" maxlength="30"></div>
-      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;padding:12px 14px;background:#f8faff;border-radius:12px;border:1px solid #dbeafe">
-       <input type="checkbox" id="os-marketing" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#3182f6">
-       <label for="os-marketing" style="font-size:12px;color:#555;line-height:1.6;cursor:pointer">개인정보 수집·이용 및 마케팅 활용 동의 (선택)<br><span style="font-size:11px;color:#888">수집항목: 성함·연락처·매장정보 / 이용목적: 서비스 개선·마케팅 / 보관기간: 서비스 탈퇴 시까지</span></label>
+      <div style="margin-bottom:16px;border:1px solid #dbeafe;border-radius:12px;overflow:hidden">
+        <div style="background:#f8faff;padding:10px 14px 8px;display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="os-marketing" checked style="width:16px;height:16px;flex-shrink:0;accent-color:#3182f6;cursor:pointer">
+          <label for="os-marketing" style="font-size:13px;font-weight:700;color:#3182f6;cursor:pointer">개인정보 수집·이용 및 마케팅 활용 동의 (선택)</label>
+        </div>
+        <div style="background:#fff;padding:12px 14px;font-size:11px;color:#666;line-height:1.8;border-top:1px solid #dbeafe">
+          <div style="font-weight:700;color:#333;margin-bottom:4px">■ 수집 항목</div>
+          성함, 연락처, 매장명, 네이버 플레이스 URL, 관리자 이메일<br>
+          <div style="font-weight:700;color:#333;margin:6px 0 4px">■ 이용 목적</div>
+          서비스 제공·개선, 이벤트·혜택 안내, 마케팅 활용<br>
+          <div style="font-weight:700;color:#333;margin:6px 0 4px">■ 보관 기간</div>
+          서비스 탈퇴 시까지 (단, 관계 법령에 따라 별도 보관)<br>
+          <div style="font-weight:700;color:#333;margin:6px 0 4px">■ 제3자 제공</div>
+          DG스튜디오 (서비스 운영·고객지원 목적)<br>
+          <div style="margin-top:6px;color:#999;font-size:10.5px">※ 동의를 거부할 수 있으나, 거부 시 마케팅 혜택이 제한될 수 있습니다.</div>
+        </div>
       </div>
       <div id="os-error"></div>
       <button class="btn btn-blue" onclick="createStore()" style="font-size:16px;padding:17px;font-weight:800">무료로 매장 만들기</button>
@@ -2008,11 +2024,18 @@ function show(id){
   if(id==='s-survey')renderSurveyQuestions();
   if(id==='s-myinfo')renderMyInfo();
   if(id==='s-admin'){
-    // Supabase에서 최신 고객 데이터 pull 후 렌더링
     _sbLoad(STORE_ID).then(remote=>{
-      if(remote){storesDB[STORE_ID]=remote;STORE=remote;saveStoresDB();}
+      if(remote){
+        // Supabase 데이터가 더 최신이면 병합 (고객 수 기준)
+        const localUsers=(storesDB[STORE_ID]?.users||[]).length;
+        const remoteUsers=(remote.users||[]).length;
+        if(remoteUsers>=localUsers){storesDB[STORE_ID]=remote;STORE=remote;saveStoresDB();}
+      } else {
+        // Supabase에 아직 없음 → 로컬 데이터 자동 업로드
+        _sbPush(STORE_ID);
+      }
       renderAdmin('stats');
-    }).catch(()=>renderAdmin('stats'));
+    }).catch(()=>{_sbPush(STORE_ID);renderAdmin('stats');});
   }
   if(id==='s-notfound')renderStoreSearchSection();
   if(id==='s-platform')renderPlatform();
