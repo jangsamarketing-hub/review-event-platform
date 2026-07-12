@@ -200,15 +200,16 @@ body.dark .success-msg{color:#3ddc97}
  <div class="scroll" style="background:#F7F6F3;padding:0;display:block">
 
   <!-- ① HERO — 2개 겹친 폰 목업 (iPhone 스타일) -->
-  <section style="background:#0D1B2A;padding:40px 0 0;overflow:hidden">
-   <div style="padding:0 24px">
-    <div style="font-size:10px;font-weight:600;color:rgba(255,107,0,0.85);letter-spacing:2px;margin-bottom:14px;text-transform:uppercase">AEO · GEO · AI 검색 시대</div>
-    <div style="font-size:34px;font-weight:900;color:#fff;line-height:1.15;letter-spacing:-1.5px;margin-bottom:10px">AI 시대,<br>더 이상<br><span style="color:#FF6B00">검색만</span><br>하지 않습니다</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:0">리뷰, 아직도 말로만 제안하시나요?<br>게임이 자연스럽게 리뷰로 이어집니다</div>
-   </div>
-
-   <!-- 겹친 폰 2대 -->
-   <div style="position:relative;height:440px;margin-top:28px;overflow:hidden">
+  <section style="background:#0D1B2A;overflow:hidden">
+   <div style="display:flex;align-items:flex-end">
+    <div style="flex:1;min-width:0;padding:44px 10px 36px 22px">
+     <div style="font-size:10px;font-weight:600;color:rgba(255,107,0,0.85);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase">AEO · GEO · AI 검색 시대</div>
+     <div style="font-size:26px;font-weight:900;color:#fff;line-height:1.2;letter-spacing:-1px;margin-bottom:10px">AI 시대,<br>더 이상<br><span style="color:#FF6B00">검색만</span><br>하지 않습니다</div>
+     <div style="font-size:11.5px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:20px">리뷰, 아직도 말로만<br>제안하시나요?<br>게임이 자연스럽게<br>리뷰로 이어집니다</div>
+     <button onclick="show('s-owner-signup')" style="width:100%;padding:13px 8px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:13px;font-size:12.5px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(255,107,0,0.42)">무료로 시작하기 →</button>
+     <div style="font-size:9px;color:rgba(255,255,255,0.18);margin-top:8px">네이버 URL만으로 · 5분 완성</div>
+    </div>
+   <div style="flex-shrink:0;width:192px;position:relative;height:460px;overflow:hidden">
 
     <!-- 뒤 폰: 리뷰 유도 화면 (왼쪽) -->
     <div style="position:absolute;left:-20px;top:48px;transform:rotate(-11deg) translateZ(0);width:176px;z-index:1;
@@ -324,10 +325,6 @@ body.dark .success-msg{color:#3ddc97}
 
    </div>
 
-   <!-- CTA -->
-   <div style="padding:0 22px 36px;background:#0D1B2A;margin-top:0">
-    <button onclick="show('s-owner-signup')" style="width:100%;padding:17px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:15px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(255,107,0,0.45);letter-spacing:-.3px">무료로 내 매장 리뷰이벤트 만들기 →</button>
-    <div style="font-size:10px;color:rgba(255,255,255,0.18);text-align:center;margin-top:11px">네이버 플레이스 URL만 있으면 · 5분 완성 · 카드 불필요</div>
    </div>
   </section>
 
@@ -614,7 +611,7 @@ body.dark .success-msg{color:#3ddc97}
     ft.addEventListener('touchend',function(e){
      var dx=e.changedTouches[0].clientX-fsx,dy=e.changedTouches[0].clientY-fsy;
      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30){
-      var cur=Math.round(ft.scrollLeft/Math.max(ft.offsetWidth,1));
+      var cur=window.ftCurrent||0;
       var next=dx<0?Math.min(cur+1,2):Math.max(cur-1,0);
       if(window.ftGo)window.ftGo(next);
      }
@@ -679,11 +676,12 @@ body.dark .success-msg{color:#3ddc97}
    </div>
 
    <!-- 스크롤 슬라이더 -->
-   <div id="ft-track" style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth" onscroll="ftOnScroll(this)">
+   <div style="overflow:hidden">
+   <div id="ft-track" style="display:flex;transition:transform 0.38s cubic-bezier(.25,.46,.45,.94);will-change:transform">
 
     <!-- 패널 1: 스탬프 카드 -->
-    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
-     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+    <div style="flex-shrink:0;width:100%;padding:20px 16px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:220px;margin:0 auto">
       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
       <div style="background:#f8f9fa;border-radius:30px;overflow:hidden">
        <div style="background:#fff;padding:13px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px">
@@ -723,8 +721,8 @@ body.dark .success-msg{color:#3ddc97}
     </div>
 
     <!-- 패널 2: 설문 만족도 (별 10개 + 방문경로) -->
-    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
-     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+    <div style="flex-shrink:0;width:100%;padding:20px 16px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:220px;margin:0 auto">
       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
       <div style="background:#fff;border-radius:30px;overflow:hidden">
        <div style="background:#fff;padding:13px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px">
@@ -798,8 +796,8 @@ body.dark .success-msg{color:#3ddc97}
     </div>
 
     <!-- 패널 3: CRM 문자 -->
-    <div style="flex-shrink:0;width:100%;scroll-snap-align:start;padding:20px 24px">
-     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:280px;margin:0 auto">
+    <div style="flex-shrink:0;width:100%;padding:20px 16px">
+     <div style="background:#1c1c1e;border-radius:40px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,0.28),inset 0 0 0 1.5px #3a3a3c;max-width:220px;margin:0 auto">
       <div style="text-align:center;margin-bottom:4px"><div style="display:inline-block;width:44px;height:5px;background:#2e2e2e;border-radius:3px"></div></div>
       <div style="background:#f5f5f5;border-radius:30px;overflow:hidden">
        <!-- 앱 상단 -->
@@ -832,12 +830,14 @@ body.dark .success-msg{color:#3ddc97}
     </div>
 
    </div><!-- /ft-track -->
+   </div>
   </section>
   <script>
   (function(){
    function ftGo(n){
     var t=document.getElementById('ft-track');
-    if(t)t.scrollTo({left:n*t.offsetWidth,behavior:'smooth'});
+    if(t)t.style.transform='translateX(-'+(n*100)+'%)';
+    window.ftCurrent=n;
     ftUpdateTabs(n);
    }
    window.ftGo=ftGo;
@@ -849,10 +849,6 @@ body.dark .success-msg{color:#3ddc97}
      b.style.fontWeight=i===n?'800':'700';
     });
    }
-   window.ftOnScroll=function(el){
-    var i=Math.round(el.scrollLeft/Math.max(el.offsetWidth,1));
-    ftUpdateTabs(Math.min(i,2));
-   };
   })();
   </script>
 
@@ -1011,6 +1007,10 @@ body.dark .success-msg{color:#3ddc97}
 
       <div class="field"><label>관리자 이메일 <span style="font-size:11px;color:var(--t4);font-weight:400">(로그인용)</span></label><input id="os-email" placeholder="owner@naver.com"></div>
       <div class="field" style="margin-bottom:24px"><label>관리자 비밀번호</label><input id="os-pw" type="password" placeholder="6자 이상" maxlength="30"></div>
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;padding:12px 14px;background:#f8faff;border-radius:12px;border:1px solid #dbeafe">
+       <input type="checkbox" id="os-marketing" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#3182f6">
+       <label for="os-marketing" style="font-size:12px;color:#555;line-height:1.6;cursor:pointer">개인정보 수집·이용 및 마케팅 활용 동의 (선택)<br><span style="font-size:11px;color:#888">수집항목: 성함·연락처·매장정보 / 이용목적: 서비스 개선·마케팅 / 보관기간: 서비스 탈퇴 시까지</span></label>
+      </div>
       <div id="os-error"></div>
       <button class="btn btn-blue" onclick="createStore()" style="font-size:16px;padding:17px;font-weight:800">무료로 매장 만들기</button>
       <div style="font-size:11px;color:var(--t4);margin-top:14px;line-height:1.7;text-align:center">무료 가입 후 관리자 페이지 "매장 연동하기"에서<br>리뷰 링크를 연결하면 이벤트가 활성화됩니다.</div>
@@ -1830,7 +1830,8 @@ function createStore(){
   newStore.adminEmail=email;
   newStore.adminPassword=pw;
   newStore.coupons=[];newStore.users=[];newStore.surveys=[];newStore.staffLogs=[];newStore.spinLog=[];newStore.stamps=0;newStore.visits=0;newStore.vipCouponsIssued={};newStore.extraSpinLog={};newStore.extraEventLog=[];newStore.stampSettings={goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'무료 사이드 메뉴 1개'},{goal:10,reward:'무료 메뉴 1개'}]};newStore.stampCards={};
-  newStore.owner={name:owner,phone};
+  const ownerMarketing=!!(document.getElementById('os-marketing')&&document.getElementById('os-marketing').checked);
+  newStore.owner={name:owner,phone,marketing:ownerMarketing,marketingConsentAt:ownerMarketing?nowStr():null};
   newStore.naverPlaceUrl=naverUrl;
   newStore.approved=true; // MVP: 자동 승인 (총괄 관리자가 나중에 정지 가능)
   newStore.premium=false;newStore.plan='free';
@@ -1991,12 +1992,14 @@ function phoneLogin(){
   let user=STORE.users.find(u=>u.phone.replace(/-/g,'')===phone.replace(/-/g,''));
   if(!user){
     user={id:'u'+Date.now(),name,phone,marketing,joined:today(),visits:0,nameHistory:[]};
+    if(marketing)user.marketingConsentAt=nowStr();
     STORE.users.push(user);
   }else{
     if(user.name&&user.name!==name){
       if(!user.nameHistory)user.nameHistory=[];
       user.nameHistory.push({prev:user.name,changed:nowStr()});
     }
+    if(marketing&&!user.marketing)user.marketingConsentAt=nowStr();
     user.name=name;user.marketing=marketing;
   }
   currentUser=user;
@@ -2469,7 +2472,7 @@ function drawWheel(ctx,rot){
   const cx=150,cy=150,r=140,prizes=STORE.prizes;
   ctx.clearRect(0,0,300,300);
   const sl=2*Math.PI/prizes.length;
-  const fontSize=prizes.length>6?13:16;
+  const fontSize=prizes.length>6?11:12;
   prizes.forEach((p,i)=>{
     const s=rot+i*sl,e=s+sl;
     const mid=s+sl/2;
@@ -2485,9 +2488,9 @@ function drawWheel(ctx,rot){
     ctx.fillStyle='#fff';
     ctx.font=`700 ${fontSize}px Noto Sans KR,sans-serif`;
     ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=3;
-    // 텍스트 잘림 방지: 최대 6글자 + 말줄임
-    const label=p.name.length>6?p.name.slice(0,5)+'…':p.name;
-    ctx.fillText(label,r-16,5);
+    // 텍스트 잘림 방지: 최대 8글자 + 말줄임
+    const label=p.name.length>8?p.name.slice(0,7)+'…':p.name;
+    ctx.fillText(label,r-14,5);
     ctx.restore();
   });
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
@@ -2734,7 +2737,7 @@ function doLadderStart(){
           recordDailyPrize(_lp.findIndex(x=>x.id===finalPrize.id),_lp.length);
           setTimeout(()=>showResult(finalPrize),900);
         }
-        },70);
+        },140);
       },600);
     },350);
   },400);
@@ -2762,8 +2765,19 @@ function initMainCard(){
   const errEl=document.getElementById('card-error');
   const track=document.getElementById('card-track');
   const N=5;
-  // 각 카드에 확률 기반으로 상품 미리 배정 (선뽑기 방식)
-  window.__mainCardPrizes=Array.from({length:N},()=>pickWinner());
+  // 카드 1개만 실제 확률 적용, 나머지는 1등 제외 lower prize로 채움
+  const _rp=pickWinner();
+  const _pp=STORE.prizes||[];
+  const _lp=_pp.length>1?_pp.slice(1):_pp;
+  function _pickLow(){
+    const total=_lp.reduce((s,p)=>s+(+p.prob||0),0);
+    if(total<=0)return _lp[_lp.length-1]||{name:'꽝',benefit:'꽝'};
+    let r=Math.random()*total;
+    for(const p of _lp){r-=(+p.prob||0);if(r<=0)return p;}
+    return _lp[_lp.length-1];
+  }
+  const _ri=Math.floor(Math.random()*N);
+  window.__mainCardPrizes=Array.from({length:N},(_,i)=>i===_ri?_rp:_pickLow());
   document.getElementById('card-status').textContent='버튼을 눌러 카드를 섞어보세요!';
   document.getElementById('card-result-msg').textContent='';
   // 처음부터 뒷면(파란 카드)으로 표시 — 상품 미공개
@@ -3636,7 +3650,7 @@ function drawExtraWheel(ctx,rot,prizes){
   const cx=150,cy=150,r=140;
   ctx.clearRect(0,0,300,300);
   const sl=2*Math.PI/prizes.length;
-  const fontSize=prizes.length>6?13:16;
+  const fontSize=prizes.length>6?11:12;
   prizes.forEach((p,i)=>{
     const s=rot+i*sl,e=s+sl;
     const mid=s+sl/2;
@@ -3648,8 +3662,8 @@ function drawExtraWheel(ctx,rot,prizes){
     ctx.textAlign='right';ctx.fillStyle='#fff';
     ctx.font=`700 ${fontSize}px Noto Sans KR,sans-serif`;
     ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=3;
-    const label=p.name.length>6?p.name.slice(0,5)+'…':p.name;
-    ctx.fillText(label,r-16,5);
+    const label=p.name.length>8?p.name.slice(0,7)+'…':p.name;
+    ctx.fillText(label,r-14,5);
     ctx.restore();
   });
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
