@@ -195,142 +195,352 @@ body.dark .success-msg{color:#3ddc97}
   <div id="qr-scan-error" style="color:#ff8a8a;font-size:13px;margin-top:14px;text-align:center;max-width:280px"></div>
 </div>
 
-<!-- ══════════ 매장 없음 → 마케팅 퍼널 ══════════ -->
+<!-- ══════════ 메인 도메인 퍼널 랜딩 ══════════ -->
 <div class="scr" id="s-notfound">
-  <div class="scroll" style="background:#f5f5f0;padding:0;display:block">
+ <div class="scroll" style="background:#F7F6F3;padding:0;display:block">
 
-    <!-- HERO -->
-    <section style="background:#0D1B2A;padding:56px 24px 48px;position:relative;overflow:hidden">
-      <div style="position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:rgba(255,107,0,0.07);pointer-events:none"></div>
-      <div style="position:absolute;left:-40px;bottom:-80px;width:200px;height:200px;border-radius:50%;background:rgba(255,107,0,0.04);pointer-events:none"></div>
-      <div style="position:relative;z-index:1">
-        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,107,0,0.13);border:1px solid rgba(255,107,0,0.35);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:700;color:#FF8C40;letter-spacing:.8px;margin-bottom:22px">⚡ AI 검색 시대 생존 전략</div>
-        <div style="font-size:32px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:14px;text-wrap:balance">
-          리뷰를 쌓는 구조를<br>만든 가게만<br><span style="color:#FF6B00">살아남습니다</span>
-        </div>
-        <div style="font-size:14px;color:rgba(255,255,255,0.65);line-height:1.8;margin-bottom:30px">
-          네이버AI · 카카오맵 · 구글 — 플랫폼이 바뀌어도<br>
-          <span style="color:rgba(255,255,255,0.9);font-weight:600">리뷰가 많은 가게를 먼저 추천합니다.</span><br>
-          게임처럼 즐거운 이벤트로 리뷰를 자동으로 모으세요.
-        </div>
-        <button onclick="show('s-owner-signup')" style="width:100%;padding:17px;background:linear-gradient(135deg,#FF6B00,#FF9500);border:none;border-radius:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(255,107,0,0.45);letter-spacing:-.2px">무료로 내 매장 리뷰이벤트 만들기 →</button>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:center;margin-top:10px">카드 불필요 · 설치 없음 · 5분 완성</div>
-      </div>
-    </section>
+  <!-- ① HERO — 페인포인트 훅 -->
+  <section style="background:#0D1B2A;padding:52px 22px 44px;position:relative;overflow:hidden">
+   <div style="position:absolute;right:-30px;top:20px;font-size:200px;font-weight:900;color:rgba(255,107,0,0.04);line-height:1;pointer-events:none;user-select:none;letter-spacing:-10px">리뷰</div>
+   <div style="position:relative;z-index:1">
+    <div style="font-size:11px;font-weight:600;color:rgba(255,107,0,0.85);letter-spacing:2px;margin-bottom:18px;text-transform:uppercase">AEO · GEO · AI 검색 시대</div>
+    <div style="font-size:38px;font-weight:900;color:#fff;line-height:1.15;letter-spacing:-1.5px;margin-bottom:20px">AI 시대,<br>더 이상<br><span style="color:#FF6B00">검색만</span><br>하지 않습니다</div>
+    <div style="border-left:3px solid #FF6B00;padding:10px 0 10px 16px;margin-bottom:28px">
+     <div style="font-size:17px;font-weight:800;color:rgba(255,255,255,0.95);line-height:1.6">리뷰, 아직도<br>말로만 제안하시나요?</div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;line-height:1.7">고객이 자발적으로 참여하는 게임 시스템을<br>사장님 매장에 <span style="color:rgba(255,255,255,0.85);font-weight:600">무료로</span> 도입하세요</div>
+    </div>
+    <button onclick="show('s-owner-signup')" style="width:100%;padding:17px;background:linear-gradient(135deg,#FF6B00,#FF8C00);border:none;border-radius:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 10px 30px rgba(255,107,0,0.4);letter-spacing:-.3px">무료로 내 매장 리뷰이벤트 만들기 →</button>
+    <div style="font-size:11px;color:rgba(255,255,255,0.25);text-align:center;margin-top:10px">네이버 플레이스 URL만 있으면 · 5분 완성 · 카드 불필요</div>
+   </div>
+  </section>
 
-    <!-- STATS BAR -->
-    <section style="background:#FF6B00;padding:18px 20px">
-      <div style="display:flex;justify-content:space-around;text-align:center">
-        <div>
-          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">87%</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">소비자가 리뷰 확인<br>후 방문</div>
-        </div>
-        <div style="width:1px;background:rgba(255,255,255,0.25)"></div>
-        <div>
-          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">3배</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">리뷰 매장 AI<br>추천 가능성</div>
-        </div>
-        <div style="width:1px;background:rgba(255,255,255,0.25)"></div>
-        <div>
-          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">무료</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.8);margin-top:3px;line-height:1.4">지금 바로<br>시작 가능</div>
-        </div>
-      </div>
-    </section>
+  <!-- ② AEO/GEO — 검색 패러다임 변화 -->
+  <section style="background:#fff;padding:40px 22px 36px">
+   <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:12px">검색 시장의 변화</div>
+   <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:22px">GPT · 제미나이에<br>맛집을 물어보는 시대</div>
+   <!-- 패러다임 타임라인 -->
+   <div style="display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;gap:14px;padding-bottom:20px;position:relative">
+     <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:36px;height:36px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#9ca3af">과거</div>
+      <div style="width:2px;flex:1;background:#e5e7eb;margin-top:6px"></div>
+     </div>
+     <div style="padding-top:6px">
+      <div style="font-size:13px;font-weight:700;color:#9ca3af;margin-bottom:3px">SEO 시대</div>
+      <div style="font-size:12px;color:#aaa;line-height:1.6">네이버·구글 키워드 검색<br>블로그 포스팅, 광고로 노출</div>
+     </div>
+    </div>
+    <div style="display:flex;gap:14px;padding-bottom:20px;position:relative">
+     <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:36px;height:36px;border-radius:50%;background:#FFF0E6;border:2px solid #FF6B00;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#FF6B00">지금</div>
+      <div style="width:2px;flex:1;background:#FF6B00;margin-top:6px"></div>
+     </div>
+     <div style="padding-top:6px">
+      <div style="font-size:13px;font-weight:800;color:#FF6B00;margin-bottom:3px">AEO · GEO 시대</div>
+      <div style="font-size:12px;color:#555;line-height:1.6">GPT·제미나이에 맛집 물어봄<br><strong style="color:#0D1B2A">리뷰 많은 매장</strong>이 AI 추천 상단에 등장</div>
+     </div>
+    </div>
+    <div style="display:flex;gap:14px">
+     <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:36px;height:36px;border-radius:50%;background:#0D1B2A;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#FF6B00">미래</div>
+     </div>
+     <div style="padding-top:6px">
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A;margin-bottom:3px">AI 에이전트 시대</div>
+      <div style="font-size:12px;color:#555;line-height:1.6">AI가 대신 예약·주문까지<br>리뷰 데이터가 매장의 <strong style="color:#0D1B2A">생존 자산</strong></div>
+     </div>
+    </div>
+   </div>
+   <div style="margin-top:22px;background:#FFF8F0;border:1.5px solid #FFD4A8;border-radius:12px;padding:14px 16px">
+    <div style="font-size:13px;font-weight:700;color:#c2410c;line-height:1.7">리뷰를 준비하지 않은 매장은<br>AI 검색 시장에서 <span style="text-decoration:underline">보이지 않게 됩니다</span></div>
+   </div>
+  </section>
 
-    <!-- AI FEAR -->
-    <section style="padding:40px 24px;background:#fff">
-      <div style="font-size:11px;font-weight:700;color:#FF6B00;letter-spacing:.8px;margin-bottom:10px">현실을 직시하세요</div>
-      <div style="font-size:21px;font-weight:900;color:#0D1B2A;margin-bottom:22px;line-height:1.35;text-wrap:balance">네이버·구글·AI가<br>리뷰로 매장을 결정합니다</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:#FFF5F5;border-left:3px solid #FF4444;border-radius:0 12px 12px 0;padding:14px 16px">
-          <div style="font-size:11px;font-weight:700;color:#FF4444;margin-bottom:5px">리뷰 없는 매장</div>
-          <div style="font-size:13px;color:#555;line-height:1.65">"근처 맛집 추천해줘" → AI가 경쟁 매장만 추천<br>검색 결과 하단, 신규 유입 거의 없음</div>
-        </div>
-        <div style="background:#F0FFF6;border-left:3px solid #03C75A;border-radius:0 12px 12px 0;padding:14px 16px">
-          <div style="font-size:11px;font-weight:700;color:#03C75A;margin-bottom:5px">리뷰 쌓인 매장</div>
-          <div style="font-size:13px;color:#555;line-height:1.65">네이버AI·카카오맵·구글이 먼저 노출<br>신규 고객이 자동으로 유입되는 선순환</div>
-        </div>
-      </div>
-    </section>
+  <!-- ③ 장사 공식 2가지 -->
+  <section style="background:#0D1B2A;padding:40px 22px">
+   <div style="font-size:12px;font-weight:700;color:rgba(255,107,0,0.8);letter-spacing:1px;margin-bottom:12px">잘되는 매장의 공식</div>
+   <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:24px">장사 잘되는 매장엔<br>반드시 구조가 있습니다</div>
+   <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px 18px">
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:28px;font-weight:900;color:#FF6B00;line-height:1">1</div>
+      <div style="font-size:15px;font-weight:800;color:#fff">고객이 와야 할 구조</div>
+     </div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7">리뷰가 많은 매장은 고객이 찾아오게 하는<br>가장 강력한 신호입니다. <span style="color:#FF6B00;font-weight:600">네이버·카카오맵·구글·티맵</span><br>4개 플랫폼 리뷰를 한 번에 쌓아드립니다</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px 18px">
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:28px;font-weight:900;color:#FF6B00;line-height:1">2</div>
+      <div style="font-size:15px;font-weight:800;color:#fff">다음에 또 오게 할 구조</div>
+     </div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7">오늘 온 고객이 내일도 오게 하려면<br>만족도 피드백 · 스탬프 적립 · 재방문 쿠폰<br><span style="color:#FF6B00;font-weight:600">CRM까지 — 전부 무료</span>로 드립니다</div>
+    </div>
+   </div>
+  </section>
 
-    <!-- HOW IT WORKS -->
-    <section style="padding:40px 24px;background:#f5f5f0">
-      <div style="font-size:11px;font-weight:700;color:#FF6B00;letter-spacing:.8px;margin-bottom:10px">이렇게 작동합니다</div>
-      <div style="font-size:21px;font-weight:900;color:#0D1B2A;margin-bottom:24px;line-height:1.35;text-wrap:balance">고객이 자발적으로<br>리뷰를 남기게 됩니다</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
-          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎰</div>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">룰렛 뽑기</div>
-            <div style="font-size:12px;color:#888;line-height:1.5">QR 스캔 → 룰렛 돌려서 경품 당첨<br>당첨 욕구가 리뷰 작성으로 이어집니다</div>
-          </div>
-        </div>
-        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
-          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#5A6FFF,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🃏</div>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">카드 뽑기</div>
-            <div style="font-size:12px;color:#888;line-height:1.5">5장 중 1장 선택 — 어떤 카드일지 두근두근<br>재미있어서 친구한테 공유하고 싶어집니다</div>
-          </div>
-        </div>
-        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
-          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#03C75A,#006633);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎟️</div>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">긁는 복권</div>
-            <div style="font-size:12px;color:#888;line-height:1.5">손가락으로 긁어서 당첨 확인<br>복권 느낌에 다음 방문 기대감까지</div>
-          </div>
-        </div>
-        <div style="background:#fff;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
-          <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⭐</div>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:#0D1B2A;margin-bottom:3px">스탬프 + 설문</div>
-            <div style="font-size:12px;color:#888;line-height:1.5">방문할수록 스탬프 적립, 설문 자동 수집<br>단골 고객이 VIP로 육성됩니다</div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <!-- ④ 리뷰 게임 — 실제 UI 목업 -->
+  <section style="background:#F7F6F3;padding:40px 22px">
+   <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:12px">리뷰이벤트 게임 3종</div>
+   <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:6px">게임이 끝나면<br>자연스럽게 리뷰를 씁니다</div>
+   <div style="font-size:13px;color:#888;margin-bottom:28px;line-height:1.6">당첨 경험 → 감사함 → 리뷰 작성 → 재방문<br>이 사이클이 자동으로 돌아갑니다</div>
 
-    <!-- NAVER EMPHASIS -->
-    <section style="padding:40px 24px;background:#03C75A">
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:.8px;margin-bottom:10px">핵심 연동</div>
-      <div style="font-size:21px;font-weight:900;color:#fff;margin-bottom:14px;line-height:1.35;text-wrap:balance">네이버 플레이스<br>주소 하나로 완성됩니다</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.8;margin-bottom:20px">
-        네이버 플레이스 URL을 붙여넣으면<br>
-        매장 전용 리뷰이벤트 사이트가 자동 생성됩니다.
-      </div>
-      <div style="background:rgba(0,0,0,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:14px;padding:16px 18px">
-        <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:10px">✅ 가입 시 필요한 것</div>
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div style="width:22px;height:22px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#03C75A;flex-shrink:0;margin-top:1px">1</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#fff">네이버 플레이스 URL</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">map.naver.com/p/entry/place/<strong style="color:#fff">숫자</strong></div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:10px">
-          <div style="width:22px;height:22px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#03C75A;flex-shrink:0;margin-top:1px">2</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#fff">관리자 이메일 + 비밀번호</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">로그인 및 관리자 페이지 접근에 사용</div>
-          </div>
-        </div>
-      </div>
-    </section>
+   <!-- 게임 UI 목업 3종 -->
+   <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch">
 
-    <!-- FINAL CTA -->
-    <section style="padding:44px 24px;background:#0D1B2A;text-align:center">
-      <div style="font-size:23px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.3;text-wrap:balance">지금 무료로 시작하세요</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:28px;line-height:1.7">설치 없음 · 카드 불필요 · 5분 안에 완성<br>네이버 플레이스 URL만 있으면 됩니다</div>
-      <button onclick="show('s-owner-signup')" style="width:100%;padding:18px;background:linear-gradient(135deg,#FF6B00,#FF9500);border:none;border-radius:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 8px 32px rgba(255,107,0,0.5);letter-spacing:-.2px">무료로 내 매장 리뷰이벤트 사이트 만들기</button>
-      <div style="margin-top:16px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
-        <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;padding:4px 8px;font-family:inherit;text-decoration:underline">기존 사장님 로그인</button>
-        <span style="font-size:11px;color:rgba(255,255,255,0.15)">|</span>
-        <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.15);cursor:pointer;padding:4px 8px;font-family:inherit">총괄관리자</button>
+    <!-- 룰렛 목업 -->
+    <div style="flex-shrink:0;width:148px">
+     <div style="background:#1a2640;border-radius:22px;padding:10px 8px 12px;box-shadow:0 16px 40px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08)">
+      <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:5px 8px;margin-bottom:10px;text-align:center">
+       <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px">오늘의 이벤트</div>
+       <div style="font-size:10px;font-weight:800;color:#fff;margin-top:1px">🎰 룰렛 뽑기</div>
       </div>
-      <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.2)">© 2025 리뷰이벤트 플랫폼 by 장사닥터</div>
-    </section>
-    <div class="store-switcher" id="store-switcher-wrap" style="padding:0 20px 20px;background:#0D1B2A"></div>
-  </div>
+      <!-- 룰렛 휠 CSS -->
+      <div style="position:relative;display:flex;justify-content:center;margin-bottom:8px">
+       <div style="font-size:14px;color:#FF6B00;position:absolute;top:-5px;z-index:3;text-shadow:0 0 8px rgba(255,107,0,0.8)">▼</div>
+       <div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#FF6B00 0deg 72deg,#5A6FFF 72deg 144deg,#03C75A 144deg 216deg,#F59E0B 216deg 288deg,#9CA3AF 288deg 360deg);box-shadow:0 4px 20px rgba(0,0,0,0.4),0 0 0 3px rgba(255,255,255,0.08);position:relative">
+        <div style="position:absolute;inset:30%;border-radius:50%;background:#1a2640;box-shadow:inset 0 2px 6px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center">
+         <div style="width:8px;height:8px;border-radius:50%;background:#FF6B00;box-shadow:0 0 8px rgba(255,107,0,0.8)"></div>
+        </div>
+       </div>
+      </div>
+      <!-- 상품 라벨 -->
+      <div style="display:flex;justify-content:center;gap:4px;margin-bottom:8px;flex-wrap:wrap">
+       <div style="background:#FF6B00;border-radius:6px;padding:2px 6px;font-size:8px;font-weight:700;color:#fff">1등</div>
+       <div style="background:#5A6FFF;border-radius:6px;padding:2px 6px;font-size:8px;font-weight:700;color:#fff">2등</div>
+       <div style="background:#03C75A;border-radius:6px;padding:2px 6px;font-size:8px;font-weight:700;color:#fff">3등</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#FF6B00,#FF9500);border-radius:10px;padding:8px;text-align:center;font-size:10px;font-weight:800;color:#fff">돌리기!</div>
+     </div>
+     <div style="text-align:center;font-size:12px;font-weight:700;color:#0D1B2A;margin-top:10px">룰렛 뽑기</div>
+    </div>
+
+    <!-- 카드뽑기 목업 -->
+    <div style="flex-shrink:0;width:148px">
+     <div style="background:#1a2640;border-radius:22px;padding:10px 8px 12px;box-shadow:0 16px 40px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08)">
+      <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:5px 8px;margin-bottom:10px;text-align:center">
+       <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px">카드를 선택하세요</div>
+       <div style="font-size:10px;font-weight:800;color:#fff;margin-top:1px">🃏 카드 뽑기</div>
+      </div>
+      <!-- 카드 그리드 목업 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px">
+       <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.3)">🃏</div>
+       <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.3)">🃏</div>
+       <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.3)">🃏</div>
+       <div style="grid-column:span 1;background:linear-gradient(135deg,#FF6B00,#FF9500);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;box-shadow:0 4px 14px rgba(255,107,0,0.5);transform:scale(1.05)">1등!</div>
+       <div style="background:linear-gradient(135deg,#3182f6,#1b64da);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.5">🃏</div>
+      </div>
+      <div style="font-size:9px;color:#03C75A;text-align:center;font-weight:700;margin-bottom:6px">🎉 희망 메뉴 1개 당첨!</div>
+      <div style="background:linear-gradient(135deg,#5A6FFF,#7C3AED);border-radius:10px;padding:8px;text-align:center;font-size:10px;font-weight:800;color:#fff">다시 뽑기</div>
+     </div>
+     <div style="text-align:center;font-size:12px;font-weight:700;color:#0D1B2A;margin-top:10px">카드 뽑기</div>
+    </div>
+
+    <!-- 긁는복권 목업 -->
+    <div style="flex-shrink:0;width:148px">
+     <div style="background:#1a2640;border-radius:22px;padding:10px 8px 12px;box-shadow:0 16px 40px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08)">
+      <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:5px 8px;margin-bottom:10px;text-align:center">
+       <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.5px">손가락으로 긁어요</div>
+       <div style="font-size:10px;font-weight:800;color:#fff;margin-top:1px">🎟️ 긁는 복권</div>
+      </div>
+      <!-- 복권 목업 -->
+      <div style="position:relative;border-radius:14px;overflow:hidden;margin-bottom:8px;height:90px;background:linear-gradient(135deg,#1a2236,#1e3a5f);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 2px 8px rgba(0,0,0,0.3)">
+       <!-- 긁힌 효과 -->
+       <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 8px)"></div>
+       <div style="position:absolute;top:8px;left:8px;width:50px;height:30px;border-radius:6px;background:rgba(255,255,255,0.07);backdrop-filter:blur(2px)"></div>
+       <div style="position:absolute;top:8px;right:8px;width:50px;height:30px;border-radius:6px;background:rgba(255,255,255,0.07)"></div>
+       <div style="position:relative;z-index:1;text-align:center">
+        <div style="font-size:22px">🎁</div>
+        <div style="font-size:10px;font-weight:900;color:#FFD700;letter-spacing:.5px">사이드 무료!</div>
+       </div>
+      </div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.45);text-align:center;margin-bottom:6px">긁은 면적 72%</div>
+      <div style="background:linear-gradient(135deg,#03C75A,#028a3d);border-radius:10px;padding:8px;text-align:center;font-size:10px;font-weight:800;color:#fff">쿠폰 받기</div>
+     </div>
+     <div style="text-align:center;font-size:12px;font-weight:700;color:#0D1B2A;margin-top:10px">긁는 복권</div>
+    </div>
+
+   </div><!-- /게임 목업 -->
+  </section>
+
+  <!-- ⑤ 4개 플랫폼 리뷰 동시에 -->
+  <section style="background:#fff;padding:36px 22px">
+   <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:12px">리뷰 플랫폼 연동</div>
+   <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:8px">4개 플랫폼 리뷰를<br>한 번에 쌓아드립니다</div>
+   <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:22px">게임 참여 후 리뷰 유도 화면으로<br>자연스럽게 연결됩니다</div>
+   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+    <div style="background:#F0FFF6;border:1.5px solid #03C75A;border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px">
+     <div style="width:36px;height:36px;border-radius:10px;background:#03C75A;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">N</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A">네이버</div>
+      <div style="font-size:11px;color:#03C75A">플레이스 리뷰</div>
+     </div>
+    </div>
+    <div style="background:#FFFBE6;border:1.5px solid #F5B900;border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px">
+     <div style="width:36px;height:36px;border-radius:10px;background:#F5B900;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#3C1E00;flex-shrink:0">K</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A">카카오맵</div>
+      <div style="font-size:11px;color:#997000">리뷰 쌓기</div>
+     </div>
+    </div>
+    <div style="background:#F0F5FF;border:1.5px solid #4285F4;border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px">
+     <div style="width:36px;height:36px;border-radius:10px;background:#4285F4;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">G</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A">구글</div>
+      <div style="font-size:11px;color:#4285F4">지도 리뷰</div>
+     </div>
+    </div>
+    <div style="background:#FFF0F2;border:1.5px solid #E8002D;border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px">
+     <div style="width:36px;height:36px;border-radius:10px;background:#E8002D;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">T</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A">티맵</div>
+      <div style="font-size:11px;color:#E8002D">리뷰 연동</div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- ⑥ 단골 만드는 구조 — 스탬프 + CRM -->
+  <section style="background:#F7F6F3;padding:40px 22px">
+   <div style="font-size:12px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:12px">단골 육성 시스템</div>
+   <div style="font-size:22px;font-weight:900;color:#0D1B2A;line-height:1.3;margin-bottom:8px">오늘 온 고객을<br>내일도 오게 합니다</div>
+   <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:24px">만족도 피드백 → 스탬프 적립 → 쿠폰 발급 → 문자 재방문 유도<br>이 사이클이 자동으로 돌아갑니다</div>
+
+   <!-- 스탬프 카드 목업 -->
+   <div style="background:#fff;border-radius:20px;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,0.07);margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#0D1B2A">스탬프 카드</div>
+      <div style="font-size:11px;color:#888">10개 모으면 무료 메뉴!</div>
+     </div>
+     <div style="font-size:11px;font-weight:700;color:#FF6B00">7 / 10</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#FF9500);display:flex;align-items:center;justify-content:center;font-size:14px">⭐</div>
+     <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#d1d5db">○</div>
+     <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#d1d5db">○</div>
+     <div style="aspect-ratio:1;border-radius:50%;border:2px dashed #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#d1d5db">○</div>
+    </div>
+   </div>
+
+   <!-- CRM 문자 목업 -->
+   <div style="background:#fff;border-radius:20px;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,0.07)">
+    <div style="font-size:13px;font-weight:800;color:#0D1B2A;margin-bottom:14px">CRM 문자 재방문 유도</div>
+    <!-- 문자 버블 -->
+    <div style="background:#F0FFF6;border-radius:0 14px 14px 14px;padding:12px 14px;margin-bottom:8px;border:1px solid #b2f0cf">
+     <div style="font-size:11px;font-weight:700;color:#03C75A;margin-bottom:5px">맛있는집</div>
+     <div style="font-size:12px;color:#1a4731;line-height:1.7">안녕하세요 김고객님 🍽️<br>이번 주 쿠폰 유효기간이 곧 만료됩니다.<br><strong>희망 메뉴 1개 무료쿠폰</strong> 사용하러 오세요!</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+     <div style="background:#0D1B2A;border-radius:14px 0 14px 14px;padding:10px 14px">
+      <div style="font-size:12px;color:#fff">알겠습니다 이번주 갈게요 ㅎㅎ</div>
+     </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#888;text-align:center">참여 고객 연락처로 자동 발송 가능</div>
+   </div>
+  </section>
+
+  <!-- ⑦ 전부 무료 -->
+  <section style="background:#0D1B2A;padding:40px 22px">
+   <div style="font-size:12px;font-weight:700;color:rgba(255,107,0,0.8);letter-spacing:1px;margin-bottom:12px">비용 걱정 없이</div>
+   <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:22px">필요한 기능<br>전부 무료입니다</div>
+   <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">룰렛 · 카드뽑기 · 긁는복권 <span style="color:#FF6B00;font-weight:700">3종 게임</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">네이버·카카오맵·구글·티맵 <span style="color:#FF6B00;font-weight:700">리뷰 유도</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">스탬프 카드 + 만족도 설문</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">고객 연락처 수집 + CRM 문자 발송</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">QR 코드 자동 생성 + 방문 통계</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:12px">
+     <div style="width:6px;height:6px;border-radius:50%;background:#03C75A;flex-shrink:0"></div>
+     <div style="font-size:13px;color:rgba(255,255,255,0.85)">VIP 등급 관리 + 쿠폰 자동 발급</div>
+    </div>
+   </div>
+   <div style="margin-top:18px;background:rgba(255,107,0,0.12);border:1px solid rgba(255,107,0,0.3);border-radius:12px;padding:14px 16px;text-align:center">
+    <div style="font-size:15px;font-weight:900;color:#FF6B00">이 모든 기능이 무료</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px">네이버 플레이스 URL만 있으면 5분 만에 시작</div>
+   </div>
+  </section>
+
+  <!-- ⑧ 네이버 플레이스 CTA (핵심 강조) -->
+  <section style="background:#03C75A;padding:40px 22px">
+   <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1px;margin-bottom:12px">지금 바로 시작</div>
+   <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:18px">네이버 플레이스 URL<br>하나로 무료 가입</div>
+   <div style="background:rgba(0,0,0,0.12);border-radius:14px;padding:16px 18px;margin-bottom:22px">
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+     <div style="width:24px;height:24px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#03C75A;flex-shrink:0">1</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px">네이버 플레이스 URL 복사</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.65)">map.naver.com/p/entry/place/<strong style="color:#fff">숫자</strong></div>
+     </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+     <div style="width:24px;height:24px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#03C75A;flex-shrink:0">2</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px">이메일 + 비밀번호 설정</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.65)">관리자 로그인에 사용됩니다</div>
+     </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start">
+     <div style="width:24px;height:24px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#03C75A;flex-shrink:0">3</div>
+     <div>
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px">완성 — QR 인쇄해서 매장에 붙이기</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.65)">고객이 스캔하면 게임이 시작됩니다</div>
+     </div>
+    </div>
+   </div>
+   <button onclick="show('s-owner-signup')" style="width:100%;padding:18px;background:#fff;border:none;border-radius:14px;font-size:16px;font-weight:900;color:#03C75A;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(0,0,0,0.15);letter-spacing:-.3px">무료로 내 매장 리뷰이벤트 사이트 만들기</button>
+   <div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:10px">카드 불필요 · 설치 없음 · 지금 바로</div>
+  </section>
+
+  <!-- ⑨ 비즈니스 문의 / 링크트리 -->
+  <section style="background:#111827;padding:36px 22px">
+   <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:16px;text-align:center">비즈니스 문의</div>
+   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+    <a href="https://litt.ly/jangsa.doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 18px;text-decoration:none">
+     <div style="width:36px;height:36px;border-radius:10px;background:#FEE500;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div>
+     <div>
+      <div style="font-size:14px;font-weight:700;color:#fff">카카오톡 문의하기</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px">litt.ly/jangsa.doctor</div>
+     </div>
+     <div style="margin-left:auto;color:rgba(255,255,255,0.3);font-size:16px">›</div>
+    </a>
+    <a href="https://open.kakao.com/me/jangsa_doctor" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 18px;text-decoration:none">
+     <div style="width:36px;height:36px;border-radius:10px;background:#03C75A;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔗</div>
+     <div>
+      <div style="font-size:14px;font-weight:700;color:#fff">오픈카카오 문의</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px">장사닥터 오픈채팅</div>
+     </div>
+     <div style="margin-left:auto;color:rgba(255,255,255,0.3);font-size:16px">›</div>
+    </a>
+   </div>
+   <div style="text-align:center;display:flex;flex-direction:column;gap:8px">
+    <button onclick="show('s-admin-login')" style="background:none;border:none;font-size:12px;color:rgba(255,255,255,0.3);cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px">기존 사장님 로그인</button>
+    <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.15);cursor:pointer;font-family:inherit;padding:4px">총괄관리자</button>
+   </div>
+   <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.15);text-align:center;line-height:1.8">© 2025 리뷰이벤트 플랫폼 by 장사닥터<br>사업자등록: 문의 시 제공</div>
+  </section>
+
+  <div class="store-switcher" id="store-switcher-wrap" style="display:none"></div>
+ </div>
 </div>
 
 <!-- ══════════ 랜딩 ══════════ -->
