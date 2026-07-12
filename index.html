@@ -612,7 +612,7 @@ body.dark .success-msg{color:#3ddc97}
      var dx=e.changedTouches[0].clientX-fsx,dy=e.changedTouches[0].clientY-fsy;
      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30){
       var cur=window.ftCurrent||0;
-      var next=dx<0?Math.min(cur+1,2):Math.max(cur-1,0);
+      var next=dx<0?(cur+1)%3:((cur-1)+3)%3;
       if(window.ftGo)window.ftGo(next);
      }
     });
@@ -945,6 +945,15 @@ body.dark .success-msg{color:#3ddc97}
     <button onclick="show('s-platform-login')" style="background:none;border:none;font-size:11px;color:rgba(255,255,255,0.15);cursor:pointer;font-family:inherit;padding:4px">총괄관리자</button>
    </div>
    <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.15);text-align:center;line-height:1.8">© 2025 리뷰이벤트 플랫폼 by 장사천재 김도겸<br>사업자등록: 문의 시 제공</div>
+  </section>
+
+  <!-- 매장 찾기 박스 -->
+  <section id="store-search-section" style="background:#1a2535;padding:28px 22px;display:none">
+   <div style="font-size:13px;font-weight:700;color:rgba(255,107,0,0.85);margin-bottom:8px">매장 찾기</div>
+   <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:6px">이용할 매장을 선택해주세요</div>
+   <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:16px">QR코드를 다시 스캔하거나 아래에서 매장을 찾아보세요</div>
+   <input id="store-search-input" placeholder="매장명 검색..." oninput="filterStoreList(this.value)" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px">
+   <div id="store-search-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </section>
 
   <div class="store-switcher" id="store-switcher-wrap" style="display:none"></div>
@@ -1560,6 +1569,33 @@ body.dark .success-msg{color:#3ddc97}
     <div class="field" style="margin-bottom:28px"><label for="a-pw">비밀번호</label><input id="a-pw" type="password" placeholder="비밀번호" maxlength="30" autocomplete="current-password"></div>
     <div id="admin-error"></div>
     <button class="btn btn-blue" onclick="adminLogin()">로그인</button>
+    <div style="text-align:center;margin-top:14px">
+      <button onclick="show('s-pw-reset')" style="background:none;border:none;font-size:13px;color:var(--blue);cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px">비밀번호를 잊으셨나요?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 비밀번호 찾기 ══════════ -->
+<div class="scr" id="s-pw-reset">
+  <div class="topbar"><button class="tb-back" onclick="show('s-admin-login')">‹</button><div class="tb-title">비밀번호 찾기</div></div>
+  <div class="scroll" style="background:var(--white);padding:24px 20px">
+    <div style="margin-bottom:28px">
+      <div style="font-size:20px;font-weight:900;color:var(--t1);margin-bottom:6px">비밀번호 초기화</div>
+      <div style="font-size:14px;color:var(--t3);line-height:1.6">회원가입 시 입력한 전화번호와<br>아이디(이메일)를 입력해주세요.</div>
+    </div>
+    <div class="field"><label>전화번호</label><input id="pwr-phone" placeholder="010-0000-0000" type="tel"></div>
+    <div class="field" style="margin-bottom:24px"><label>아이디 (이메일)</label><input id="pwr-email" placeholder="등록된 이메일" type="email"></div>
+    <div id="pwr-error" style="margin-bottom:12px"></div>
+    <button class="btn btn-blue" onclick="pwrFind()">본인 확인</button>
+    <!-- 인증 후 새 비밀번호 입력 (기본 숨김) -->
+    <div id="pwr-step2" style="display:none;margin-top:24px;border-top:1px solid var(--border2);padding-top:20px">
+      <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px" id="pwr-store-name"></div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px">위 매장의 비밀번호를 새로 설정합니다.</div>
+      <div class="field"><label>새 비밀번호</label><input id="pwr-new1" type="password" placeholder="새 비밀번호 (4자 이상)" maxlength="30"></div>
+      <div class="field" style="margin-bottom:20px"><label>비밀번호 확인</label><input id="pwr-new2" type="password" placeholder="비밀번호 재입력" maxlength="30"></div>
+      <div id="pwr-error2" style="margin-bottom:12px"></div>
+      <button class="btn btn-blue" onclick="pwrSave()">비밀번호 변경</button>
+    </div>
   </div>
 </div>
 
@@ -1920,7 +1956,7 @@ let spinAngle=0,isSpinning=false,curRating=3,currentUser=null,currentStaff=null,
 
 /* ════════════════════ 화면 전환 ════════════════════ */
 function show(id){
-  if(!STORE && !['s-notfound','s-owner-signup','s-owner-done','s-platform-login','s-platform'].includes(id)){id='s-notfound'}
+  if(!STORE && !['s-notfound','s-owner-signup','s-owner-done','s-platform-login','s-platform','s-admin-login','s-pw-reset'].includes(id)){id='s-notfound'}
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   const sc=document.getElementById(id);
   if(sc){sc.classList.add('on');const sr=sc.querySelector('.scroll');if(sr)sr.scrollTop=0}
@@ -1942,6 +1978,7 @@ function show(id){
   if(id==='s-survey')renderSurveyQuestions();
   if(id==='s-myinfo')renderMyInfo();
   if(id==='s-admin')renderAdmin('stats');
+  if(id==='s-notfound')renderStoreSearchSection();
   if(id==='s-platform')renderPlatform();
   if(id==='s-staff-check')renderStaffLog();
   const navMap={'s-home':'home','s-coupons':'coupons','s-stamp':'stamp','s-myinfo':'myinfo'};
@@ -2034,6 +2071,74 @@ function adminPreviewCustomer(){
   }
   show('s-home');
   toast('고객 화면 미리보기 중 — 홈 우측 상단 👤 메뉴에서 관리자로 복귀');
+}
+let _pwrMatchId=null;
+function pwrFind(){
+  const phone=document.getElementById('pwr-phone').value.trim();
+  const email=document.getElementById('pwr-email').value.trim().toLowerCase();
+  const el=document.getElementById('pwr-error');
+  if(!phone||!email){el.innerHTML='<div class="error-msg">전화번호와 아이디를 모두 입력해주세요</div>';return;}
+  // storesDB에서 매칭 매장 검색
+  const found=Object.entries(storesDB||{}).find(([,s])=>{
+    const ownerPhone=(s.owner&&s.owner.phone||'').replace(/\s/g,'');
+    const inputPhone=phone.replace(/\s/g,'');
+    const adminEmail=(s.adminEmail||'').toLowerCase();
+    return ownerPhone===inputPhone&&adminEmail===email;
+  });
+  if(!found){el.innerHTML='<div class="error-msg">일치하는 매장 정보를 찾을 수 없습니다.<br>전화번호와 아이디를 다시 확인해주세요.</div>';return;}
+  el.innerHTML='';
+  _pwrMatchId=found[0];
+  document.getElementById('pwr-store-name').textContent='✅ 매장명: '+found[1].profile.name;
+  document.getElementById('pwr-step2').style.display='block';
+  document.getElementById('pwr-error2').innerHTML='';
+}
+function pwrSave(){
+  const p1=document.getElementById('pwr-new1').value.trim();
+  const p2=document.getElementById('pwr-new2').value.trim();
+  const el=document.getElementById('pwr-error2');
+  if(!p1||p1.length<4){el.innerHTML='<div class="error-msg">비밀번호는 4자 이상이어야 합니다</div>';return;}
+  if(p1!==p2){el.innerHTML='<div class="error-msg">비밀번호가 일치하지 않습니다</div>';return;}
+  if(!_pwrMatchId||!storesDB[_pwrMatchId]){el.innerHTML='<div class="error-msg">오류가 발생했습니다. 다시 시도해주세요</div>';return;}
+  storesDB[_pwrMatchId].adminPassword=p1;
+  saveState();
+  toast('✅ 비밀번호가 변경되었습니다');
+  show('s-admin-login');
+  _pwrMatchId=null;
+}
+function renderStoreSearchSection(){
+  const sec=document.getElementById('store-search-section');
+  if(!sec)return;
+  // demo 제외한 실 매장만 수집
+  const stores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name);
+  if(stores.length===0){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('store-search-input').value='';
+  renderStoreList(stores);
+}
+function renderStoreList(stores){
+  const list=document.getElementById('store-search-list');
+  if(!list)return;
+  if(stores.length===0){list.innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:13px;text-align:center;padding:12px">검색 결과가 없습니다</div>';return;}
+  list.innerHTML=stores.map(([id,s])=>`
+    <button onclick="goToStore('${id}')" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;width:100%;font-family:inherit">
+      <div style="font-size:24px;flex-shrink:0">${s.profile.emoji||'🏪'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.profile.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">${s.profile.address||''}</div>
+      </div>
+      <div style="color:rgba(255,255,255,0.3);font-size:18px;flex-shrink:0">›</div>
+    </button>`).join('');
+}
+function filterStoreList(query){
+  const q=(query||'').trim().toLowerCase();
+  const stores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&(q===''||s.profile.name.toLowerCase().includes(q)));
+  renderStoreList(stores);
+}
+function goToStore(storeId){
+  if(!storesDB||!storesDB[storeId])return;
+  STORE_ID=storeId;STORE=storesDB[storeId];
+  localStorage.setItem('last_store',storeId);
+  show('s-landing');
 }
 function adminLogin(){
   const e=document.getElementById('a-email').value.trim(),p=document.getElementById('a-pw').value.trim();
@@ -2768,16 +2873,13 @@ function initMainCard(){
   // 카드 1개만 실제 확률 적용, 나머지는 1등 제외 lower prize로 채움
   const _rp=pickWinner();
   const _pp=STORE.prizes||[];
-  const _lp=_pp.length>1?_pp.slice(1):_pp;
-  function _pickLow(){
-    const total=_lp.reduce((s,p)=>s+(+p.prob||0),0);
-    if(total<=0)return _lp[_lp.length-1]||{name:'꽝',benefit:'꽝'};
-    let r=Math.random()*total;
-    for(const p of _lp){r-=(+p.prob||0);if(r<=0)return p;}
-    return _lp[_lp.length-1];
-  }
+  // 하위 상품 셔플 — 각 카드에 고유 상품이 배정되도록
+  const _lp=_pp.length>1?[..._pp.slice(1)]:[..._pp];
+  for(let _j=_lp.length-1;_j>0;_j--){const _k=Math.floor(Math.random()*(_j+1));[_lp[_j],_lp[_k]]=[_lp[_k],_lp[_j]];}
+  while(_lp.length<N-1)_lp.push(...(_pp.length>1?_pp.slice(1):_pp));
+  let _li=0;
   const _ri=Math.floor(Math.random()*N);
-  window.__mainCardPrizes=Array.from({length:N},(_,i)=>i===_ri?_rp:_pickLow());
+  window.__mainCardPrizes=Array.from({length:N},(_,i)=>i===_ri?_rp:_lp[_li++]);
   document.getElementById('card-status').textContent='버튼을 눌러 카드를 섞어보세요!';
   document.getElementById('card-result-msg').textContent='';
   // 처음부터 뒷면(파란 카드)으로 표시 — 상품 미공개
