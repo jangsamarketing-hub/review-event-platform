@@ -148,7 +148,7 @@ body.dark .badge-green{color:#3ddc97}
 .success-msg{background:var(--green-light);color:#00a868;padding:11px 14px;border-radius:11px;font-size:13px;margin:10px 0;font-weight:500}
 body.dark .success-msg{color:#3ddc97}
 .bottom-banner{background:var(--white);border-top:1px solid var(--border);padding:10px 16px}
-.result-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;gap:18px;min-height:60vh}
+.result-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 24px;text-align:center;gap:12px;min-height:unset}
 .badge-rank{display:inline-block;padding:4px 11px;border-radius:20px;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700}
 .section-label{padding:20px 20px 10px;font-size:13px;color:var(--t3);font-weight:700}
 .contact-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--blue);font-weight:600;background:var(--blue-light);padding:4px 10px;border-radius:8px}
@@ -1314,7 +1314,7 @@ body.dark .success-msg{color:#3ddc97}
   <div class="topbar"><button class="tb-back" onclick="show('s-home')">‹</button><div class="tb-title">당첨 결과</div></div>
   <div class="scroll" style="background:var(--white)">
     <div class="result-wrap">
-      <div style="font-size:84px" id="res-emoji">🎉</div>
+      <div style="font-size:64px" id="res-emoji">🎉</div>
       <div>
         <div style="font-size:25px;font-weight:900;color:var(--t1)" id="res-title">당첨!</div>
         <div style="font-size:15px;color:var(--t3);margin-top:6px" id="res-sub">쿠폰이 자동 발급되었습니다</div>
@@ -1403,6 +1403,16 @@ body.dark .success-msg{color:#3ddc97}
       <div style="text-align:center;margin-top:10px">
         <div style="font-size:11px;color:var(--t4)">긁은 면적: <span id="extra-scratch-pct">0</span>% (65% 이상 자동 공개)</div>
       </div>
+    </div>
+
+    <!-- 게임 뷰: 사다리타기 -->
+    <div id="extra-view-ladder" style="display:none;padding:0 12px">
+      <div id="extra-ladder-tops" style="display:flex;justify-content:space-around;padding:0 4px;margin-bottom:2px"></div>
+      <div style="position:relative;margin:0 auto;max-width:340px">
+        <canvas id="extra-ladder-canvas" width="300" height="200" style="display:block;width:100%;border-radius:12px;background:var(--bg)"></canvas>
+      </div>
+      <div id="extra-ladder-bottoms" style="display:flex;justify-content:space-around;padding:0 4px;margin-top:2px"></div>
+      <div id="extra-ladder-status" style="text-align:center;padding:10px 0 2px;font-size:13px;font-weight:700;color:var(--t2)">번호를 선택하세요!</div>
     </div>
 
     <div style="padding:16px 20px 16px;text-align:center">
@@ -3817,17 +3827,17 @@ function openExtraRoulette(evId){
   link.style.color=ev.textColor||'#191f28';
   document.getElementById('extra-roulette-title').textContent=ev.label+' 이벤트';
   document.getElementById('extra-spin-error').innerHTML='';
-  const descMap={roulette:'리뷰 작성 후 룰렛을 돌려보세요!',card:'리뷰 작성 후 카드 1장을 뽑아보세요!',scratch:'리뷰 작성 후 복권을 긁어보세요!'};
+  const descMap={roulette:'리뷰 작성 후 룰렛을 돌려보세요!',card:'리뷰 작성 후 카드 1장을 뽑아보세요!',scratch:'리뷰 작성 후 복권을 긁어보세요!',ladder:'리뷰 작성 후 사다리를 타보세요!'};
   document.getElementById('extra-event-desc').textContent=descMap[gm]||descMap.roulette;
   // 모든 게임 뷰 숨기기 후 해당 뷰만 표시
-  ['roulette','card','scratch'].forEach(g=>{
+  ['roulette','card','scratch','ladder'].forEach(g=>{
     const v=document.getElementById('extra-view-'+g);
     if(v)v.style.display=(g===gm)?'block':'none';
   });
   extraSpinAngle=0;extraIsSpinning=false;
   const btn=document.getElementById('extra-spin-btn');
   btn.style.display='block';btn.disabled=false;
-  const btnLabels={roulette:'🎡 룰렛 돌리기',card:'🃏 카드 뽑기 시작',scratch:'🎟️ 복권 시작하기'};
+  const btnLabels={roulette:'🎡 룰렛 돌리기',card:'🃏 카드 뽑기 시작',scratch:'🎟️ 복권 시작하기',ladder:'🪜 사다리 시작'};
   btn.textContent=btnLabels[gm]||btnLabels.roulette;
   show('s-extra-roulette');
   setTimeout(()=>{
@@ -3838,6 +3848,8 @@ function openExtraRoulette(evId){
       initExtraCard();
     }else if(gm==='scratch'){
       initExtraScratch();
+    }else if(gm==='ladder'){
+      initExtraLadder();
     }
   },80);
 }
@@ -3894,6 +3906,7 @@ function doExtraSpin(){
   const gm=currentExtraEvent.gameMode||'roulette';
   if(gm==='card'){doExtraCardStart();return}
   if(gm==='scratch'){doExtraScratchStart();return}
+  if(gm==='ladder'){doExtraLadderStart();return}
   // 룰렛
   extraIsSpinning=true;
   const btn=document.getElementById('extra-spin-btn');
@@ -3921,6 +3934,88 @@ function doExtraSpin(){
     }
   }
   requestAnimationFrame(frame);
+}
+
+/* ═══ 추가이벤트: 사다리타기 ═══ */
+let extraLadderPicked=-1;
+function initExtraLadder(){
+  extraLadderPicked=-1;
+  const prizes=(currentExtraEvent.prizes||[]);
+  const n=Math.min(prizes.length,4);
+  const tops=document.getElementById('extra-ladder-tops');
+  const bottoms=document.getElementById('extra-ladder-bottoms');
+  const pct=Math.floor(100/n);
+  tops.innerHTML=Array.from({length:n},(_,i)=>
+    `<div style="width:${pct}%;text-align:center">
+      <button id="elad-t-${i}" onclick="pickExtraLadder(${i})" style="width:44px;height:44px;border-radius:50%;border:3px solid var(--border);background:var(--bg);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;color:var(--t1)">${i+1}번</button>
+    </div>`).join('');
+  bottoms.innerHTML=prizes.slice(0,n).map((p,i)=>{
+    const isLose=!p.benefit||!p.benefit.trim();
+    const col=isLose?null:getPrizeColor(i);
+    return `<div style="width:${pct}%;text-align:center">
+      <div id="elad-b-${i}" style="border-radius:8px;padding:4px 2px;font-size:11px;font-weight:700;color:var(--t2);filter:blur(5px);transition:filter .5s;text-align:center;line-height:1.3;min-height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <span style="font-size:16px">${isLose?'💨':(col?col.emoji:'🎁')}</span>
+        <span style="font-size:9px;word-break:keep-all">${isLose?'꽝':p.name.slice(0,5)}</span>
+      </div>
+    </div>`;}).join('');
+  const canvas=document.getElementById('extra-ladder-canvas');
+  const ctx=canvas.getContext('2d');
+  drawLadderMystery(ctx,n,300,200);
+  document.getElementById('extra-ladder-status').textContent='번호를 선택하세요!';
+  const btn=document.getElementById('extra-spin-btn');
+  btn.style.display='block';btn.disabled=false;btn.textContent='🪜 사다리 시작';
+}
+function pickExtraLadder(idx){
+  if(extraLadderPicked>=0||extraIsSpinning)return;
+  extraLadderPicked=idx;
+  document.querySelectorAll('[id^="elad-t-"]').forEach((b,i)=>{
+    b.style.border=i===idx?'3px solid var(--blue)':'3px solid var(--border)';
+    b.style.background=i===idx?'rgba(49,130,246,.12)':'var(--bg)';
+    b.style.transform=i===idx?'scale(1.15)':'scale(1)';
+  });
+  document.getElementById('extra-ladder-status').textContent='선택 완료! 시작 버튼을 누르세요';
+}
+function doExtraLadderStart(){
+  if(extraIsSpinning||!currentExtraEvent)return;
+  if(isExtraAlreadyDone()){document.getElementById('extra-spin-error').innerHTML='<div class="error-msg">오늘 이미 참여하셨습니다</div>';return;}
+  if(extraLadderPicked<0){toast('번호를 먼저 선택하세요!');return;}
+  const ev=currentExtraEvent;
+  const prizes=(ev.prizes||[]);
+  const n=Math.min(prizes.length,4);
+  const winner=pickExtraWinner();
+  const winnerRank=ev.prizes.findIndex(x=>x.id===winner.id)%n;
+  let hconn,attempts=0;
+  do{hconn=generateLadder(n,8);attempts++;}
+  while(followLadder(extraLadderPicked,hconn,n)!==winnerRank&&attempts<150);
+  const path=getLadderPath(extraLadderPicked,hconn,n,200);
+  const canvas=document.getElementById('extra-ladder-canvas');
+  const ctx=canvas.getContext('2d');
+  const btn=document.getElementById('extra-spin-btn');
+  btn.disabled=true;btn.textContent='사다리 타는 중...';
+  extraIsSpinning=true;
+  initAudio();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  canvas.style.transition='opacity 0.3s ease';canvas.style.opacity='0';
+  setTimeout(()=>{
+    drawLadder(ctx,hconn,n,300,200,null,-1);
+    canvas.style.opacity='1';
+    document.getElementById('extra-ladder-status').textContent='경로가 펼쳐지고 있어요...';
+    setTimeout(()=>{
+      let step=0;
+      const iv=setInterval(()=>{
+        tick(0.12);
+        drawLadder(ctx,hconn,n,300,200,path.slice(0,step+2),extraLadderPicked);
+        step++;
+        if(step>=path.length-1){
+          clearInterval(iv);extraIsSpinning=false;
+          document.querySelectorAll('[id^="elad-b-"]').forEach(el=>el.style.filter='none');
+          const isLose=!winner.benefit||!winner.benefit.trim();
+          if(!isLose)winSound();
+          document.getElementById('extra-ladder-status').textContent='결과 확인!';
+          finishExtraGame(winner);
+        }
+      },140);
+    },500);
+  },350);
 }
 
 /* ═══ 추가이벤트: 카드뽑기 (먼저 공개 → 셔플 → 선택 → 결과) ═══ */
