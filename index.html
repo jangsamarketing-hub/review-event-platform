@@ -2479,7 +2479,7 @@ function bulkSendOwnerSMS(){
   toast(`${chks.length}개 업체에 문자 앱을 열었습니다 ✉️`);
 }
 function togglePlatformApprove(id){storesDB[id].approved=!storesDB[id].approved;saveStoresDB();renderPlatform();toast(storesDB[id].approved?'매장을 승인했습니다':'매장을 정지했습니다')}
-function togglePlatformPremium(id){storesDB[id].premium=!storesDB[id].premium;storesDB[id].plan=storesDB[id].premium?'premium':'free';saveStoresDB();renderPlatform();toast(storesDB[id].premium?'프리미엄을 부여했습니다':'프리미엄을 해제했습니다')}
+function togglePlatformPremium(id){storesDB[id].premium=!storesDB[id].premium;storesDB[id].plan=storesDB[id].premium?'premium':'free';saveStoresDB();_sbPush(id);renderPlatform();toast(storesDB[id].premium?'프리미엄을 부여했습니다':'프리미엄을 해제했습니다')}
 function resetStoreData(id){
   if(!confirm('이 매장의 고객/쿠폰/설문 등 모든 데이터를 초기화할까요?\n매장 프로필(이름/주소)은 유지됩니다. 복구 불가.'))return;
   const old=storesDB[id];
@@ -2508,9 +2508,48 @@ function deleteStore(id){
 }
 
 /* ════════════════════ 홈 ════════════════════ */
+function _homeEvMeta(){
+  const _n=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#03C75A"/><path d="M9 27V9h5l9 14V9H28v18h-5L14 13V27z" fill="white"/></svg>`;
+  const _k=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#FEE500"/><ellipse cx="18" cy="16" rx="11" ry="10" fill="#3C1E1E"/><circle cx="13.5" cy="15" r="2" fill="#FEE500"/><circle cx="22.5" cy="15" r="2" fill="#FEE500"/><path d="M13 20 Q18 23.5 23 20" stroke="#FEE500" stroke-width="2" fill="none" stroke-linecap="round"/><polygon points="15,25 18,29 21,25" fill="#FEE500"/></svg>`;
+  const _g=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="white" stroke="#e0e0e0" stroke-width="1"/><path d="M28.4 18.3c0-.8-.07-1.57-.2-2.3H18v4.35h5.8c-.25 1.35-1 2.5-2.15 3.27v2.72h3.48c2.04-1.88 3.27-4.65 3.27-8.04z" fill="#4285F4"/><path d="M18 31c2.9 0 5.33-.96 7.1-2.6l-3.48-2.7c-.96.64-2.18 1.02-3.62 1.02-2.79 0-5.15-1.88-5.99-4.41H8.4v2.79C10.16 28.65 13.82 31 18 31z" fill="#34A853"/><path d="M12.01 22.31c-.22-.64-.34-1.32-.34-2.02s.12-1.38.34-2.02v-2.79H8.4C7.51 17.03 7 18.46 7 20s.51 2.97 1.4 4.52l3.61-2.21z" fill="#FBBC05"/><path d="M18 13.58c1.57 0 2.98.54 4.09 1.6l3.06-3.06C23.32 10.42 20.9 9 18 9c-4.18 0-7.84 2.35-9.6 5.79l3.61 2.79C12.85 15.46 15.21 13.58 18 13.58z" fill="#EA4335"/></svg>`;
+  const _t=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#E8002D"/><rect x="10" y="9" width="16" height="4" rx="2" fill="white"/><rect x="15" y="13" width="6" height="15" rx="2" fill="white"/></svg>`;
+  return {naver:{icon:_n,color:'#03C75A',bg:'#e8faf3',label:'네이버지도 리뷰'},kakao:{icon:_k,color:'#FEE500',bg:'#fffbcc',label:'카카오맵 리뷰'},google:{icon:_g,color:'#4285F4',bg:'#fff',label:'구글 리뷰'},tmap:{icon:_t,color:'#E8002D',bg:'#fff0f3',label:'티맵 리뷰'}};
+}
 function refreshHome(){
-  if(!currentUser)return show('s-landing');
-  document.getElementById('home-store-name').textContent=STORE.profile.name;
+  document.getElementById('home-store-name').textContent=STORE?.profile?.name||'';
+  const gm=STORE.gameMode||'roulette';
+  const gmIcon=document.getElementById('home-game-icon');
+  const gmTitle=document.getElementById('home-game-title');
+  const gmIcons={roulette:'🎡',card:'🃏',scratch:'🎟️',ladder:'🪜'};
+  const gmTitles={roulette:'룰렛 이벤트',card:'카드 뽑기',scratch:'럭키 복권',ladder:'사다리 게임'};
+  if(gmIcon)gmIcon.textContent=gmIcons[gm]||'🎡';
+  if(gmTitle)gmTitle.textContent=gmTitles[gm]||'룰렛 이벤트';
+
+  if(!currentUser){
+    // 비로그인 게스트 모드: 매장 홈 미리보기
+    document.getElementById('home-name').textContent='이벤트 참여하기 👆';
+    document.getElementById('home-rank').textContent='';
+    document.getElementById('home-coupon-badge').textContent='';
+    document.getElementById('home-coupon-sub').textContent='로그인 후 확인';
+    document.getElementById('home-stamp-sub').textContent='로그인 후 확인';
+    document.getElementById('home-spin-left').textContent='하루 1회 무료';
+    const rankBarEl=document.getElementById('home-rank-bar');
+    if(rankBarEl)rankBarEl.innerHTML='<div style="text-align:center;padding:6px 0"><button onclick="show(\'s-login\')" style="background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📱 번호 등록하고 스탬프·쿠폰 받기</button></div>';
+    const surveyEl=document.getElementById('home-survey-sub');
+    if(surveyEl){surveyEl.textContent='참여 시 스탬프 1개 적립';surveyEl.style.color='var(--t3)';}
+    // 게스트 모드 추가이벤트: 클릭 시 로그인으로
+    const _gExtraEl=document.getElementById('home-extra-events');
+    if(_gExtraEl){
+      const _gEvs=STORE.events||[];
+      if(!_gEvs.length){_gExtraEl.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--t4)">추가 이벤트가 설정되지 않았습니다</div>';}
+      else{_gExtraEl.innerHTML=_gEvs.map((ev,idx)=>{
+        const _pm=_homeEvMeta();const meta=_pm[ev.platform]||{icon:'🎁',bg:'#f3f0ff',label:ev.label};
+        return `<div${idx>0?' style="border-top:1px solid var(--border2)"':''}><div class="list-item" style="opacity:${ev.active?1:.4};cursor:${ev.active?'pointer':'default'};padding:10px 14px" onclick="${ev.active?`show('s-login')`:''}"><div class="li-icon" style="background:${meta.bg};display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;width:40px;height:40px;border-radius:12px">${meta.icon}</div><div class="li-body"><div class="li-title" style="font-size:14px">${meta.label}</div><div class="li-sub" style="color:var(--t3)">${ev.active?'리뷰 작성 후 게임 참여':'현재 비활성화됨'}</div></div><span style="font-size:18px;color:var(--t4)">›</span></div></div>`;
+      }).join('');}
+    }
+    return;
+  }
+
   const uVisits=currentUser.visits||0;
   const rank=getRank(uVisits);
   document.getElementById('home-name').textContent=currentUser.name+'님';
@@ -2526,14 +2565,6 @@ function refreshHome(){
   document.getElementById('home-stamp-sub').textContent=_cur+' / '+_nextMs.goal+'개 적립';
   const last=localStorage.getItem('lastSpin_'+STORE_ID);
   document.getElementById('home-spin-left').textContent=last===today()?'오늘 이미 참여됨':'하루 1회';
-  // 게임 모드별 홈 UI
-  const gm=STORE.gameMode||'roulette';
-  const gmIcon=document.getElementById('home-game-icon');
-  const gmTitle=document.getElementById('home-game-title');
-  const gmIcons={roulette:'🎡',card:'🃏',scratch:'🎟️',ladder:'🪜'};
-  const gmTitles={roulette:'룰렛 이벤트',card:'카드 뽑기',scratch:'럭키 복권',ladder:'사다리 게임'};
-  if(gmIcon)gmIcon.textContent=gmIcons[gm]||'🎡';
-  if(gmTitle)gmTitle.textContent=gmTitles[gm]||'룰렛 이벤트';
   // 설문 스탬프 적립 여부 표시
   const _surveyEl=document.getElementById('home-survey-sub');
   if(_surveyEl){
@@ -2548,16 +2579,7 @@ function refreshHome(){
     if(!STORE.extraSpinLog)STORE.extraSpinLog={};
     const todayKey=today();
     const allEvents=STORE.events||[];
-    const _naverSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#03C75A"/><path d="M9 27V9h5l9 14V9H28v18h-5L14 13V27z" fill="white"/></svg>`;
-    const _kakaoSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#FEE500"/><ellipse cx="18" cy="16" rx="11" ry="10" fill="#3C1E1E"/><circle cx="13.5" cy="15" r="2" fill="#FEE500"/><circle cx="22.5" cy="15" r="2" fill="#FEE500"/><path d="M13 20 Q18 23.5 23 20" stroke="#FEE500" stroke-width="2" fill="none" stroke-linecap="round"/><polygon points="15,25 18,29 21,25" fill="#FEE500"/></svg>`;
-    const _googleSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="white" stroke="#e0e0e0" stroke-width="1"/><path d="M28.4 18.3c0-.8-.07-1.57-.2-2.3H18v4.35h5.8c-.25 1.35-1 2.5-2.15 3.27v2.72h3.48c2.04-1.88 3.27-4.65 3.27-8.04z" fill="#4285F4"/><path d="M18 31c2.9 0 5.33-.96 7.1-2.6l-3.48-2.7c-.96.64-2.18 1.02-3.62 1.02-2.79 0-5.15-1.88-5.99-4.41H8.4v2.79C10.16 28.65 13.82 31 18 31z" fill="#34A853"/><path d="M12.01 22.31c-.22-.64-.34-1.32-.34-2.02s.12-1.38.34-2.02v-2.79H8.4C7.51 17.03 7 18.46 7 20s.51 2.97 1.4 4.52l3.61-2.21z" fill="#FBBC05"/><path d="M18 13.58c1.57 0 2.98.54 4.09 1.6l3.06-3.06C23.32 10.42 20.9 9 18 9c-4.18 0-7.84 2.35-9.6 5.79l3.61 2.79C12.85 15.46 15.21 13.58 18 13.58z" fill="#EA4335"/></svg>`;
-    const _tmapSVG=`<svg viewBox="0 0 36 36" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="36" rx="8" fill="#E8002D"/><rect x="10" y="9" width="16" height="4" rx="2" fill="white"/><rect x="15" y="13" width="6" height="15" rx="2" fill="white"/></svg>`;
-    const platformMeta={
-      naver:{icon:_naverSVG,color:'#03C75A',bg:'#e8faf3',label:'네이버지도 리뷰'},
-      kakao:{icon:_kakaoSVG,color:'#FEE500',bg:'#fffbcc',label:'카카오맵 리뷰'},
-      google:{icon:_googleSVG,color:'#4285F4',bg:'#fff',label:'구글 리뷰'},
-      tmap:{icon:_tmapSVG,color:'#E8002D',bg:'#fff0f3',label:'티맵 리뷰'}
-    };
+    const platformMeta=_homeEvMeta();
     if(!allEvents.length){
       extraEl.innerHTML='<div style="padding:14px 16px;font-size:13px;color:var(--t4)">추가 이벤트가 설정되지 않았습니다</div>';
     }else{
@@ -2695,6 +2717,7 @@ function drawWheel(ctx,rot){
 }
 /* ════════════════════ 게임 모드 분기 ════════════════════ */
 function goToMainGame(){
+  if(!currentUser)return show('s-login');
   const gm=STORE.gameMode||'roulette';
   if(gm==='scratch')show('s-scratch');
   else if(gm==='card')show('s-card');
@@ -5769,8 +5792,8 @@ document.getElementById('s-pin').value='';
   const _p=new URLSearchParams(location.search).get('admin');
   const _storeParam=new URLSearchParams(location.search).get('store');
   if(_p==='platform'){show('s-platform-login');}
-  else if(STORE&&_storeParam){show('s-login');}  // ?store= URL → 고객 로그인 화면으로 바로
-  else if(STORE){show('s-landing');}             // ?store= 없음 → 퍼널 랜딩
+  else if(STORE&&_storeParam){refreshHome();show('s-home');}  // ?store= URL → 매장 홈으로 바로
+  else if(STORE){show('s-landing');}                          // ?store= 없음 → 퍼널 랜딩
   else if(_storeParam&&_storeParam!=='demo'){
     // ?store=X 있지만 이 기기에 localStorage 없음 → Supabase에서 로드 시도
     show('s-loading');
@@ -5779,7 +5802,7 @@ document.getElementById('s-pin').value='';
         storesDB[_storeParam]=remoteData;
         STORE_ID=_storeParam;
         STORE=remoteData;
-        show('s-login');
+        refreshHome();show('s-home');
       } else {
         show('s-notfound');
       }
