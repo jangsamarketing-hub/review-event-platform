@@ -3941,13 +3941,14 @@ let extraLadderPicked=-1;
 function initExtraLadder(){
   extraLadderPicked=-1;
   const prizes=(currentExtraEvent.prizes||[]);
-  const n=Math.min(prizes.length,4);
+  const n=Math.min(prizes.length,5);
+  const animals=LADDER_ANIMALS.slice(0,n);
   const tops=document.getElementById('extra-ladder-tops');
   const bottoms=document.getElementById('extra-ladder-bottoms');
   const pct=Math.floor(100/n);
-  tops.innerHTML=Array.from({length:n},(_,i)=>
+  tops.innerHTML=animals.map((a,i)=>
     `<div style="width:${pct}%;text-align:center">
-      <button id="elad-t-${i}" onclick="pickExtraLadder(${i})" style="width:44px;height:44px;border-radius:50%;border:3px solid var(--border);background:var(--bg);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;color:var(--t1)">${i+1}번</button>
+      <button id="elad-t-${i}" onclick="pickExtraLadder(${i})" style="width:44px;height:44px;border-radius:50%;border:3px solid var(--border);background:var(--bg);font-size:24px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.08)">${a}</button>
     </div>`).join('');
   bottoms.innerHTML=prizes.slice(0,n).map((p,i)=>{
     const isLose=!p.benefit||!p.benefit.trim();
@@ -3961,7 +3962,7 @@ function initExtraLadder(){
   const canvas=document.getElementById('extra-ladder-canvas');
   const ctx=canvas.getContext('2d');
   drawLadderMystery(ctx,n,300,200);
-  document.getElementById('extra-ladder-status').textContent='번호를 선택하세요!';
+  document.getElementById('extra-ladder-status').textContent='동물을 선택하세요!';
   const btn=document.getElementById('extra-spin-btn');
   btn.style.display='block';btn.disabled=false;btn.textContent='🪜 사다리 시작';
 }
@@ -3981,7 +3982,7 @@ function doExtraLadderStart(){
   if(extraLadderPicked<0){toast('번호를 먼저 선택하세요!');return;}
   const ev=currentExtraEvent;
   const prizes=(ev.prizes||[]);
-  const n=Math.min(prizes.length,4);
+  const n=Math.min(prizes.length,5);
   const winner=pickExtraWinner();
   const winnerRank=ev.prizes.findIndex(x=>x.id===winner.id)%n;
   let hconn,attempts=0;
