@@ -1778,6 +1778,9 @@ const PLATFORM={email:'jayden',password:'194360'};
 let storesDB=loadStoresDB();
 if(!storesDB['demo']){storesDB['demo']=seedDemoStore();saveStoresDB()}
 // 신호등 데모용 테스트 매장 (활동일 다르게)
+// 구버전 테스트 매장 정리
+if(storesDB['1000000002']){delete storesDB['1000000002'];saveStoresDB();}
+
 if(!storesDB['1000000001']){
   const s2=seedDemoStore();
   s2.profile.name='정자역 룸식당';s2.profile.emoji='🍲';s2.profile.industry='한식';
@@ -1789,18 +1792,6 @@ if(!storesDB['1000000001']){
   s2.spinLog=[{date:d15s,uid:'guest'}];
   s2.users=[{id:'u1',name:'단골손님',phone:'010-9999-8888',marketing:true,joined:d15s,visits:5}];
   storesDB['1000000001']=s2;
-}
-if(!storesDB['1000000002']){
-  const s3=seedDemoStore();
-  s3.profile.name='분당 카페브런치';s3.profile.emoji='☕';s3.profile.industry='카페';
-  s3.owner={name:'최사장',phone:'010-3333-4444'};
-  s3.adminEmail='store3@example.com';s3.adminPassword='admin1234';
-  // 10일 전 활동 (주의/주황)
-  const d10=new Date();d10.setDate(d10.getDate()-10);
-  const d10s=d10.toISOString().split('T')[0];
-  s3.spinLog=[{date:d10s,uid:'guest'}];
-  s3.users=[{id:'u1',name:'브런치러버',phone:'010-7777-6666',marketing:true,joined:d10s,visits:3}];
-  storesDB['1000000002']=s3;
 }
 saveStoresDB();
 
@@ -2221,8 +2212,8 @@ function filterStoreList(query){
 function goToStore(storeId){
   if(!storesDB||!storesDB[storeId])return;
   STORE_ID=storeId;STORE=storesDB[storeId];
-  localStorage.setItem('last_store',storeId);
-  show('s-landing');
+  history.pushState(null,'','?store='+storeId);
+  refreshHome();show('s-home');
 }
 function adminLogin(){
   const e=document.getElementById('a-email').value.trim(),p=document.getElementById('a-pw').value.trim();
