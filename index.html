@@ -2699,7 +2699,7 @@ function drawWheel(ctx,rot){
     ctx.save();
     ctx.translate(cx,cy);
     ctx.rotate(mid);           // 해당 슬라이스 중앙각으로 회전
-    ctx.textAlign='right';     // 오른쪽(=외곽) 정렬 고정
+    ctx.textAlign='center';    // 슬라이스 중간에 가운데 정렬
     ctx.fillStyle='#fff';
     ctx.font=`700 ${fontSize}px Noto Sans KR,sans-serif`;
     ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=3;
@@ -2708,8 +2708,9 @@ function drawWheel(ctx,rot){
     let ln1,ln2;
     if(words.length>=2){const mid=Math.ceil(words.length/2);ln1=words.slice(0,mid).join(' ');ln2=words.slice(mid).join(' ');}
     else{ln1=p.name.length>5?p.name.slice(0,5):p.name;ln2=p.name.length>5?p.name.slice(5).slice(0,5):''}
-    if(ln2){ctx.fillText(ln1,r-14,-3);ctx.fillText(ln2,r-14,9);}
-    else{ctx.fillText(ln1,r-14,5);}
+    const tx=r*0.62;
+    if(ln2){ctx.fillText(ln1,tx,-3);ctx.fillText(ln2,tx,9);}
+    else{ctx.fillText(ln1,tx,5);}
     ctx.restore();
   });
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
@@ -3121,11 +3122,35 @@ function initScratchCard(){
   document.getElementById('scratch-pct').textContent='0';
   document.getElementById('scratch-progress').style.width='0%';
 
+  let _hasPending=false;
   if(last===today()){
-    btn.style.display='none';
-    alreadyEl.style.display='block';
-    if(resetWrap)resetWrap.style.display='block';
-    if(errEl)errEl.innerHTML='<div class="error-msg">오늘은 이미 참여하셨습니다. 내일 다시 도전해주세요!</div>';
+    // 미완료 복권이 있으면 복원
+    const _pendStr=localStorage.getItem('scratchPending_'+STORE_ID);
+    if(_pendStr){
+      try{
+        const _pd=JSON.parse(_pendStr);
+        if(_pd.date===today()&&_pd.winner){
+          _hasPending=true;
+          scratchWinner=_pd.winner;
+          const _isL=!scratchWinner.benefit||!scratchWinner.benefit.trim();
+          document.getElementById('scratch-emoji').textContent='🐷';
+          document.getElementById('scratch-prize-name').textContent=_isL?'아쉽게도 꽝이에요':scratchWinner.benefit;
+          document.getElementById('scratch-prize-benefit').textContent=_isL?'다음 기회에 도전해요!':'쿠폰이 자동 발급됩니다';
+          const _pnEl=document.getElementById('scratch-prize-name');
+          if(_pnEl)_pnEl.style.color=_isL?'#9ca3af':'#78350f';
+          btn.style.display='none';
+          alreadyEl.style.display='none';
+          if(resetWrap)resetWrap.style.display='none';
+          if(errEl)errEl.innerHTML='<div style="font-size:13px;color:var(--blue);font-weight:600">이전 복권 결과를 공개합니다! ✨</div>';
+        }
+      }catch(e){}
+    }
+    if(!_hasPending){
+      btn.style.display='none';
+      alreadyEl.style.display='block';
+      if(resetWrap)resetWrap.style.display='block';
+      if(errEl)errEl.innerHTML='<div class="error-msg">오늘은 이미 참여하셨습니다. 내일 다시 도전해주세요!</div>';
+    }
     canvas.style.pointerEvents='none';
   }else{
     btn.style.display='block';
@@ -3145,6 +3170,8 @@ function initScratchCard(){
   scratchCtx=newCanvas.getContext('2d');
   drawSilverLayer(scratchCtx,true);
   attachScratchEvents(newCanvas);
+  // 미완료 복권 자동 공개
+  if(_hasPending)setTimeout(()=>revealScratch(),600);
 }
 
 function drawSilverLayer(ctx,fresh){
@@ -3216,6 +3243,7 @@ function checkScratchProgress(){
 function revealScratch(){
   if(scratchRevealed)return;
   scratchRevealed=true;
+  localStorage.removeItem('scratchPending_'+STORE_ID);
   document.getElementById('scratch-pct').textContent='100';
   document.getElementById('scratch-progress').style.width='100%';
   initAudio();
@@ -3264,6 +3292,9 @@ function doScratch(){
   }
   // 당첨 미리 결정 후 배경에 표시
   scratchWinner=pickWinner();
+  // 즉시 lastSpin 저장 — 나가도 재참여 불가, pending에 winner 보존
+  localStorage.setItem('lastSpin_'+STORE_ID,today());
+  localStorage.setItem('scratchPending_'+STORE_ID,JSON.stringify({winner:scratchWinner,date:today()}));
   const isLose=!scratchWinner.benefit||!scratchWinner.benefit.trim();
   document.getElementById('scratch-emoji').textContent='🐷';
   document.getElementById('scratch-prize-name').textContent=isLose?'아쉽게도 꽝이에요':scratchWinner.benefit;
@@ -3899,11 +3930,16 @@ function drawExtraWheel(ctx,rot,prizes){
     ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.stroke();
     ctx.save();
     ctx.translate(cx,cy);ctx.rotate(mid);
-    ctx.textAlign='right';ctx.fillStyle='#fff';
+    ctx.textAlign='center';ctx.fillStyle='#fff';
     ctx.font=`700 ${fontSize}px Noto Sans KR,sans-serif`;
     ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=3;
-    const label=p.name.length>8?p.name.slice(0,7)+'…':p.name;
-    ctx.fillText(label,r-14,5);
+    const _words=p.name.split(' ');
+    let _l1,_l2;
+    if(_words.length>=2){const _m=Math.ceil(_words.length/2);_l1=_words.slice(0,_m).join(' ');_l2=_words.slice(_m).join(' ');}
+    else{_l1=p.name.length>5?p.name.slice(0,5):p.name;_l2=p.name.length>5?p.name.slice(5).slice(0,5):'';}
+    const _tx=r*0.62;
+    if(_l2){ctx.fillText(_l1,_tx,-3);ctx.fillText(_l2,_tx,9);}
+    else{ctx.fillText(_l1,_tx,5);}
     ctx.restore();
   });
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
