@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#191f28">
 <meta name="description" content="우리 매장 리뷰 이벤트에 참여하고 룰렛, 쿠폰, 스탬프 혜택을 받아보세요.">
 <meta property="og:title" content="리뷰 이벤트 참여하기">
@@ -35,8 +35,9 @@ body.dark{
   --t1:#f5f6f8;--t2:#c2c8d1;--t3:#8b95a1;--t4:#5b6472;
   --border:#33373f;--border2:#2a2d33;
 }
-html,body{height:100%}
+html,body{height:100%;touch-action:manipulation}
 body{font-family:'Noto Sans KR',sans-serif;background:#d8dce0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;transition:background .2s}
+input,select,textarea{font-size:16px !important}
 body.dark{background:#0a0b0d}
 .phone{width:100%;max-width:430px;background:var(--bg);min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,.15);transition:background .2s}
 
@@ -6069,6 +6070,17 @@ document.getElementById('s-pin').value='';
   }
   else{show('s-notfound');}
 })();
+// iOS Safari 핀치줌·더블탭줌 방지
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
+let _lastTap=0;
+document.addEventListener('touchend',function(e){
+  const now=Date.now();
+  if(now-_lastTap<300&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){
+    e.preventDefault();
+  }
+  _lastTap=now;
+},{passive:false});
 </script>
 </body>
 </html>
