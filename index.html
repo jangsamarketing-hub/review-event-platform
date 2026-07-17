@@ -1962,9 +1962,12 @@ function createStore(){
   if(!validateEmail(email)){el.innerHTML='<div class="error-msg">올바른 이메일 형식이 아닙니다</div>';return}
   if(!pw||pw.length<6){el.innerHTML='<div class="error-msg">비밀번호는 6자 이상 입력해주세요</div>';return}
 
+  const emailDup=Object.values(storesDB||{}).find(s=>s.adminEmail&&s.adminEmail.toLowerCase()===email.toLowerCase());
+  if(emailDup){el.innerHTML='<div class="error-msg">이미 사용 중인 이메일입니다. 해당 이메일로 로그인해주세요</div>';return}
+
   let uid=extractNaverUID(naverUrl)||manualId;
   if(!uid||!/^\d{4,}$/.test(uid)){el.innerHTML='<div class="error-msg">매장 고유번호를 인식하지 못했어요. 직접 입력란에 숫자를 입력해주세요</div>';return}
-  if(storesDB[uid]){el.innerHTML='<div class="error-msg">이미 등록된 매장 번호입니다. 관리자로 로그인해주세요</div>';return}
+  if(storesDB[uid]){el.innerHTML='<div class="error-msg">이미 등록된 매장입니다 (네이버 플레이스 번호 중복). 관리자로 로그인해주세요</div>';return}
 
   const newStore=seedDemoStore();
   newStore.profile.name=name;
