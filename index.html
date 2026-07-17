@@ -2682,29 +2682,27 @@ function refreshHome(){
 /* ════════════════════ 효과음 (MP3) ════════════════════ */
 let audioCtx=null;
 function initAudio(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}}
-let _spinAudio=null,_ladderAudio=null,_scratchAudio=null;
 function _mkAudio(src){const a=new Audio(src);a.preload='auto';return a;}
+// 미리 생성해서 브라우저가 즉시 버퍼링 시작 → 버튼 누르자마자 재생
+let _spinAudio=_mkAudio('spin.mp3'),_ladderAudio=_mkAudio('ladder.mp3'),_scratchAudio=_mkAudio('scratch.mp3');
 function playSpinBGM(){
   if(!soundOn)return;
-  if(!_spinAudio)_spinAudio=_mkAudio('spin.mp3');
-  _spinAudio.loop=true;_spinAudio.volume=0.7;
+  _spinAudio.loop=true;_spinAudio.volume=0.4;
   _spinAudio.currentTime=0;_spinAudio.play().catch(()=>{});
 }
-function stopSpinBGM(){if(_spinAudio){_spinAudio.pause();_spinAudio.currentTime=0;}}
+function stopSpinBGM(){_spinAudio.pause();_spinAudio.currentTime=0;}
 function playLadderBGM(){
   if(!soundOn)return;
-  if(!_ladderAudio)_ladderAudio=_mkAudio('ladder.mp3');
   _ladderAudio.loop=true;_ladderAudio.volume=0.6;
   _ladderAudio.currentTime=0;_ladderAudio.play().catch(()=>{});
 }
-function stopLadderBGM(){if(_ladderAudio){_ladderAudio.pause();_ladderAudio.currentTime=0;}}
+function stopLadderBGM(){_ladderAudio.pause();_ladderAudio.currentTime=0;}
 function playScratchBGM(){
   if(!soundOn)return;
-  if(!_scratchAudio)_scratchAudio=_mkAudio('scratch.mp3');
   _scratchAudio.loop=true;_scratchAudio.volume=0.5;
   if(_scratchAudio.paused){_scratchAudio.currentTime=0;_scratchAudio.play().catch(()=>{});}
 }
-function stopScratchBGM(){if(_scratchAudio){_scratchAudio.pause();_scratchAudio.currentTime=0;}}
+function stopScratchBGM(){_scratchAudio.pause();_scratchAudio.currentTime=0;}
 function tick(){}
 function winSound(){
   initAudio();
@@ -4035,7 +4033,7 @@ function doExtraSpin(){
   if(gm==='scratch'){doExtraScratchStart();return}
   if(gm==='ladder'){doExtraLadderStart();return}
   // 룰렛
-  extraIsSpinning=true;
+  extraIsSpinning=true;playSpinBGM();
   const btn=document.getElementById('extra-spin-btn');
   btn.disabled=true;btn.textContent='두근두근...';
   const winner=pickExtraWinner();
@@ -4054,7 +4052,7 @@ function doExtraSpin(){
     if(ts-lastTick>90&&p<0.96){tick(0.4+p*0.6);lastTick=ts;}
     if(p<1)requestAnimationFrame(frame);
     else{
-      extraSpinAngle=cur%(Math.PI*2);extraIsSpinning=false;
+      extraSpinAngle=cur%(Math.PI*2);extraIsSpinning=false;stopSpinBGM();
       const isLose=!winner.benefit||!winner.benefit.trim();
       if(!isLose)winSound();
       finishExtraGame(winner);
