@@ -6070,17 +6070,9 @@ document.getElementById('s-pin').value='';
   }
   else{show('s-notfound');}
 })();
-// iOS Safari 핀치줌·더블탭줌 방지
+// iOS Safari 핀치줌 방지 (touch-action:manipulation이 더블탭줌 담당)
 document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
-let _lastTap=0;
-document.addEventListener('touchend',function(e){
-  const now=Date.now();
-  if(now-_lastTap<300&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){
-    e.preventDefault();
-  }
-  _lastTap=now;
-},{passive:false});
 </script>
 </body>
 </html>
