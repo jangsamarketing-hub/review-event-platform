@@ -970,7 +970,7 @@ body.dark .success-msg{color:#3ddc97}
    <div id="store-search-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </section>
 
-  <div class="store-switcher" id="store-switcher-wrap" style="display:none"></div>
+  <div class="store-switcher" id="store-switcher-wrap-notfound" style="display:none"></div>
  </div>
 </div>
 
@@ -1741,6 +1741,8 @@ function seedDemoStore(){
     surveyQuestions:[
       {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (10점 만점)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
       {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
+      {id:'q_visit_motive',type:'multicheck',label:'어떤 계기로 방문 하셨나요?',options:['가족 모임','친구와 함께','연인과 데이트','직장동료와 식사','회식 또는 단체모임','혼밥','기념일/특별한날']},
+      {id:'q_travel_time',type:'multicheck',label:'매장까지 오시는데 얼마나 걸리셨나요?',options:['도보 10분 거리','차량 5분 거리','차량 10분 거리','차량 20분 거리','그 이상 시간 소요']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ],
     adminEmail:'jayden',adminPassword:'194360',
@@ -1865,8 +1867,22 @@ function migrateStore(s){
     s.surveyQuestions=[
       {id:'q2',type:'matrix',label:'솔직한 평가가 도움이 됩니다 (10점 만점)',items:['가격대비 맛','가격대비 양','조리 시간','직원 친절도','매장 청결도']},
       {id:'q1',type:'multicheck',label:'방문 경로를 알려주세요 (복수 선택 가능)',options:['네이버 검색','인스타 SNS','지나가다가','지인 추천','지난번에 방문']},
+      {id:'q_visit_motive',type:'multicheck',label:'어떤 계기로 방문 하셨나요?',options:['가족 모임','친구와 함께','연인과 데이트','직장동료와 식사','회식 또는 단체모임','혼밥','기념일/특별한날']},
+      {id:'q_travel_time',type:'multicheck',label:'매장까지 오시는데 얼마나 걸리셨나요?',options:['도보 10분 거리','차량 5분 거리','차량 10분 거리','차량 20분 거리','그 이상 시간 소요']},
       {id:'q3',type:'text',label:'아쉬운 부분 적어주세요 (꼭 개선하겠습니다)'}
     ];
+  }
+  // 기존 매장에 신규 고정 질문 추가 (없는 경우에만)
+  if(s.surveyQuestions){
+    const textQ=s.surveyQuestions.find(q=>q.id==='q3')||s.surveyQuestions.find(q=>q.type==='text');
+    const textIdx=textQ?s.surveyQuestions.indexOf(textQ):s.surveyQuestions.length;
+    if(!s.surveyQuestions.find(q=>q.id==='q_visit_motive')){
+      s.surveyQuestions.splice(textIdx,0,{id:'q_visit_motive',type:'multicheck',label:'어떤 계기로 방문 하셨나요?',options:['가족 모임','친구와 함께','연인과 데이트','직장동료와 식사','회식 또는 단체모임','혼밥','기념일/특별한날']});
+    }
+    if(!s.surveyQuestions.find(q=>q.id==='q_travel_time')){
+      const tIdx=s.surveyQuestions.findIndex(q=>q.id==='q3')||s.surveyQuestions.findIndex(q=>q.type==='text');
+      s.surveyQuestions.splice(tIdx>=0?tIdx:s.surveyQuestions.length,0,{id:'q_travel_time',type:'multicheck',label:'매장까지 오시는데 얼마나 걸리셨나요?',options:['도보 10분 거리','차량 5분 거리','차량 10분 거리','차량 20분 거리','그 이상 시간 소요']});
+    }
   }
   // 기존 저장된 데이터 순서 교정: matrix가 첫 번째로 오도록
   if(s.surveyQuestions&&s.surveyQuestions.length>=2&&s.surveyQuestions[0].type!=='matrix'){
@@ -1981,13 +1997,13 @@ function goToMyStore(){
 }
 
 function renderStoreSwitcher(){
-  const wrap=document.getElementById('store-switcher-wrap');
-  const ids=Object.keys(storesDB);
-  if(ids.length<=1){wrap.innerHTML='';return}
-  wrap.innerHTML=`<select onchange="if(this.value)location.search='?store='+this.value">
+  const html=Object.keys(storesDB).length<=1?'':
+    `<select onchange="if(this.value)location.search='?store='+this.value">
     <option value="">🏪 테스트: 다른 매장 보기</option>
-    ${ids.map(id=>`<option value="${id}" ${id===STORE_ID?'selected':''}>${storesDB[id].profile.name} (${id})</option>`).join('')}
+    ${Object.keys(storesDB).map(id=>`<option value="${id}" ${id===STORE_ID?'selected':''}>${storesDB[id].profile.name} (${id})</option>`).join('')}
   </select>`;
+  // 중복 ID가 있어도 모두 업데이트되도록 querySelectorAll 사용
+  document.querySelectorAll('[id="store-switcher-wrap"]').forEach(el=>el.innerHTML=html);
 }
 
 /* ════════════════════ 다크모드 ════════════════════ */
@@ -3908,6 +3924,7 @@ function renderMyInfo(){
 /* ════════════════════ 네이버/카카오 ════════════════════ */
 /* ════════════════════ 추가 이벤트 (카카오맵/구글/티맵) ════════════════════ */
 let currentExtraEvent=null;
+let _extraCallerScreen='s-result';
 let extraSpinAngle=0,extraIsSpinning=false;
 
 function getActiveEvents(){
@@ -3945,6 +3962,7 @@ function openExtraRoulette(evId){
   const ev=(STORE.events||[]).find(e=>e.id===evId);
   if(!ev)return;
   currentExtraEvent=ev;
+  _extraCallerScreen=window.currentScreenId||'s-result';
   closeExtraEventPopup();
   const gm=ev.gameMode||'roulette';
   const badge=document.getElementById('extra-event-badge');
@@ -3985,7 +4003,8 @@ function openExtraRoulette(evId){
 }
 function closeExtraRoulette(){
   currentExtraEvent=null;
-  show('s-result');
+  show(_extraCallerScreen||'s-result');
+  _extraCallerScreen='s-result';
 }
 function drawExtraWheel(ctx,rot,prizes){
   const cx=150,cy=150,r=140;
