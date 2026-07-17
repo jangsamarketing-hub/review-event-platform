@@ -2049,6 +2049,7 @@ let spinAngle=0,isSpinning=false,curRating=3,currentUser=null,currentStaff=null,
 /* ════════════════════ 화면 전환 ════════════════════ */
 function show(id){
   if(!STORE && !['s-notfound','s-loading','s-owner-signup','s-owner-done','s-platform-login','s-platform','s-admin-login','s-pw-reset'].includes(id)){id='s-notfound'}
+  window.currentScreenId=id;
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   const sc=document.getElementById(id);
   if(sc){sc.classList.add('on');const sr=sc.querySelector('.scroll');if(sr)sr.scrollTop=0}
@@ -3304,6 +3305,8 @@ function checkScratchProgress(){
 
 function revealScratch(){
   if(scratchRevealed)return;
+  // 복권 화면을 떠났으면 자동공개 중단 (pending 보존 → 다시 들어오면 이어서 공개)
+  if(window.currentScreenId!=='s-scratch'){stopScratchBGM();return;}
   scratchRevealed=true;stopScratchBGM();
   localStorage.removeItem('scratchPending_'+STORE_ID);
   document.getElementById('scratch-pct').textContent='100';
@@ -3458,6 +3461,9 @@ function showVipUpgradePopup(grade,benefit){
   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove()});
 }
 function showResult(winner){
+  // 게임 도중 뒤로가기로 나간 뒤 지연 타이머가 발동한 경우 → 결과·쿠폰 발급 중단
+  const _cur=window.currentScreenId;
+  if(_cur!=='s-roulette'&&_cur!=='s-scratch'&&_cur!=='s-card'&&_cur!=='s-ladder'&&_cur!=='s-result')return;
   const isLose=!winner.benefit||!winner.benefit.trim();
   document.getElementById('res-emoji').textContent=isLose?'😢':'🎉';
   document.getElementById('res-title').textContent=isLose?'아쉽게도 꽝이에요':winner.benefit+' 당첨!';
@@ -4365,6 +4371,9 @@ function finishExtraGame(winner){
   setTimeout(()=>showExtraResult(winner),isLose?900:1300);
 }
 function showExtraResult(winner){
+  // 추가게임 도중 뒤로가기로 나간 뒤 지연 타이머 발동 → 결과·쿠폰 발급 중단
+  const _cur=window.currentScreenId;
+  if(_cur!=='s-extra-roulette'&&_cur!=='s-result')return;
   const isLose=!winner.benefit||!winner.benefit.trim();
   document.getElementById('res-emoji').textContent=isLose?'😢':'🎉';
   document.getElementById('res-title').textContent=isLose?'아쉽게도 꽝이에요':winner.benefit+' 당첨!';
