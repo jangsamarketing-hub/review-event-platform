@@ -1726,7 +1726,7 @@ function seedDemoStore(){
     for(let i=0;i<cnt;i++)spinLog.push({date:dateStr,uid:'u'+i});
   }
   return {
-    approved:true,premium:false,plan:'free',
+    approved:true,premium:true,plan:'premium',
     owner:{name:'데모사장',phone:'010-0000-0000'},
     naverLinked:false,naverPlaceUrl:'',naverReviewUrl:'',
     resetPin:'0123',
@@ -2290,7 +2290,8 @@ function renderStoreSearchSection(){
   if(stores.length===0){sec.style.display='none';return;}
   sec.style.display='block';
   document.getElementById('store-search-input').value='';
-  renderStoreList(stores);
+  // 초기엔 목록 비워둠 — 검색어 입력 시에만 매장 표시
+  document.getElementById('store-search-list').innerHTML='';
 }
 function renderStoreList(stores){
   const list=document.getElementById('store-search-list');
@@ -2308,7 +2309,8 @@ function renderStoreList(stores){
 }
 function filterStoreList(query){
   const q=(query||'').trim().toLowerCase();
-  const stores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&(q===''||s.profile.name.toLowerCase().includes(q)));
+  if(!q){document.getElementById('store-search-list').innerHTML='';return;}
+  const stores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&s.profile.name.toLowerCase().includes(q));
   renderStoreList(stores);
 }
 function goToStore(storeId){
