@@ -36,3 +36,5 @@ __pycache__/
 # Logs
 *.log
 npm-debug.log*
+.vercel
+.env*
