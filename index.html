@@ -2050,6 +2050,7 @@ let spinAngle=0,isSpinning=false,curRating=3,currentUser=null,currentStaff=null,
 function show(id){
   if(!STORE && !['s-notfound','s-loading','s-owner-signup','s-owner-done','s-platform-login','s-platform','s-admin-login','s-pw-reset'].includes(id)){id='s-notfound'}
   window.currentScreenId=id;
+  stopAllBGM();  // 화면 전환 시 모든 게임 BGM 정지 (뒤로가기 후 무한반복 방지)
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   const sc=document.getElementById(id);
   if(sc){sc.classList.add('on');const sr=sc.querySelector('.scroll');if(sr)sr.scrollTop=0}
@@ -2706,6 +2707,7 @@ function playScratchBGM(){
   if(_scratchAudio.paused){_scratchAudio.currentTime=0;_scratchAudio.play().catch(()=>{});}
 }
 function stopScratchBGM(){_scratchAudio.pause();_scratchAudio.currentTime=0;}
+function stopAllBGM(){stopSpinBGM();stopLadderBGM();stopScratchBGM();}
 function tick(){}
 function winSound(){
   initAudio();
