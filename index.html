@@ -36,7 +36,6 @@ body.dark{
   --border:#33373f;--border2:#2a2d33;
 }
 html,body{height:100%;overflow-x:hidden}
-button,a,[role="button"]{touch-action:manipulation}
 body{font-family:'Noto Sans KR',sans-serif;background:#d8dce0;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;transition:background .2s}
 input,select,textarea{font-size:16px !important}
 body.dark{background:#0a0b0d}
@@ -2148,7 +2147,7 @@ function phoneLogin(){
     user.name=name;user.marketing=marketing;
   }
   currentUser=user;
-  saveState();
+  try{saveState();}catch(err){/* iOS 시크릿모드 등 localStorage 실패 시에도 진행 */}
   show('s-home');
 }
 function requireLogin(target){if(!currentUser)return show('s-login');show(target);}
@@ -6072,8 +6071,6 @@ document.getElementById('s-pin').value='';
   }
   else{show('s-notfound');}
 })();
-// iOS Safari 핀치줌 방지
-document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 </script>
 </body>
 </html>
