@@ -1129,6 +1129,17 @@ body.dark .success-msg{color:#3ddc97}
   </div>
 </div>
 
+<!-- ══════════ VIP 등급 팝업 모달 ══════════ -->
+<div id="vip-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeVipModal()">
+  <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;padding:24px 20px 40px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:900;color:var(--t1)">🏆 VIP 등급별 확정 혜택</div>
+      <button onclick="closeVipModal()" style="background:var(--bg);border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--t2)">✕</button>
+    </div>
+    <div id="vip-modal-body"></div>
+  </div>
+</div>
+
 <!-- ══════════ 개인정보 동의 모달 ══════════ -->
 <div id="privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closePrivacyModal()">
   <div style="background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;padding:28px 20px 40px">
@@ -1178,7 +1189,7 @@ body.dark .success-msg{color:#3ddc97}
         <div style="font-size:13px;color:var(--t3);font-weight:500" id="home-store-name">맛있는집</div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
           <div style="font-size:21px;font-weight:900;color:var(--t1)" id="home-name">고객님</div>
-          <span class="badge-rank" id="home-rank">🥉 브론즈</span>
+          <span class="badge-rank" id="home-rank" onclick="openVipModal()" style="cursor:pointer">🥉 브론즈</span>
         </div>
       </div>
       <div style="display:flex;gap:8px">
@@ -1187,7 +1198,7 @@ body.dark .success-msg{color:#3ddc97}
       </div>
     </div>
   </div>
-  <div id="home-rank-bar" style="background:var(--white);padding:10px 20px 14px;border-bottom:1px solid var(--border2)"></div>
+  <div id="home-rank-bar" onclick="openVipModal()" style="background:var(--white);padding:10px 20px 14px;border-bottom:1px solid var(--border2);cursor:pointer"></div>
   <div class="scroll" style="background:var(--bg)">
     <div style="margin:14px 16px;background:linear-gradient(135deg,#0a3d1f 0%,#03612f 100%);border-radius:20px;padding:24px;cursor:pointer;position:relative;overflow:hidden" onclick="goToMainGame()">
       <div style="position:absolute;right:-8px;top:-8px;opacity:.1;pointer-events:none"><svg viewBox="0 0 100 100" width="90" height="90" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#03C75A"/><path d="M20 76V24h16l27 40V24H79v52H63L36 36V76z" fill="white"/></svg></div>
@@ -1207,11 +1218,11 @@ body.dark .success-msg{color:#3ddc97}
       <div id="home-extra-events"></div>
     </div>
     <div class="card">
-      <div onclick="show('s-coupons')" class="list-item"><div class="li-icon" style="background:#e8faf3">🎟️</div><div class="li-body"><div class="li-title">내 쿠폰함</div><div class="li-sub" id="home-coupon-sub">사용 가능한 쿠폰</div></div><span class="li-badge badge-green" id="home-coupon-badge">0개</span><span class="li-arrow">›</span></div>
+      <div onclick="requireLogin('s-coupons')" class="list-item"><div class="li-icon" style="background:#e8faf3">🎟️</div><div class="li-body"><div class="li-title">내 쿠폰함</div><div class="li-sub" id="home-coupon-sub">사용 가능한 쿠폰</div></div><span class="li-badge badge-green" id="home-coupon-badge">0개</span><span class="li-arrow">›</span></div>
       <div class="divider"></div>
-      <div onclick="show('s-stamp')" class="list-item"><div class="li-icon" style="background:#fff8e6">⭐</div><div class="li-body"><div class="li-title">스탬프 카드</div><div class="li-sub" id="home-stamp-sub">3 / 10개 적립</div></div><span class="li-arrow">›</span></div>
+      <div onclick="requireLogin('s-stamp')" class="list-item"><div class="li-icon" style="background:#fff8e6">⭐</div><div class="li-body"><div class="li-title">스탬프 카드</div><div class="li-sub" id="home-stamp-sub">3 / 10개 적립</div></div><span class="li-arrow">›</span></div>
       <div class="divider"></div>
-      <div onclick="show('s-survey')" class="list-item"><div class="li-icon" style="background:#f3f0ff">📝</div><div class="li-body"><div class="li-title">만족도 설문 <span style="background:#fff8e6;color:#f5b925;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;vertical-align:middle">⭐ 스탬프 적립</span></div><div class="li-sub" id="home-survey-sub">참여 시 스탬프 1개 적립</div></div><span class="li-arrow">›</span></div>
+      <div onclick="requireLogin('s-survey')" class="list-item"><div class="li-icon" style="background:#f3f0ff">📝</div><div class="li-body"><div class="li-title">만족도 설문 <span style="background:#fff8e6;color:#f5b925;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;vertical-align:middle">⭐ 스탬프 적립</span></div><div class="li-sub" id="home-survey-sub">참여 시 스탬프 1개 적립</div></div><span class="li-arrow">›</span></div>
     </div>
     <div class="card" onclick="openReviewLinks()">
       <div class="list-item"><div class="li-icon" style="background:#e8faf3;font-size:22px">✍️</div><div class="li-body"><div class="li-title" style="color:var(--blue);font-weight:800">리뷰 작성하러 가기</div><div class="li-sub">작성 후 직원을 불러주세요!</div></div><span class="li-arrow" style="color:var(--blue)">›</span></div>
@@ -1221,8 +1232,8 @@ body.dark .success-msg{color:#3ddc97}
   <div class="bottom-banner"><button class="btn-channel" onclick="goKakaoChannel()">💬 카카오 채널 구독하고 혜택받기</button></div>
   <div class="bnav">
     <button class="bni on" data-nav="home" onclick="show('s-home')"><div class="bni-icon">🏠</div><span>홈</span></button>
-    <button class="bni" data-nav="coupons" onclick="show('s-coupons')"><div class="bni-icon">🎟️</div><span>쿠폰</span></button>
-    <button class="bni" data-nav="stamp" onclick="show('s-stamp')"><div class="bni-icon">⭐</div><span>적립</span></button>
+    <button class="bni" data-nav="coupons" onclick="requireLogin('s-coupons')"><div class="bni-icon">🎟️</div><span>쿠폰</span></button>
+    <button class="bni" data-nav="stamp" onclick="requireLogin('s-stamp')"><div class="bni-icon">⭐</div><span>적립</span></button>
     <button class="bni" data-nav="myinfo" onclick="show('s-myinfo')"><div class="bni-icon">👤</div><span>내 정보</span></button>
   </div>
 </div>
@@ -1327,7 +1338,7 @@ body.dark .success-msg{color:#3ddc97}
       <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:16px">
         <button id="extra-event-btn" class="btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:800;display:none;box-shadow:0 6px 16px rgba(118,75,162,.35)" onclick="openExtraEventPopup()">&#x1F381; 추가 이벤트 참여하기</button>
         <a id="extra-review-link-btn" class="btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none;background:linear-gradient(135deg,#00c471,#005f35);color:#fff;font-weight:800;text-decoration:none;text-align:center;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,196,113,.35)">📝 리뷰 작성하러 가기</a>
-        <button id="kakao-share-btn" class="btn" style="background:#FEE500;color:#191f28;font-weight:800;display:none;box-shadow:0 6px 16px rgba(254,229,0,.4)" onclick="shareToKakaoChannel()">💬 당첨내역 카카오채널에 보내기</button>
+        <button id="kakao-share-btn" class="btn" style="background:#FEE500;color:#191f28;font-weight:800;display:none;box-shadow:0 6px 16px rgba(254,229,0,.4)" onclick="shareToKakaoChannel()">📸 당첨내역 사진보내고 상품받기</button>
         <button class="btn btn-blue" onclick="show('s-coupons')" style="font-weight:700">🎟️ 내 쿠폰들 확인하기</button>
         <button class="btn" style="background:var(--bg);border:1.5px solid var(--border);color:var(--t2);font-weight:600" onclick="show('s-home')">🏠 홈으로</button>
       </div>
@@ -1459,10 +1470,10 @@ body.dark .success-msg{color:#3ddc97}
   <div class="scroll" style="background:var(--white)">
     <!-- 보상 이미지 + 텍스트 (맨 위, 달성 전) -->
     <div id="stamp-reward-preview" style="display:none">
-      <div id="stamp-preview-img-wrap" style="display:none;width:100%;height:180px;overflow:hidden;border-bottom:3px solid var(--border)">
+      <div id="stamp-preview-img-wrap" style="display:none;width:100%;aspect-ratio:1/1;overflow:hidden;border-bottom:3px solid var(--border)">
         <img id="stamp-preview-img" src="" style="width:100%;height:100%;object-fit:cover">
       </div>
-      <div style="padding:16px 20px 4px;text-align:center">
+      <div style="padding:12px 20px 4px;text-align:center">
         <div style="font-size:12px;color:var(--t3);margin-bottom:4px">스탬프를 모아 보상을 받아보세요!</div>
         <div id="stamp-preview-text" style="font-size:16px;font-weight:800;color:var(--blue)"></div>
       </div>
@@ -1743,7 +1754,7 @@ function seedDemoStore(){
     gameMode:'roulette',
     stampSettings:{goal:10,reward:'무료 메뉴 1개',grantStamp:'survey',milestones:[{goal:5,reward:'음료 1잔 무료'},{goal:10,reward:'무료 메뉴 1개'}]},
     stampCards:{'u1':{count:3,history:[]}},
-    vipBenefits:{10:'실버 달성 기념 음료 1잔 무료',20:'골드 달성 기념 사이드메뉴 1개 무료',30:'플래티넘 달성 기념 메인메뉴 1개 무료',50:'다이아 달성 기념 식사권 1회 무료'},
+    vipBenefits:{10:'평생 음료 1잔 무료',20:'평생 사이드메뉴 1개 무료',30:'평생 메인메뉴 1개 무료',50:'평생 월 식사권 1회 무료'},
     vipCouponsIssued:{},
     events:[
       {id:'ev-kakao',platform:'kakao',label:'카카오맵 리뷰',emoji:'🗺️',color:'#FEE500',textColor:'#191f28',active:false,link:'',gameMode:'ladder',prizes:[{id:'ek1',name:'희망 메뉴 1개',prob:3,color:'#FFD700',benefit:'희망 메뉴 1개 무료'},{id:'ek2',name:'희망 사이드 1개',prob:20,color:'#C0C0C0',benefit:'희망 사이드 메뉴 1개 무료'},{id:'ek3',name:'지정 사이드 1개',prob:30,color:'#cd7f32',benefit:'지정 사이드 메뉴 무료'},{id:'ek4',name:'주류 1개',prob:22,color:'#9ca3af',benefit:'주류 1개 무료'},{id:'ek5',name:'음료수 1개',prob:25,color:'#e5e7eb',benefit:'음료수 1개 무료'}]},
@@ -1780,6 +1791,18 @@ const PLATFORM={email:'jayden',password:'194360'};
 
 let storesDB=loadStoresDB();
 if(!storesDB['demo']){storesDB['demo']=seedDemoStore();saveStoresDB()}
+// VIP 혜택 문구 마이그레이션 (구버전 "달성 기념" → 신버전 "평생")
+(function(){
+  const _newBenefits={10:'평생 음료 1잔 무료',20:'평생 사이드메뉴 1개 무료',30:'평생 메인메뉴 1개 무료',50:'평생 월 식사권 1회 무료'};
+  let _changed=false;
+  Object.values(storesDB).forEach(s=>{
+    if(!s.vipBenefits)return;
+    [10,20,30,50].forEach(v=>{
+      if(s.vipBenefits[v]&&s.vipBenefits[v].includes('달성 기념')){s.vipBenefits[v]=_newBenefits[v];_changed=true;}
+    });
+  });
+  if(_changed)saveStoresDB();
+})();
 // 신호등 데모용 테스트 매장 (활동일 다르게)
 // 구버전 테스트 매장 정리
 if(storesDB['1000000002']){delete storesDB['1000000002'];saveStoresDB();}
@@ -2008,10 +2031,10 @@ function getRank(v){
 }
 // 방문 횟수별 확정 혜택 발급 기준 (threshold: 도달 시 자동 발급)
 const VIP_THRESHOLDS=[
-  {visits:10,grade:'실버',defaultBenefit:'실버 달성 기념 음료 1잔 무료'},
-  {visits:20,grade:'골드',defaultBenefit:'골드 달성 기념 사이드메뉴 1개 무료'},
-  {visits:30,grade:'플래티넘',defaultBenefit:'플래티넘 달성 기념 메인메뉴 1개 무료'},
-  {visits:50,grade:'다이아',defaultBenefit:'다이아 달성 기념 식사권 1회 무료'},
+  {visits:10,grade:'실버',defaultBenefit:'평생 음료 1잔 무료'},
+  {visits:20,grade:'골드',defaultBenefit:'평생 사이드메뉴 1개 무료'},
+  {visits:30,grade:'플래티넘',defaultBenefit:'평생 메인메뉴 1개 무료'},
+  {visits:50,grade:'다이아',defaultBenefit:'평생 월 식사권 1회 무료'},
 ];
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toastT);window.__toastT=setTimeout(()=>t.classList.remove('show'),2200)}
 function openProfileMenu(){document.getElementById('profile-menu-overlay').classList.add('on')}
@@ -2072,9 +2095,11 @@ function renderLanding(){
   const overlay=document.getElementById('landing-overlay');
   if(STORE.profile.bgImage){
     hero.style.backgroundImage=`url(${STORE.profile.bgImage})`;
+    hero.style.aspectRatio='1/1';
     overlay.style.background='rgba(0,0,0,.45)';
   }else{
     hero.style.backgroundImage='';
+    hero.style.aspectRatio='';
     overlay.style.background='transparent';
   }
   renderStoreSwitcher();
@@ -2120,6 +2145,58 @@ function phoneLogin(){
   currentUser=user;
   saveState();
   show('s-home');
+}
+function requireLogin(target){if(!currentUser)return show('s-login');show(target);}
+function closeVipModal(){const m=document.getElementById('vip-modal');if(m)m.style.display='none';}
+function openVipModal(){
+  const m=document.getElementById('vip-modal');if(!m)return;
+  const uVisits=currentUser?(currentUser.visits||0):0;
+  const rank=getRank(uVisits);
+  const benefits=STORE.vipBenefits||{};
+  const tiers=[
+    {visits:10,grade:'실버',emoji:'🥈',color:'#9ba3af'},
+    {visits:20,grade:'골드',emoji:'🥇',color:'#f5b925'},
+    {visits:30,grade:'플래티넘',emoji:'💠',color:'#3182f6'},
+    {visits:50,grade:'다이아',emoji:'💎',color:'#8b5cf6'},
+  ];
+  const nextTier=tiers.find(t=>uVisits<t.visits);
+  let html='';
+  // 현재 등급 + 진행 현황
+  if(nextTier){
+    const pct=Math.min(100,Math.round((uVisits/(nextTier.visits))*100));
+    html+=`<div style="background:var(--bg);border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:22px">${rank.emoji}</span>
+        <div><div style="font-size:15px;font-weight:800;color:var(--t1)">${rank.name} 등급</div><div style="font-size:12px;color:var(--t3)">${uVisits}회 방문 · 다음 등급까지 ${nextTier.visits-uVisits}회</div></div>
+      </div>
+      <div style="height:7px;background:rgba(128,128,128,0.2);border-radius:6px;overflow:hidden"><div style="height:100%;background:${nextTier.color};border-radius:6px;width:${pct}%;transition:width .5s"></div></div>
+    </div>`;
+  }else{
+    html+=`<div style="background:#f3f0ff;border-radius:14px;padding:14px;margin-bottom:16px;text-align:center"><span style="font-size:22px">${rank.emoji}</span><div style="font-weight:800;color:#8b5cf6;margin-top:4px">최고 등급 달성! 감사합니다 💜</div></div>`;
+  }
+  // 안내 문구
+  html+='<div style="font-size:12px;color:var(--t3);margin-bottom:14px;line-height:1.6">방문 횟수가 기준에 도달하면 쿠폰이 자동 발급됩니다. 내용은 원하시는 대로 수정하세요.</div>';
+  // 전체 등급 혜택 목록
+  const tierInfo=[
+    {visits:10,grade:'실버',emoji:'🥈',color:'#9ba3af'},
+    {visits:20,grade:'골드',emoji:'🥇',color:'#f5b925'},
+    {visits:30,grade:'플래티넘',emoji:'💠',color:'#3182f6'},
+    {visits:50,grade:'다이아',emoji:'💎',color:'#8b5cf6'},
+  ];
+  tierInfo.forEach(t=>{
+    const benefit=benefits[t.visits]||(t.grade==='실버'?'평생 음료 1잔 무료':t.grade==='골드'?'평생 사이드메뉴 1개 무료':t.grade==='플래티넘'?'평생 메인메뉴 1개 무료':'평생 월 식사권 1회 무료');
+    const reached=uVisits>=t.visits;
+    html+=`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2)">
+      <div style="font-size:28px;filter:${reached?'none':'grayscale(1) opacity(.35)'}">${t.emoji}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:${reached?t.color:'var(--t3)'}">${t.grade} (${t.visits}회)</div>
+        <div style="font-size:13px;color:var(--t1);margin-top:2px">${benefit}</div>
+      </div>
+      ${reached?'<span style="font-size:12px;color:#00c471;font-weight:700">달성 ✅</span>':'<span style="font-size:12px;color:var(--t4)">'+t.visits+'회~</span>'}
+    </div>`;
+  });
+  document.getElementById('vip-modal-body').innerHTML=html;
+  m.style.display='flex';
 }
 function logout(){currentUser=null;show('s-landing')}
 function showPrivacyModal(){
@@ -2593,26 +2670,42 @@ function refreshHome(){
       const prev=rank.level===0?0:[0,10,20,30][rank.level];
       const pct=Math.min(100,Math.round((uVisits-prev)/(rank.next-prev)*100));
       const left=rank.next-uVisits;
-      rankBarEl.innerHTML=`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:5px"><span>${rank.emoji} ${rank.name}</span><span>다음 등급까지 ${left}회</span></div><div style="height:6px;background:var(--border);border-radius:6px;overflow:hidden"><div style="height:100%;background:${rank.color};border-radius:6px;width:${pct}%;transition:width .5s ease"></div></div>`;
+      rankBarEl.innerHTML=`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:5px"><span>${rank.emoji} ${rank.name}</span><span>다음 등급까지 ${left}회</span></div><div style="height:6px;background:rgba(128,128,128,0.2);border-radius:6px;overflow:hidden"><div style="height:100%;background:${rank.color};border-radius:6px;width:${pct}%;transition:width .5s ease"></div></div>`;
     }else{
       rankBarEl.innerHTML=`<div style="text-align:center;font-size:13px;font-weight:700;color:#8b5cf6;padding:4px 0">${rank.emoji} 최고 등급 달성! 감사합니다 💜</div>`;
     }
   }
 }
 
-/* ════════════════════ 효과음 ════════════════════ */
+/* ════════════════════ 효과음 (MP3) ════════════════════ */
 let audioCtx=null;
 function initAudio(){if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}}
-function tick(volume){
-  if(!soundOn||!audioCtx)return;
-  const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-  osc.connect(gain);gain.connect(audioCtx.destination);
-  osc.type='square';osc.frequency.value=900+Math.random()*200;
-  gain.gain.setValueAtTime(volume*0.08,audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.06);
-  osc.start();osc.stop(audioCtx.currentTime+0.06);
+let _spinAudio=null,_ladderAudio=null,_scratchAudio=null;
+function _mkAudio(src){const a=new Audio(src);a.preload='auto';return a;}
+function playSpinBGM(){
+  if(!soundOn)return;
+  if(!_spinAudio)_spinAudio=_mkAudio('spin.mp3');
+  _spinAudio.loop=true;_spinAudio.volume=0.7;
+  _spinAudio.currentTime=0;_spinAudio.play().catch(()=>{});
 }
+function stopSpinBGM(){if(_spinAudio){_spinAudio.pause();_spinAudio.currentTime=0;}}
+function playLadderBGM(){
+  if(!soundOn)return;
+  if(!_ladderAudio)_ladderAudio=_mkAudio('ladder.mp3');
+  _ladderAudio.loop=true;_ladderAudio.volume=0.6;
+  _ladderAudio.currentTime=0;_ladderAudio.play().catch(()=>{});
+}
+function stopLadderBGM(){if(_ladderAudio){_ladderAudio.pause();_ladderAudio.currentTime=0;}}
+function playScratchBGM(){
+  if(!soundOn)return;
+  if(!_scratchAudio)_scratchAudio=_mkAudio('scratch.mp3');
+  _scratchAudio.loop=true;_scratchAudio.volume=0.5;
+  if(_scratchAudio.paused){_scratchAudio.currentTime=0;_scratchAudio.play().catch(()=>{});}
+}
+function stopScratchBGM(){if(_scratchAudio){_scratchAudio.pause();_scratchAudio.currentTime=0;}}
+function tick(){}
 function winSound(){
+  initAudio();
   if(!soundOn||!audioCtx)return;
   [523,659,784,1047].forEach((f,i)=>{
     const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
@@ -2626,39 +2719,6 @@ function winSound(){
   });
 }
 function toggleSound(){soundOn=!soundOn;document.getElementById('sound-btn').textContent=soundOn?'🔊 효과음 켜짐':'🔇 효과음 꺼짐'}
-let _ladderBGMTimer=null;
-function playLadderBGM(){
-  if(!soundOn||!audioCtx)return;
-  stopLadderBGM();
-  // 신나는 사다리 BGM: 빠른 도레미파솔라 상승 + 내려오기 패턴
-  const C4=261.6,D4=293.7,E4=329.6,F4=349.2,G4=392,A4=440,B4=493.9,C5=523.3,D5=587.3,E5=659.3;
-  const s=0.09,m=0.12,l=0.18;
-  const notes=[
-    [C4,s],[E4,s],[G4,s],[C5,m],[0,0.03],
-    [C5,s],[B4,s],[A4,s],[G4,s],[0,0.03],
-    [E4,s],[G4,s],[A4,s],[B4,m],[0,0.03],
-    [G4,s],[A4,s],[B4,s],[C5,l],[0,0.06],
-    [D5,s],[C5,s],[B4,s],[A4,s],[0,0.03],
-    [G4,s],[F4,s],[E4,s],[D4,m],[0,0.03],
-    [E4,s],[G4,s],[C5,l],[0,0.08],
-  ];
-  let t=audioCtx.currentTime;
-  let totalDur=0;
-  notes.forEach(([freq,dur])=>{
-    if(freq>0){
-      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-      osc.connect(gain);gain.connect(audioCtx.destination);
-      osc.type='square';osc.frequency.value=freq;
-      gain.gain.setValueAtTime(0.0001,t);
-      gain.gain.exponentialRampToValueAtTime(0.07,t+0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001,t+dur-0.02);
-      osc.start(t);osc.stop(t+dur);
-    }
-    t+=dur;totalDur+=dur;
-  });
-  _ladderBGMTimer=setTimeout(playLadderBGM,totalDur*1000);
-}
-function stopLadderBGM(){if(_ladderBGMTimer){clearTimeout(_ladderBGMTimer);_ladderBGMTimer=null;}}
 
 /* ════════════════════ 룰렛 (6초, 확률 비노출) ════════════════════ */
 function initWheel(){
@@ -3242,7 +3302,7 @@ function checkScratchProgress(){
 
 function revealScratch(){
   if(scratchRevealed)return;
-  scratchRevealed=true;
+  scratchRevealed=true;stopScratchBGM();
   localStorage.removeItem('scratchPending_'+STORE_ID);
   document.getElementById('scratch-pct').textContent='100';
   document.getElementById('scratch-progress').style.width='100%';
@@ -3307,8 +3367,8 @@ function doScratch(){
   canvas.style.pointerEvents='auto';
   document.getElementById('scratch-spin-btn').style.display='none';
   document.getElementById('scratch-error').innerHTML='<div style="font-size:13px;color:var(--blue);font-weight:600">화면을 손가락으로 긁어보세요! ✨</div>';
-  initAudio();
-  if(soundOn&&audioCtx)tick(0.3);
+  initAudio();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  playScratchBGM();
   setTimeout(()=>{if(!scratchRevealed)revealScratch();},5000);
 }
 
@@ -3318,7 +3378,7 @@ function doSpin(){
   const last=localStorage.getItem('lastSpin_'+STORE_ID);
   if(last===today()){document.getElementById('spin-error').innerHTML='<div class="error-msg">오늘은 이미 참여하셨습니다. 내일 다시 도전해주세요!</div>';return}
   document.getElementById('spin-error').innerHTML='';
-  isSpinning=true;
+  isSpinning=true;playSpinBGM();
   const btn=document.getElementById('spin-btn');btn.disabled=true;btn.textContent='두근두근...';
   const prizes=STORE.prizes;
   const winner=pickWinner();
@@ -3339,7 +3399,7 @@ function doSpin(){
     if(passed>lastTickStep){lastTickStep=passed;tick(0.4+p*0.6)}
     if(p<1)requestAnimationFrame(frame);
     else{
-      spinAngle=cur%(Math.PI*2);isSpinning=false;
+      spinAngle=cur%(Math.PI*2);isSpinning=false;stopSpinBGM();
       localStorage.setItem('lastSpin_'+STORE_ID,today());
       STORE.visits++;if(currentUser){currentUser.visits=(currentUser.visits||0)+1}
       if(!STORE.spinLog)STORE.spinLog=[];
@@ -4192,6 +4252,33 @@ function initExtraScratch(){
   drawExtraSilver(ctx,'시작 버튼을 눌러주세요');
   document.getElementById('extra-scratch-pct').textContent='0';
   canvas.style.pointerEvents='none';
+  // 미완료 복권 복원 — 중간에 나갔다 들어와도 같은 결과 공개
+  if(currentExtraEvent){
+    const _pendKey='extraScratchPend_'+STORE_ID+'_'+currentExtraEvent.platform;
+    const _pendStr=localStorage.getItem(_pendKey);
+    if(_pendStr){
+      try{
+        const _pd=JSON.parse(_pendStr);
+        if(_pd.date===today()&&_pd.uid===currentUser?.id&&_pd.winner){
+          extraScratchWinner=_pd.winner;extraScratchStarted=true;
+          const _isW=!!(_pd.winner.benefit&&_pd.winner.benefit.trim());
+          document.getElementById('extra-scratch-emoji').textContent=_isW?'🎉':'😢';
+          document.getElementById('extra-scratch-prizename').textContent=_isW?_pd.winner.benefit:'꽝';
+          drawExtraSilver(ctx,'이전 복권 결과를 공개합니다...');
+          canvas.style.pointerEvents='none';
+          document.getElementById('extra-spin-btn').style.display='none';
+          document.getElementById('extra-spin-error').innerHTML='<div style="font-size:13px;color:var(--blue);font-weight:600">이전 복권 결과를 공개합니다! ✨</div>';
+          setTimeout(()=>{
+            extraScratchRevealed=true;
+            localStorage.removeItem(_pendKey);
+            ctx.clearRect(0,0,300,200);
+            if(_isW)winSound();
+            finishExtraGame(extraScratchWinner);
+          },800);
+        }
+      }catch(e){}
+    }
+  }
 }
 function drawExtraSilver(ctx,msg){
   const grad=ctx.createLinearGradient(0,0,300,200);
@@ -4208,6 +4295,13 @@ function doExtraScratchStart(){
   if(isExtraAlreadyDone()){document.getElementById('extra-spin-error').innerHTML='<div class="error-msg">오늘 이미 참여하셨습니다</div>';return}
   extraScratchStarted=true;
   extraScratchWinner=pickExtraWinner();
+  // 즉시 저장 — 뒤로 나가도 재참여·치팅 불가
+  if(!STORE.extraSpinLog)STORE.extraSpinLog={};
+  const _logKey=currentUser?.id+'_'+currentExtraEvent.platform+'_'+today();
+  STORE.extraSpinLog[_logKey]=true;
+  const _pendKey='extraScratchPend_'+STORE_ID+'_'+currentExtraEvent.platform;
+  localStorage.setItem(_pendKey,JSON.stringify({winner:extraScratchWinner,date:today(),uid:currentUser?.id}));
+  saveState();
   const isWin=!!(extraScratchWinner.benefit&&extraScratchWinner.benefit.trim());
   document.getElementById('extra-scratch-emoji').textContent=isWin?'🎉':'😢';
   document.getElementById('extra-scratch-prizename').textContent=isWin?extraScratchWinner.benefit:'꽝';
@@ -4218,6 +4312,7 @@ function doExtraScratchStart(){
   document.getElementById('extra-spin-btn').style.display='none';
   document.getElementById('extra-spin-error').innerHTML='<div style="font-size:13px;color:var(--blue);font-weight:600">화면을 손가락으로 긁어보세요! ✨</div>';
   initAudio();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  playScratchBGM();
   let drawing=false,lastTick=0;
   function getPos(e){
     const r=canvas.getBoundingClientRect();
@@ -4241,7 +4336,8 @@ function doExtraScratchStart(){
     if(pct>=65&&!extraScratchRevealed){
       extraScratchRevealed=true;canvas.style.pointerEvents='none';
       ctx.clearRect(0,0,300,200);
-      if(isWin)winSound();
+      stopScratchBGM();if(isWin)winSound();
+      localStorage.removeItem('extraScratchPend_'+STORE_ID+'_'+currentExtraEvent.platform);
       finishExtraGame(extraScratchWinner);
     }
   }
@@ -4323,9 +4419,9 @@ function openReviewLinks(){
   const naverUrl=STORE.naverReviewUrl||(STORE.naverLinked?STORE.profile?.naverUrl:'');
   // 추가이벤트에서 플랫폼별 링크
   const events=STORE.events||[];
-  const kakaoEv=events.find(e=>e.platform==='kakao'&&e.active&&e.link);
-  const googleEv=events.find(e=>e.platform==='google'&&e.active&&e.link);
-  const tmapEv=events.find(e=>e.platform==='tmap'&&e.active&&e.link);
+  const kakaoEv=events.find(e=>e.platform==='kakao'&&e.link);
+  const googleEv=events.find(e=>e.platform==='google'&&e.link);
+  const tmapEv=events.find(e=>e.platform==='tmap'&&e.link);
   const links=[
     {label:'네이버 플레이스 리뷰',icon:'<svg viewBox="0 0 22 22" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="22" rx="5" fill="#03C75A"/><path d="M5 17V5h3.8l5.4 8.2V5H17v12h-3.8L7.8 8.8V17z" fill="white"/></svg>',url:naverUrl,color:'#03C75A'},
     {label:'카카오맵 리뷰',icon:'<span style="font-size:18px">🟡</span>',url:kakaoEv?.link,color:'#FEE500'},
@@ -5945,7 +6041,7 @@ document.getElementById('s-pin').value='';
   const _p=new URLSearchParams(location.search).get('admin');
   const _storeParam=new URLSearchParams(location.search).get('store');
   if(_p==='platform'){show('s-platform-login');}
-  else if(STORE&&_storeParam){refreshHome();show('s-home');}  // ?store= URL → 매장 홈으로 바로
+  else if(STORE&&_storeParam){renderLanding();show('s-landing');}  // ?store= URL → 매장 랜딩 먼저
   else if(STORE){show('s-landing');}                          // ?store= 없음 → 퍼널 랜딩
   else if(_storeParam&&_storeParam!=='demo'){
     // ?store=X 있지만 이 기기에 localStorage 없음 → Supabase에서 로드 시도
@@ -5955,7 +6051,7 @@ document.getElementById('s-pin').value='';
         storesDB[_storeParam]=remoteData;
         STORE_ID=_storeParam;
         STORE=remoteData;
-        refreshHome();show('s-home');
+        renderLanding();show('s-landing');
       } else {
         show('s-notfound');
       }
