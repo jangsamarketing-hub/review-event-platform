@@ -1511,9 +1511,9 @@ body.dark .success-msg{color:#3ddc97}
 <div class="scr" id="s-survey">
   <div class="topbar"><button class="tb-back" onclick="show('s-home')">‹</button><div class="tb-title">만족도 설문</div></div>
   <div class="scroll" style="background:var(--white)">
-    <div class="hero" style="padding-bottom:20px">
-      <div class="hero-title" style="margin-top:16px">매장 평가 후<br>포인트 적립 받자!</div>
-      <div class="hero-desc">(약 10초면 완료됩니다)</div>
+    <div style="padding:14px 20px 12px;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:var(--t1);line-height:1.4">매장 평가 후 포인트 적립!</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:4px">(약 10초면 완료됩니다)</div>
     </div>
     <div style="padding:0 20px" id="survey-questions"></div>
     <div id="survey-submit-error" style="padding:0 20px 4px"></div>
@@ -3722,18 +3722,18 @@ function renderSurveyQuestions(){
     }else if(q.type==='matrix'){
       curSurveyAnswers[q.id]={};
       (q.items||[]).forEach(it=>curSurveyAnswers[q.id][it]=0);
-      return `<div style="margin-bottom:20px">
-        <div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:14px">${q.label}</div>
-        <div style="background:var(--bg);border-radius:16px;overflow:hidden">
+      return `<div style="margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:8px">${q.label} <span style="color:var(--accent);font-weight:700;font-size:11px;background:var(--accent-light);padding:2px 7px;border-radius:8px;margin-left:4px">필수</span></div>
+        <div style="background:var(--bg);border-radius:14px;overflow:hidden">
         ${(q.items||[]).map((it,idx)=>`
-          <div style="padding:10px 14px;${idx>0?'border-top:1px solid var(--border2)':''}">
-            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px">${it}</div>
-            <div style="display:flex;align-items:center;gap:8px">
-            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:3px;justify-content:flex-start;align-items:center;flex:1" onmousedown="this._drag=1" onmouseup="this._drag=0" onmouseleave="this._drag=0">
-              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`${n===6?'<span style="display:inline-block;width:4px;flex-shrink:0"></span>':''}<span data-star="${n}" onclick="handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" onmousemove="if(this.closest('.star-row')._drag)handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))"
-                style="font-size:28px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block;flex-shrink:0;touch-action:none">★</span>`).join('')}
+          <div style="padding:7px 12px;${idx>0?'border-top:1px solid var(--border2)':''}">
+            <div style="font-size:12px;font-weight:600;color:var(--t1);margin-bottom:4px">${it}</div>
+            <div style="display:flex;align-items:center;gap:6px">
+            <div class="star-row" data-qid="${q.id}" data-item="${it.replace(/"/g,'&quot;')}" style="display:flex;gap:2px;justify-content:flex-start;align-items:center;flex:1" onmousedown="this._drag=1" onmouseup="this._drag=0" onmouseleave="this._drag=0">
+              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`${n===6?'<span style="display:inline-block;width:3px;flex-shrink:0"></span>':''}<span data-star="${n}" onclick="handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))" onmousemove="if(this.closest('.star-row')._drag)handleStarHalf(event,'${q.id}','${it.replace(/'/g,"\\'")}',${n},this.closest('.star-row'))"
+                style="font-size:24px;line-height:1;cursor:pointer;color:#d1d5db;user-select:none;display:inline-block;flex-shrink:0;touch-action:none">★</span>`).join('')}
             </div>
-            <span class="star-score" style="font-size:13px;font-weight:800;color:var(--blue);min-width:30px;text-align:right">-</span>
+            <span class="star-score" style="font-size:13px;font-weight:800;color:var(--blue);min-width:28px;text-align:right">-</span>
             </div>
           </div>
         `).join('')}
@@ -3741,12 +3741,12 @@ function renderSurveyQuestions(){
       </div>`;
     }else if(q.type==='multicheck'){
       curSurveyAnswers[q.id]=[];
-      return `<div style="margin-bottom:24px"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px">${q.label} <span style="color:var(--t4);font-weight:400;font-size:12px">(복수선택)</span></div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+      return `<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px">${q.label} <span style="color:var(--t4);font-weight:400;font-size:11px">(선택사항)</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
         ${(q.options||[]).map((o,i)=>`
-          <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;background:var(--white)" onclick="toggleMultiCheck(event,'${q.id}','${o.replace(/'/g,"\\'")}',this)">
-            <span class="mc-box" style="width:20px;height:20px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff"></span>
-            <span style="font-size:14px;color:var(--t1)">${o}</span>
+          <label style="display:flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:var(--white)" onclick="toggleMultiCheck(event,'${q.id}','${o.replace(/'/g,"\\'")}',this)">
+            <span class="mc-box" style="width:18px;height:18px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff"></span>
+            <span style="font-size:13px;color:var(--t1)">${o}</span>
           </label>
         `).join('')}
       </div></div>`;
@@ -3756,8 +3756,8 @@ function renderSurveyQuestions(){
       <div class="chips">${q.options.map((o,i)=>`<button class="chip ${i===0?'on':'off'}" onclick="setSurveyChoice('${q.id}','${o.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}</div></div>`;
     }else{
       curSurveyAnswers[q.id]='';
-      return `<div style="margin-bottom:24px"><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:6px">${q.label} <span style="color:var(--accent);font-weight:700;font-size:11px;background:var(--accent-light);padding:2px 7px;border-radius:8px;margin-left:4px">필수 · 스탬프 적립</span></div>
-      <textarea rows="3" placeholder="의견을 꼭 남겨주세요 — 스탬프가 적립됩니다 ✍️" oninput="curSurveyAnswers['${q.id}']=this.value;document.getElementById('survey-submit-error').innerHTML=''" style="width:100%;border:1.5px solid var(--border);background:var(--white);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--t1);resize:none;outline:none;font-family:'Noto Sans KR',sans-serif;line-height:1.6"></textarea></div>`;
+      return `<div style="margin-bottom:16px"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:6px">${q.label} <span style="color:var(--accent);font-weight:700;font-size:11px;background:var(--accent-light);padding:2px 7px;border-radius:8px;margin-left:4px">필수 · 스탬프 적립</span></div>
+      <textarea rows="3" placeholder="의견을 꼭 남겨주세요 — 스탬프가 적립됩니다 ✍️" oninput="curSurveyAnswers['${q.id}']=this.value;document.getElementById('survey-submit-error').innerHTML=''" style="width:100%;border:1.5px solid var(--border);background:var(--white);border-radius:14px;padding:12px 14px;font-size:14px;color:var(--t1);resize:none;outline:none;font-family:'Noto Sans KR',sans-serif;line-height:1.6"></textarea></div>`;
     }
   }).join('');
   // 터치 드래그로 별점 조절
