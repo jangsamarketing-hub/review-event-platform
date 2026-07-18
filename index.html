@@ -1779,18 +1779,46 @@ const _SB_URL='https://pauzkmqmliuumybpinqi.supabase.co';
 const _SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhdXprbXFtbGl1dW15YnBpbnFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4Njc5NjAsImV4cCI6MjA5OTQ0Mzk2MH0.HUoanXQiFlpSncyukkqdrjVEiPfRucpOxZ_p2YlTJq4';
 const _sb=(window.supabase||{}).createClient?window.supabase.createClient(_SB_URL,_SB_KEY):null;
 
+// 단일 매장 Supabase에 저장
 async function _sbPush(storeId){
   if(!_sb||!storeId||!storesDB[storeId])return;
   try{
     await _sb.from('stores').upsert({store_id:storeId,data:storesDB[storeId],updated_at:new Date().toISOString()},{onConflict:'store_id'});
   }catch(e){console.warn('[sb push]',e);}
 }
+// 단일 매장 Supabase에서 로드
 async function _sbLoad(storeId){
   if(!_sb)return null;
   try{
     const {data,error}=await _sb.from('stores').select('data').eq('store_id',storeId).maybeSingle();
     return(data&&data.data)||null;
   }catch(e){console.warn('[sb load]',e);return null;}
+}
+// 타임스탬프 기반 스마트 동기화 — 로컬·원격 중 최신 것을 사용
+async function _sbSync(storeId){
+  if(!_sb||!storeId)return false;
+  try{
+    const remote=await _sbLoad(storeId);
+    if(!remote){_sbPush(storeId);return false;}
+    const localTs=storesDB[storeId]?._sbTs||0;
+    const remoteTs=remote._sbTs||0;
+    if(remoteTs>localTs){
+      storesDB[storeId]=migrateStore(remote);
+      if(STORE_ID===storeId){STORE=storesDB[storeId];}
+      saveStoresDB();
+      return true; // 원격이 더 최신 → 화면 갱신 필요
+    }
+    if(localTs>remoteTs||localTs===0)_sbPush(storeId); // 로컬이 더 최신 → 원격 업데이트
+    return false;
+  }catch(e){console.warn('[sb sync]',e);return false;}
+}
+// 전체 매장 목록 조회 (랜딩 검색용)
+async function _sbLoadAll(){
+  if(!_sb)return[];
+  try{
+    const {data}=await _sb.from('stores').select('store_id,data');
+    return data||[];
+  }catch(e){return[];}
 }
 
 const PLATFORM={email:'jayden',password:'194360'};
@@ -1918,7 +1946,7 @@ saveStoresDB();
 let STORE_ID=detectStoreId();
 let STORE=storesDB[STORE_ID]||null;
 
-function saveState(){if(STORE){storesDB[STORE_ID]=STORE;saveStoresDB();_sbPush(STORE_ID);}}
+function saveState(){if(STORE){STORE._sbTs=Date.now();storesDB[STORE_ID]=STORE;saveStoresDB();_sbPush(STORE_ID);}}
 
 /* ════════════════════ 네이버 UID 추출 ════════════════════ */
 function extractNaverUID(url){
@@ -1985,8 +2013,10 @@ function createStore(){
   newStore.resetPin='0123';
   newStore.staff=[{code:'STAFF001',pin:'1234',name:'직원',active:true}];
 
+  newStore._sbTs=Date.now();
   storesDB[uid]=newStore;
   saveStoresDB();
+  _sbPush(uid); // 다른 기기에서 바로 QR 접근 가능하도록 즉시 업로드
 
   document.getElementById('os-result-id').textContent=uid;
   document.getElementById('os-result-link').textContent=buildStoreUrl(uid);
@@ -2091,18 +2121,8 @@ function show(id){
   if(id==='s-survey')renderSurveyQuestions();
   if(id==='s-myinfo')renderMyInfo();
   if(id==='s-admin'){
-    _sbLoad(STORE_ID).then(remote=>{
-      if(remote){
-        // Supabase 데이터가 더 최신이면 병합 (고객 수 기준)
-        const localUsers=(storesDB[STORE_ID]?.users||[]).length;
-        const remoteUsers=(remote.users||[]).length;
-        if(remoteUsers>=localUsers){storesDB[STORE_ID]=remote;STORE=remote;saveStoresDB();}
-      } else {
-        // Supabase에 아직 없음 → 로컬 데이터 자동 업로드
-        _sbPush(STORE_ID);
-      }
-      renderAdmin('stats');
-    }).catch(()=>{_sbPush(STORE_ID);renderAdmin('stats');});
+    renderAdmin('stats'); // 로컬 데이터로 즉시 렌더 (빠른 UX)
+    _sbSync(STORE_ID).then(updated=>{if(updated)renderAdmin('stats');}); // 원격이 더 최신이면 재렌더
   }
   if(id==='s-notfound')renderStoreSearchSection();
   if(id==='s-platform')renderPlatform();
@@ -2313,8 +2333,18 @@ function renderStoreList(stores){
 function filterStoreList(query){
   const q=(query||'').trim().toLowerCase();
   if(!q){document.getElementById('store-search-list').innerHTML='';return;}
-  const stores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&s.profile.name.toLowerCase().includes(q));
-  renderStoreList(stores);
+  // 로컬에서 즉시 표시
+  const localStores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&s.profile.name.toLowerCase().includes(q));
+  renderStoreList(localStores);
+  // Supabase에서 추가 매장 검색 (이 기기 localStorage에 없는 매장도 검색)
+  _sbLoadAll().then(rows=>{
+    let added=false;
+    rows.forEach(row=>{if(!storesDB[row.store_id]&&row.data){storesDB[row.store_id]=migrateStore(row.data);added=true;}});
+    if(added){
+      const allStores=Object.entries(storesDB||{}).filter(([id,s])=>id!=='demo'&&s.approved&&s.profile&&s.profile.name&&s.profile.name.toLowerCase().includes(q));
+      renderStoreList(allStores);
+    }
+  }).catch(()=>{});
 }
 function goToStore(storeId){
   if(!storesDB||!storesDB[storeId])return;
@@ -6088,16 +6118,24 @@ document.getElementById('s-pin').value='';
   const _p=new URLSearchParams(location.search).get('admin');
   const _storeParam=new URLSearchParams(location.search).get('store');
   if(_p==='platform'){show('s-platform-login');}
-  else if(STORE&&_storeParam){renderLanding();show('s-landing');}  // ?store= URL → 매장 랜딩 먼저
-  else if(STORE){show('s-landing');}                          // ?store= 없음 → 퍼널 랜딩
+  else if(STORE&&_storeParam){
+    renderLanding();show('s-landing');
+    // 백그라운드에서 Supabase 최신 데이터 체크 (다른 기기에서 변경된 내용 반영)
+    _sbSync(STORE_ID).then(updated=>{if(updated&&window.currentScreenId==='s-landing')renderLanding();});
+  }
+  else if(STORE){
+    show('s-landing');
+    _sbSync(STORE_ID).then(updated=>{if(updated&&window.currentScreenId==='s-landing')renderLanding();});
+  }
   else if(_storeParam&&_storeParam!=='demo'){
     // ?store=X 있지만 이 기기에 localStorage 없음 → Supabase에서 로드 시도
     show('s-loading');
     _sbLoad(_storeParam).then(remoteData=>{
       if(remoteData){
-        storesDB[_storeParam]=remoteData;
+        storesDB[_storeParam]=migrateStore(remoteData);
+        saveStoresDB();
         STORE_ID=_storeParam;
-        STORE=remoteData;
+        STORE=storesDB[_storeParam];
         renderLanding();show('s-landing');
       } else {
         show('s-notfound');
