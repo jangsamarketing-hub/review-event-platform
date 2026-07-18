@@ -6161,15 +6161,38 @@ const osPhoneEl=document.getElementById('os-phone');
 if(osPhoneEl)osPhoneEl.addEventListener('input',function(e){e.target.value=formatPhone(e.target.value)});
 
 /* ════════════════════ 사장님 카운터 ════════════════════ */
-var _storeCount=424;
-function _updateStoreCounter(){document.querySelectorAll('.store-counter-num').forEach(function(el){el.textContent=_storeCount.toLocaleString();});}
+var _storeCountBase=424;
+function _getRealStoreCount(){return Object.keys(storesDB).filter(function(id){return /^\d{5,}$/.test(id);}).length;}
+function _updateStoreCounter(){
+  var total=_storeCountBase+_getRealStoreCount();
+  document.querySelectorAll('.store-counter-num').forEach(function(el){el.textContent=total.toLocaleString();});
+}
+function _getCounterCfg(){
+  // KST = UTC+9
+  var h=new Date(Date.now()+9*3600000).getUTCHours();
+  if(h>=9&&h<12)  return{min:50000, max:120000,incMin:1,incMax:2};  // 오전 9~12시
+  if(h>=12&&h<17) return{min:40000, max:60000, incMin:1,incMax:3};  // 낮 12~5시
+  if(h>=17&&h<21) return{min:60000, max:90000, incMin:1,incMax:2};  // 저녁 5~9시
+  if(h>=21||h<2)  return{min:20000, max:60000, incMin:1,incMax:2};  // 밤 9시~새벽 2시
+  return null; // 새벽 2~9시: 정지
+}
 function _startStoreCounter(){
+  _updateStoreCounter();
   function tick(){
-    _storeCount+=Math.random()<0.5?1:2;
+    var cfg=_getCounterCfg();
+    if(!cfg){
+      // 새벽 2~9시: 다음 오전 9시까지 대기
+      var h=new Date(Date.now()+9*3600000).getUTCHours();
+      var waitH=(h<9?9-h:33-h);
+      setTimeout(tick,waitH*3600000);
+      return;
+    }
+    _storeCountBase+=cfg.incMin+Math.floor(Math.random()*(cfg.incMax-cfg.incMin+1));
     _updateStoreCounter();
-    setTimeout(tick,10000+Math.random()*30000);
+    setTimeout(tick,cfg.min+Math.random()*(cfg.max-cfg.min));
   }
-  setTimeout(tick,10000+Math.random()*30000);
+  var cfg=_getCounterCfg();
+  setTimeout(tick,cfg?cfg.min+Math.random()*(cfg.max-cfg.min):3600000);
 }
 
 /* ════════════════════ 초기화 ════════════════════ */
