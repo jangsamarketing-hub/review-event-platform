@@ -1031,7 +1031,7 @@ body.dark .success-msg{color:#3ddc97}
         <input id="os-manual-id" placeholder="숫자만 입력 (예: 1234567890)" oninput="previewUID()">
       </div>
 
-      <div class="field"><label>관리자 이메일 <span style="font-size:11px;color:var(--t4);font-weight:400">(로그인용)</span></label><input id="os-email" placeholder="owner@naver.com"></div>
+      <div class="field"><label>관리자 이메일 <span style="font-size:11px;color:var(--t4);font-weight:400">(로그인용)</span></label><input id="os-email" placeholder="네이버 아이디 (예: myname 또는 myname@naver.com)"></div>
       <div class="field" style="margin-bottom:24px"><label>관리자 비밀번호</label><input id="os-pw" type="password" placeholder="6자 이상" maxlength="30"></div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 14px;background:#f8faff;border-radius:12px;border:1px solid #dbeafe">
         <input type="checkbox" id="os-marketing" checked style="width:16px;height:16px;flex-shrink:0;accent-color:#3182f6;cursor:pointer">
@@ -1649,7 +1649,7 @@ body.dark .success-msg{color:#3ddc97}
       <div style="font-size:14px;color:var(--t3);line-height:1.6">회원가입 시 입력한 전화번호와<br>아이디(이메일)를 입력해주세요.</div>
     </div>
     <div class="field"><label>전화번호</label><input id="pwr-phone" placeholder="010-0000-0000" type="tel"></div>
-    <div class="field" style="margin-bottom:24px"><label>아이디 (이메일)</label><input id="pwr-email" placeholder="등록된 이메일" type="email"></div>
+    <div class="field" style="margin-bottom:24px"><label>아이디 (이메일)</label><input id="pwr-email" placeholder="네이버 아이디 (예: myname 또는 myname@naver.com)"></div>
     <div id="pwr-error" style="margin-bottom:12px"></div>
     <button class="btn btn-blue" onclick="pwrFind()">본인 확인</button>
     <!-- 인증 후 새 비밀번호 입력 (기본 숨김) -->
@@ -2005,14 +2005,14 @@ function createStore(){
   const name=document.getElementById('os-name').value.trim();
   const naverUrl=document.getElementById('os-naver').value.trim();
   const manualId=document.getElementById('os-manual-id').value.trim();
-  const email=document.getElementById('os-email').value.trim();
+  const email=normalizeNaverEmail(document.getElementById('os-email').value);
   const pw=document.getElementById('os-pw').value.trim();
   const el=document.getElementById('os-error');
   el.innerHTML='';
 
   if(!owner||!phone||!name||!naverUrl){el.innerHTML='<div class="error-msg">성함, 연락처, 상호명, 네이버 플레이스 URL을 모두 입력해주세요</div>';return}
   if(!validatePhone(phone)){el.innerHTML='<div class="error-msg">올바른 연락처를 입력해주세요 (010-0000-0000)</div>';return}
-  if(!validateEmail(email)){el.innerHTML='<div class="error-msg">올바른 이메일 형식이 아닙니다</div>';return}
+  if(!validateEmail(email)){el.innerHTML='<div class="error-msg">네이버 이메일(@naver.com)만 사용 가능합니다</div>';return}
   if(!pw||pw.length<6){el.innerHTML='<div class="error-msg">비밀번호는 6자 이상 입력해주세요</div>';return}
 
   const emailDup=Object.values(storesDB||{}).find(s=>s.adminEmail&&s.adminEmail.toLowerCase()===email.toLowerCase());
@@ -2100,7 +2100,8 @@ function stampFmt(dt){if(!dt)return '';return dt.replace(/\./g,'/').replace(' ',
 function genId(){return 'CPN-'+Math.floor(1000+Math.random()*9000)}
 function expDate(d=30){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0]}
 function validatePhone(p){return /^01[0-9]\d{7,8}$/.test(p.replace(/-/g,''))}
-function validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+function normalizeNaverEmail(v){const t=v.trim().toLowerCase();return t.includes('@')?t:t+'@naver.com';}
+function validateEmail(e){return /^[^\s@]+@naver\.com$/.test(e)}
 function formatPhone(v){v=v.replace(/[^0-9]/g,'');if(v.length<4)return v;if(v.length<8)return v.slice(0,3)+'-'+v.slice(3);return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11)}
 function getRank(v){
   if(v<10)return{emoji:'🥉',name:'브론즈',level:0,next:10,color:'#cd7f32'};
@@ -2302,7 +2303,7 @@ function adminPreviewCustomer(){
 let _pwrMatchId=null;
 function pwrFind(){
   const phone=document.getElementById('pwr-phone').value.trim();
-  const email=document.getElementById('pwr-email').value.trim().toLowerCase();
+  const email=normalizeNaverEmail(document.getElementById('pwr-email').value);
   const el=document.getElementById('pwr-error');
   if(!phone||!email){el.innerHTML='<div class="error-msg">전화번호와 아이디를 모두 입력해주세요</div>';return;}
   // storesDB에서 매칭 매장 검색
