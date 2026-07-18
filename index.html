@@ -1786,6 +1786,16 @@ async function _sbPush(storeId){
     await _sb.from('stores').upsert({store_id:storeId,data:storesDB[storeId],updated_at:new Date().toISOString()},{onConflict:'store_id'});
   }catch(e){console.warn('[sb push]',e);}
 }
+// 신규 매장 가입 시 카카오 알림 (Edge Function 호출)
+function _notifyNewStore(storeId,storeData){
+  try{
+    fetch('https://pauzkmqmliuumybpinqi.supabase.co/functions/v1/bright-task',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_SB_KEY},
+      body:JSON.stringify({record:{store_id:storeId,data:storeData}})
+    }).catch(()=>{});
+  }catch(e){}
+}
 // 단일 매장 Supabase에서 로드
 async function _sbLoad(storeId){
   if(!_sb)return null;
@@ -2029,10 +2039,11 @@ function createStore(){
   newStore.staff=[{code:'STAFF001',pin:'1234',name:'직원',active:true}];
 
   newStore._sbTs=Date.now();
-  newStore._notifiedAdmin=false; // 신규 가입 알림 미발송 플래그
+  newStore._notifiedAdmin=false;
   storesDB[uid]=newStore;
   saveStoresDB();
   _sbPush(uid); // 다른 기기에서 바로 QR 접근 가능하도록 즉시 업로드
+  _notifyNewStore(uid,newStore);
 
   document.getElementById('os-result-id').textContent=uid;
   document.getElementById('os-result-link').textContent=buildStoreUrl(uid);
