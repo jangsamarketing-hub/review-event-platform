@@ -1878,6 +1878,7 @@ if(!storesDB['1000000001']){
 saveStoresDB();
 
 function migrateStore(s){
+  if(!s.createdAt)s.createdAt=s._sbTs||Date.now(); // 기존 매장은 최초 동기화 시점을 가입일로 간주
   if(s.approved===undefined)s.approved=true;
   if(s.premium===undefined)s.premium=false;
   if(!s.plan)s.plan='free';
@@ -2045,6 +2046,7 @@ function createStore(){
   newStore.staff=[{code:'STAFF001',pin:'1234',name:'직원',active:true}];
 
   newStore._sbTs=Date.now();
+  newStore.createdAt=Date.now();
   newStore._notifiedAdmin=false;
   storesDB[uid]=newStore;
   saveStoresDB();
